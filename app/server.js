@@ -1,6 +1,7 @@
 const express = require("express");
 const { default: mongoose } = require("mongoose");
-const path = require("path")
+const path = require("path");
+const { AllRoutes } = require("./router/router");
 
 const options = {
     useNewUrlParser: true,
@@ -49,6 +50,7 @@ module.exports = class Application {
 
     }
     createRoutes(){
+        this.#app.use(AllRoutes)
 
     }
     errorHandling(){
