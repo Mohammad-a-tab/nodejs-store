@@ -3,17 +3,17 @@ const { default: mongoose } = require("mongoose");
 const Schema = mongoose.Schema({
     first_name : {type : String},
     last_name : {type : String},
-    phone : {type : String },
-    email : {type : String},
-    username : {type : String},
+    mobile : {type : String, required : true},
+    email : {type : String , lowercase : true},
+    username : {type : String , lowercase : true},
     password : {type : String},
     bills : {type : [] , default : []},
     discount : {type : Number , default : 0},
     birthday : {type : String },
     Roles : {type : [String] , default : ["USER"]},
-    otp : {type : String , default : {
+    otp : {type : Object , default : {
         code : 0,
-        expires : 0
+        expiresIn : 0
     }}
 
 });

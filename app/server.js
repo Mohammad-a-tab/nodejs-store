@@ -1,6 +1,10 @@
 const express = require("express");
 const { default: mongoose } = require("mongoose");
+const morgan = require("morgan");
 const path = require("path");
+const createError = require("http-errors");
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc")
 const { AllRoutes } = require("./router/router");
 
 const options = {
@@ -29,10 +33,31 @@ module.exports = class Application {
 
     }
     configApplication(){
+        this.#app.use(morgan("dev"))
         this.#app.use(express.json());
         this.#app.use(express.urlencoded({extended : true}));
         this.#app.use(express.static(path.join(__dirname , "..", "public")));
-
+        this.#app.use( "/api-doc" , swaggerUI.serve , swaggerUI.setup(swaggerJsDoc({
+            swaggerDefinition : {
+                info : {
+                    title : "Boto Start Store",
+                    version : "2.0.0",
+                    description : "بزرگترین مرجع ارائه پکیج برنامه نویسی",
+                    contact : {
+                        name : "Mohammad Aali",
+                        url : "http://github.com/Mohammad-a-tab",
+                        email : "mohammad.programmer.tab@gmail.com",
+                    },
+                    
+                },
+                servers : [
+                    {
+                        url : "http://localhost:5000"
+                    }
+                ]
+            },
+            apis : ["./app/router/**/*.js"]
+        })));
 
     }
 
@@ -46,6 +71,14 @@ module.exports = class Application {
         mongoose.connect(this.#DB_URI , options, (err) => {
             if(!err) return console.log("Connected to MongoDB")
             return console.log("felid connect to MongoDB");
+        });
+        mongoose.connection.on("connected" , () => {
+            console.log('mongoose connected to MongoDB')
+        });
+        process.on("SIGINT" , () => {
+            mongoose.connection.close();
+            console.log("disconnected");
+            process.exit();
         })
 
     }
@@ -55,18 +88,20 @@ module.exports = class Application {
     }
     errorHandling(){
        this.#app.use((req,res,next) => {
-          return res.status(404).json({
-            statusCode : 404,
-            message : "آدرس مورد نظر یافت نشد"
-          })
+           next(createError.NotFound("آدرس مورد نظر یافت نشد"));
        });
        this.#app.use((error,req,res,next) => {
-         const statusCode = error?.status || 500;
-         const message = error?.message || "InternalServerError";
-         return res.status(statusCode).join({
-            statusCode,
-            message
-         })
+        const serverError = createError.InternalServerError()
+         const statusCode = error?.status || serverError.status
+         const message = error?.message || serverError.message
+         return res.status(statusCode).json({
+            data : null,
+            errors : [
+        
+                statusCode,
+                message 
+            ]
+         });
        })
     }
 }
