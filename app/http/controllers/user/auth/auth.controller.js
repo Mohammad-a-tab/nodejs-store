@@ -1,8 +1,8 @@
 const date = require('@hapi/joi/lib/types/date');
 const createError = require('http-errors');
 const { UserModel } = require('../../../../models/users');
-const { EXPIRES_IN, USER_ROLE } = require('../../../../utils/constants');
-const { RandomNumberGenerator, SignAccessToken } = require('../../../../utils/function');
+const { ROLES } = require('../../../../utils/constants');
+const { RandomNumberGenerator, SignAccessToken, verifyRefreshToken, SignRefreshToken } = require('../../../../utils/function');
 const { checkOTPSchema , getOTPSchema } = require('../../../validators/user/auth.schema');
 const Controller = require('../../controller');
 
@@ -36,9 +36,11 @@ class UserAuthController extends Controller{
          const now = Date.now();
          if(+user.otp.expiresIn < now) throw createError.Unauthorized("کد شما منقضی شده است")
          const accessToken = await SignAccessToken(user._id);
+         const refreshToken = await SignRefreshToken(user._id);
          return res.json({
             data : {
-               accessToken
+               accessToken,
+               refreshToken
             }
          })
          
@@ -46,10 +48,27 @@ class UserAuthController extends Controller{
          next(error)
       }
    }
+   async refreshToken(req,res,next){
+       try {
+         const {refreshToken} = req.body;
+         const mobile = await verifyRefreshToken(refreshToken);
+         const user = await UserModel.findOne({mobile});
+         const accessToken = await SignAccessToken(user._id);
+         const newRefreshToken = await SignRefreshToken(user._id);
+         return res.json({
+            data : {
+               accessToken,
+               refreshToken : newRefreshToken
+            }
+         })
+       } catch (error) {
+            next(error)
+       }
+   }
    async saveUser(mobile , code){
     let otp = {
         code,
-        expiresIn : EXPIRES_IN,
+        expiresIn : (new Date().getTime() + 120000),
     }
         const result = await this.checkExistIUser(mobile);
         if(result){
@@ -57,7 +76,7 @@ class UserAuthController extends Controller{
            return (await this.updateUser(mobile , {otp}))
             
         }
-        return !!(await UserModel.create({mobile,otp,Roles : [USER_ROLE]}))
+        return !!(await UserModel.create({mobile,otp,Roles : [ROLES.USER]}))
 
     }
     async checkExistIUser(mobile){

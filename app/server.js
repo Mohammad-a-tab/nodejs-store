@@ -27,6 +27,7 @@ module.exports = class Application {
         this.#PORT = PORT;
         this.#DB_URI = DB_URL;
         this.configApplication();
+        this.initRedis();
         this.connectTOMongoDB();
         this.createServer();
         this.createRoutes();
@@ -37,6 +38,7 @@ module.exports = class Application {
         this.#app.use(cors());
         this.#app.use(morgan("dev"));
         this.#app.use(express.json());
+        
         this.#app.use(express.urlencoded({extended : true}));
         this.#app.use(express.static(path.join(__dirname , "..", "public")));
         this.#app.use( "/api-doc" , swaggerUI.serve , swaggerUI.setup(swaggerJsDoc({
@@ -83,6 +85,9 @@ module.exports = class Application {
             process.exit();
         })
 
+    }
+    initRedis(){
+        require("./utils/init_redis")
     }
     createRoutes(){
         this.#app.use(AllRoutes)
