@@ -24,7 +24,17 @@ class CategoryController extends Controller {
     }
     async removeCategory(req,res,next){
         try {
-            
+            const {id} = req.params;
+            const category = await this.checkExistCategory(id);
+            const result = await CategoryModel.deleteOne({_id : category._id});
+            if(result.deletedCount == 0 ) throw createHttpError.InternalServerError("عملیات حذف دسته بندی انجام نشد");
+            return res.status(200).json({
+                data : {
+                    statusCode : 200,
+                    message : "دسته بندی با موفقیت حذف شد"
+                }
+            })
+
         } catch (error) {
             next(error)
         }
@@ -38,6 +48,29 @@ class CategoryController extends Controller {
     }
     async getAllCategory(req,res,next){
         try {
+            const category = await CategoryModel.aggregate([
+                {
+                    $lookup : {
+                        from : "categories",
+                        localField : "_id",
+                        foreignField : "parent",
+                        as : "children"
+                    }
+                },
+                {
+                    $project : {
+                        __v : 0,
+                        "children.__v" : 0,
+                        "children.parent" : 0
+                    }
+                }
+            ]);
+            return res.status(200).json({
+                data : {
+                    statusCode : 200,
+                    category
+                }
+            })
             
         } catch (error) {
             next(error)
@@ -52,6 +85,12 @@ class CategoryController extends Controller {
     }
     async getAllParents(req,res,next){
         try {
+            const parents = await CategoryModel.find({parent : undefined} , {__v : 0});
+            return res.status(200).json({
+                data : {
+                    parents
+                }
+            })
             
         } catch (error) {
             next(error)
@@ -59,10 +98,23 @@ class CategoryController extends Controller {
     }
     async getChildOfParents(req,res,next){
         try {
+            const {parent} = req.params;
+            const children = await CategoryModel.find({parent}, {__v : 0 , parent : 0});
+            return res.status(200).json({
+                data : {
+                    statusCode : 200,
+                    children
+                }
+            })
             
         } catch (error) {
             next(error)
         }
+    }
+    async checkExistCategory(id){
+        const category = await CategoryModel.findById(id);
+        if(!category) throw createHttpError.NotFound("دسته بندی یافت نشد");
+        return category
     }
 
 }
