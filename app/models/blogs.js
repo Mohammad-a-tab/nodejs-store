@@ -1,6 +1,6 @@
 const { default: mongoose } = require("mongoose");
 
-const Schema = mongoose.Schema({
+const Schema = new mongoose.Schema({
      author : {type : mongoose.Types.ObjectId , required : true},
      title : {type : String, required : true},
      text : {type : String , required : true},

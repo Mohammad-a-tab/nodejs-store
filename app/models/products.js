@@ -1,6 +1,6 @@
 const { default: mongoose } = require("mongoose");
 
-const Schema = mongoose.Schema({
+const Schema = new mongoose.Schema({
     title : {type : String , required : true},
     short_desc : {type : String , required : true},
     total_desc : {type : String , required : true},
