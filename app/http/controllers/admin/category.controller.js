@@ -210,5 +210,5 @@ class CategoryController extends Controller {
 
 
 module.exports = {
-    CategoryController : new CategoryController()
+    AdminCategoryController : new CategoryController()
 }

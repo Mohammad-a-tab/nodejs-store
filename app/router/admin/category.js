@@ -1,4 +1,4 @@
-const { CategoryController } = require("../../http/controllers/admin/category.controller");
+const { AdminCategoryController } = require("../../http/controllers/admin/category.controller");
 
 const router = require("express").Router();
  
@@ -21,7 +21,7 @@ const router = require("express").Router();
  *              201:
  *                  description: success
  */                 
-router.post("/add-category" , CategoryController.addCategory)
+router.post("/add-category" , AdminCategoryController.addCategory)
 /**
  * @swagger
  * /admin/category/parents:
@@ -32,7 +32,7 @@ router.post("/add-category" , CategoryController.addCategory)
  *               200:
  *                  description: success
  */
-router.get("/parents" , CategoryController.getAllParents)
+router.get("/parents" , AdminCategoryController.getAllParents)
 /**
  * @swagger
  * /admin/category/child/{parent}:
@@ -48,7 +48,7 @@ router.get("/parents" , CategoryController.getAllParents)
  *               200:
  *                  description: success
  */
- router.get("/child/:parent" , CategoryController.getChildOfParents)
+ router.get("/child/:parent" , AdminCategoryController.getChildOfParents)
  /**
  * @swagger
  * /admin/category/all-c:
@@ -59,7 +59,7 @@ router.get("/parents" , CategoryController.getAllParents)
  *               200:
  *                  description: success
  */
-  router.get("/all-c" , CategoryController.getAllCategory)
+  router.get("/all-c" , AdminCategoryController.getAllCategory)
 /**
  * @swagger
  * /admin/category/remove/{id}:
@@ -75,7 +75,7 @@ router.get("/parents" , CategoryController.getAllParents)
  *               200:
  *                  description: success
  */
- router.delete("/remove/:id" , CategoryController.removeCategory)
+ router.delete("/remove/:id" , AdminCategoryController.removeCategory)
  /**
  * @swagger
  * /admin/category/get-all:
@@ -86,7 +86,7 @@ router.get("/parents" , CategoryController.getAllParents)
  *               200:
  *                  description: success
  */
-  router.get("/get-all" , CategoryController.getAllCategoryWithoutPopulate)
+  router.get("/get-all" , AdminCategoryController.getAllCategoryWithoutPopulate)
  /**
  * @swagger
  * /admin/category/{id}:
@@ -102,7 +102,7 @@ router.get("/parents" , CategoryController.getAllParents)
  *               200:
  *                  description: success
  */
-  router.get("/:id" , CategoryController.getCategoryByID)
+  router.get("/:id" , AdminCategoryController.getCategoryByID)
 /**
  * @swagger
  * /admin/category/update/{id}:
@@ -124,9 +124,9 @@ router.get("/parents" , CategoryController.getAllParents)
  *               500:
  *                  description: internal Server Error
  */
-    router.patch("/update/:id" , CategoryController.editCategoryTitle)
+    router.patch("/update/:id" , AdminCategoryController.editCategoryTitle)
 
 
 module.exports = {
-    CategoryRoutes : router
+  AdminApiCategoryRouter : router
 }

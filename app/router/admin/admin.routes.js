@@ -1,4 +1,5 @@
-const { CategoryRoutes } = require("./category");
+const { AdminApiBlogRouter } = require("./blog");
+const { AdminApiCategoryRouter } = require("./category");
 
 const router =require("express").Router();
 /**
@@ -7,11 +8,16 @@ const router =require("express").Router();
  *      -   name: Admin-Panel
  *          description: action of admin (add, edit, remove and any do)
  *      -   name: Category(Admin-Panel)
- *          description: all method and routes
+ *          description: all method and routes Category section
+ *      -   name: Prisma(Api)
+ *          description: create some api's with prisma and postgresSQL
+ *      -   name: Blog(Admin-Panel)
+ *          description: make blog management admin panel
  *          
  */
 
-router.use("/category",CategoryRoutes)
+router.use("/category", AdminApiCategoryRouter)
+router.use("/blogs", AdminApiBlogRouter)
 
 module.exports = {
     AdminRoutes : router
