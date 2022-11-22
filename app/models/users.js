@@ -16,6 +16,12 @@ const Schema = new mongoose.Schema({
         expiresIn : 0
     }}
 
+},
+{
+    timestamps : true,
+    toJSON : {
+        virtuals : true
+    }
 });
 
 module.exports = {
