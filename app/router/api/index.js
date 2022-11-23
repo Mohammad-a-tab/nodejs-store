@@ -26,7 +26,7 @@ const router = require("express").Router();
  *              description : notfound 
  */
 
-router.get("/" , verifyAccessToken, homeController.indexPage);
+router.get("/" ,homeController.indexPage);
 module.exports = {
     HomeRoutes : router
 }

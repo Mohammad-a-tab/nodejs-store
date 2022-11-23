@@ -18,7 +18,7 @@ const router =require("express").Router();
  */
 
 router.use("/category", AdminApiCategoryRouter)
-router.use("/blogs",verifyAccessToken, AdminApiBlogRouter)
+router.use("/blogs",AdminApiBlogRouter)
 
 module.exports = {
     AdminRoutes : router

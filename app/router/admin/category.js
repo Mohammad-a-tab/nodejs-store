@@ -9,6 +9,11 @@ const router = require("express").Router();
  *          tags: [Category(Admin-Panel)]
  *          summary: create new category title
  *          parameters:
+ *              -   in: header
+ *                  value: Bearer 
+ *                  name: access-token
+ *                  type: string
+ *                  required: true
  *              -   in: formData
  *                  type: string
  *                  required: true
@@ -28,6 +33,12 @@ router.post("/add-category" , AdminCategoryController.addCategory)
  *      get:
  *          tags: [Category(Admin-Panel)]
  *          summary: get All parents of category or category Heads
+ *          parameters:
+ *              -   in: header
+ *                  value: Bearer 
+ *                  name: access-token
+ *                  type: string
+ *                  required: true
  *          responses:
  *               200:
  *                  description: success
@@ -40,6 +51,11 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *          tags: [Category(Admin-Panel)]
  *          summary: get All children of parents category 
  *          parameters:
+ *              -   in: header
+ *                  value: Bearer 
+ *                  name: access-token
+ *                  type: string
+ *                  required: true
  *              -   in: path
  *                  name: parent
  *                  type: string
@@ -55,6 +71,12 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *      get:
  *          tags: [Category(Admin-Panel)]
  *          summary: get All categories
+ *          parameters:
+ *              -   in: header
+ *                  value: Bearer 
+ *                  name: access-token
+ *                  type: string
+ *                  required: true
  *          responses:
  *               200:
  *                  description: success
@@ -67,6 +89,11 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *          tags: [Category(Admin-Panel)]
  *          summary: delete category with object-id
  *          parameters:
+ *              -   in: header
+ *                  value: Bearer 
+ *                  name: access-token
+ *                  type: string
+ *                  required: true
  *              -   in: path
  *                  name: id
  *                  type: string
@@ -82,6 +109,12 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *      get:
  *          tags: [Category(Admin-Panel)]
  *          summary: get all category without populate 
+ *          parameters:
+ *              -   in: header
+ *                  value: Bearer 
+ *                  name: access-token
+ *                  type: string
+ *                  required: true
  *          responses:
  *               200:
  *                  description: success
@@ -94,6 +127,11 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *          tags: [Category(Admin-Panel)]
  *          summary: get category By ID
  *          parameters:
+ *              -   in: header
+ *                  value: Bearer 
+ *                  name: access-token
+ *                  type: string
+ *                  required: true
  *              -   in: path
  *                  name: id
  *                  type: string
@@ -110,6 +148,11 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *          tags: [Category(Admin-Panel)]
  *          summary: update category title with ID
  *          parameters:
+ *              -   in: header
+ *                  value: Bearer 
+ *                  name: access-token
+ *                  type: string
+ *                  required: true
  *              -   in: path
  *                  name: id
  *                  type: string
@@ -124,7 +167,7 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *               500:
  *                  description: internal Server Error
  */
-    router.patch("/update/:id" , AdminCategoryController.editCategoryTitle)
+  router.patch("/update/:id" , AdminCategoryController.editCategoryTitle)
 
 
 module.exports = {
