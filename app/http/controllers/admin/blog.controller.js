@@ -149,7 +149,7 @@ class BlogController extends Controller {
         }
     }
     async findBlog(id) {
-        const blog = await BlogModel.findById(id).populate([{path : "category" , select : ['title']} , {path : "author" , select  : ['mobile' , 'first_name' , 'last_name' , 'username']}]);
+        const blog = await BlogModel.findById(id).populate([{path : "category" , select : ['title']} , {path : "author" , select  : ['mobile', 'first_name' , 'last_name' , 'username']}]);
         if(!blog) throw createHttpError.NotFound("مقاله ای یافت نشد");
         return blog
     }

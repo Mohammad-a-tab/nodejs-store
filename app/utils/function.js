@@ -72,10 +72,35 @@ function deleteFilePublic(fileAddress) {
     }
 }
 
+function ListOfImagesFromRequest(files, fileUploadPath) {
+    if (files?.length > 0) {
+        return ((files.map(file => path.join(fileUploadPath, file.filename))).map(item => item.replace(/\\/g, "/")))
+    } else {
+        return []
+    }
+}
+function setFeatures(body) {
+    const { colors, width, weight, height, length } = body;
+    let features = {};
+    features.colors = colors;
+    if (!isNaN(+width) || !isNaN(+height) || !isNaN(+weight) || !isNaN(+length)) {
+        if (!width) features.width = 0;
+        else features.width = +width;
+        if (!height) features.height = 0;
+        else features.height = +height;
+        if (!weight) features.weight = 0;
+        else features.weight = +weight;
+        if (!length) features.length = 0;
+        else features.length = +length;
+    }
+    return features
+}
 module.exports = {
     RandomNumberGenerator,
     SignAccessToken,
     SignRefreshToken,
     verifyRefreshToken,
-    deleteFilePublic
+    deleteFilePublic,
+    ListOfImagesFromRequest,
+    setFeatures
 }

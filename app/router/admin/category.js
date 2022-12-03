@@ -1,27 +1,37 @@
 const { AdminCategoryController } = require("../../http/controllers/admin/category.controller");
 
 const router = require("express").Router();
- 
+/**
+ * @swagger
+ *  components:
+ *      schemas:        
+ *          Category:
+ *              type: object
+ *              required:
+ *                  -   title
+ *              properties: 
+ *                  title:     
+ *                      type: string
+ *                      description: the title Of category
+ *                  parent:     
+ *                      type: string
+ *                      description: the parent of category
+ */
 /**
  * @swagger
  * /admin/category/add-category:
  *      post:
  *          tags: [Category(Admin-Panel)]
  *          summary: create new category title
- *          parameters:
- *              -   in: header
- *                  value: Bearer 
- *                  name: access-token
- *                  type: string
- *                  required: true
- *              -   in: formData
- *                  type: string
- *                  required: true
- *                  name: title
- *              -   in: formData
- *                  type: string
- *                  required: false
- *                  name: parent        
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                application/x-www-form-urlencoded:
+ *                    schema:
+ *                        $ref: '#/components/schemas/Category'     
+ *                application/json:
+ *                    schema:
+ *                        $ref: '#/components/schemas/Category'     
  *          responses:
  *              201:
  *                  description: success
@@ -33,12 +43,6 @@ router.post("/add-category" , AdminCategoryController.addCategory)
  *      get:
  *          tags: [Category(Admin-Panel)]
  *          summary: get All parents of category or category Heads
- *          parameters:
- *              -   in: header
- *                  value: Bearer 
- *                  name: access-token
- *                  type: string
- *                  required: true
  *          responses:
  *               200:
  *                  description: success
@@ -51,11 +55,6 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *          tags: [Category(Admin-Panel)]
  *          summary: get All children of parents category 
  *          parameters:
- *              -   in: header
- *                  value: Bearer 
- *                  name: access-token
- *                  type: string
- *                  required: true
  *              -   in: path
  *                  name: parent
  *                  type: string
@@ -71,12 +70,6 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *      get:
  *          tags: [Category(Admin-Panel)]
  *          summary: get All categories
- *          parameters:
- *              -   in: header
- *                  value: Bearer 
- *                  name: access-token
- *                  type: string
- *                  required: true
  *          responses:
  *               200:
  *                  description: success
@@ -89,11 +82,6 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *          tags: [Category(Admin-Panel)]
  *          summary: delete category with object-id
  *          parameters:
- *              -   in: header
- *                  value: Bearer 
- *                  name: access-token
- *                  type: string
- *                  required: true
  *              -   in: path
  *                  name: id
  *                  type: string
@@ -109,12 +97,6 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *      get:
  *          tags: [Category(Admin-Panel)]
  *          summary: get all category without populate 
- *          parameters:
- *              -   in: header
- *                  value: Bearer 
- *                  name: access-token
- *                  type: string
- *                  required: true
  *          responses:
  *               200:
  *                  description: success
@@ -127,11 +109,6 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *          tags: [Category(Admin-Panel)]
  *          summary: get category By ID
  *          parameters:
- *              -   in: header
- *                  value: Bearer 
- *                  name: access-token
- *                  type: string
- *                  required: true
  *              -   in: path
  *                  name: id
  *                  type: string
@@ -148,19 +125,19 @@ router.get("/parents" , AdminCategoryController.getAllParents)
  *          tags: [Category(Admin-Panel)]
  *          summary: update category title with ID
  *          parameters:
- *              -   in: header
- *                  value: Bearer 
- *                  name: access-token
- *                  type: string
- *                  required: true
  *              -   in: path
  *                  name: id
  *                  type: string
  *                  required: true
- *              -   in: formData
- *                  name: title
- *                  type: string
- *                  required: true
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                application/x-www-form-urlencoded:
+ *                    schema:
+ *                        $ref: '#/components/schemas/Category'     
+ *                application/json:
+ *                    schema:
+ *                        $ref: '#/components/schemas/Category' 
  *          responses:
  *               200:
  *                  description: success

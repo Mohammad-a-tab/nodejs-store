@@ -1,20 +1,72 @@
 const { AdminBlogController } = require("../../http/controllers/admin/blog.controller");
 const { stringToArray } = require("../../http/middlewares/stringToArray");
 const { uploadFile } = require("../../utils/multer");
-
+/**
+ * @swagger
+ *  components:
+ *      schemas:        
+ *          Blog:
+ *              type: object
+ *              required:
+ *                  -   title
+ *                  -   text
+ *                  -   short_text
+ *                  -   category
+ *                  -   image
+ *              properties: 
+ *                  title:     
+ *                      type: string
+ *                      description: the title Of blog
+ *                  text:     
+ *                      type: string
+ *                      description: the text of blog
+ *                  short_text:     
+ *                      type: string
+ *                      description: the summary text of blog
+ *                  tags:     
+ *                      type: string
+ *                      description: the list of tags for example(tag1#tag2#tag_foo)
+ *                  category:     
+ *                      type: string
+ *                      description: the ID of category for forinField in blog 
+ *                  image:     
+ *                      type: file
+ *                      description: the index picture of blog
+ */
 const router = require("express").Router();
 /**
+ * @swagger
+ *  components:
+ *      schemas:        
+ *          BlogUpdate:
+ *              type: object
+ *              properties: 
+ *                  title:     
+ *                      type: string
+ *                      description: the title Of blog
+ *                  text:     
+ *                      type: string
+ *                      description: the text of blog
+ *                  short_text:     
+ *                      type: string
+ *                      description: the summary text of blog
+ *                  tags:     
+ *                      type: string
+ *                      description: the list of tags for example(tag1#tag2#tag_foo)
+ *                  category:     
+ *                      type: string
+ *                      description: the ID of category for forinField in blog 
+ *                  image:     
+ *                      type: file
+ *                      description: the index picture of blog
+ */
+/**
+ * 
  * @swagger
  * /admin/blogs:
  *      get:    
  *          tags: [Blog(Admin-Panel)]
  *          summary: get all blogs
- *          parameters:
- *              -   in: header
- *                  value: Bearer 
- *                  name: access-token
- *                  type: string
- *                  required: true
  *          responses:
  *              200:
  *                  description: success
@@ -26,39 +78,12 @@ router.get("/", AdminBlogController.getListOfBlogs)
  *      post:    
  *          tags: [Blog(Admin-Panel)]
  *          summary: create blog document
- *          consumes:
- *              -  multipart/form-data
- *          parameters:
- *              -   in: header
- *                  value: Bearer 
- *                  name: access-token
- *                  type: string
- *                  required: true
- *              -   in: formData
- *                  name: title
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: text
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: short_text
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: tags
- *                  example: tag1#tag2#tag3_foo#foo_bar || str || undefined
- *                  type: string
- *              -   in: formData
- *                  name: category
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: image
- *                  required: true
- *                  type: file
- * 
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                multipart/form-data:
+ *                    schema:
+ *                        $ref: '#/components/schemas/Blog'      
  *          responses:
  *              201:
  *                  description: created
@@ -71,11 +96,6 @@ router.get("/", AdminBlogController.getListOfBlogs)
  *          tags: [Blog(Admin-Panel)]
  *          summary: get blog By ID and populate this field
  *          parameters:
- *              -   in: header
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTE0MTI0MTc0NyIsImlhdCI6MTY2OTA2Njg4NywiZXhwIjoxNjY5MDcwNDg3fQ.5HqloTWBLyO8nU9tQM7YqiwMlHBaz6GW8wcjz9adEuM
- *                  name: access-token
- *                  type: string
- *                  required: true
  *              -   in: path
  *                  name: id
  *                  type: string
@@ -92,11 +112,6 @@ router.get("/:id", AdminBlogController.getOneBlogByID)
  *          tags: [Blog(Admin-Panel)]
  *          summary: delete blog By ID 
  *          parameters:
- *              -   in: header
- *                  value: Bearer 
- *                  name: access-token
- *                  type: string
- *                  required: true
  *              -   in: path
  *                  name: id
  *                  type: string
@@ -112,38 +127,17 @@ router.delete("/remove/:id", AdminBlogController.deleteBlogByID)
  *      patch:    
  *          tags: [Blog(Admin-Panel)]
  *          summary: update blog document By ID
- *          consumes:
- *              -  multipart/form-data
  *          parameters:
- *              -   in: header
- *                  value: Bearer 
- *                  name: access-token
- *                  type: string
- *                  required: true
  *              -   in: path
  *                  name: id
  *                  type: string
  *                  required: true
- *              -   in: formData
- *                  name: title
- *                  type: string
- *              -   in: formData
- *                  name: text
- *                  type: string
- *              -   in: formData
- *                  name: short_text
- *                  type: string
- *              -   in: formData
- *                  name: tags
- *                  example: tag1#tag2#tag3_foo#foo_bar || str || undefined
- *                  type: string
- *              -   in: formData
- *                  name: category
- *                  type: string
- *              -   in: formData
- *                  name: image
- *                  type: file
- * 
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                multipart/form-data:
+ *                    schema:
+ *                        $ref: '#/components/schemas/BlogUpdate' 
  *          responses:
  *              201:
  *                  description: created

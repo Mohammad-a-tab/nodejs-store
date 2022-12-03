@@ -1,6 +1,38 @@
 const { UserAuthController } = require("../../http/controllers/user/auth/auth.controller");
 const router = require("express").Router();
-
+/**
+ * @swagger
+ *  components:
+ *      schemas:        
+ *          GetOTP:
+ *              type: object
+ *              required:
+ *                  -   mobile
+ *              properties: 
+ *                  mobile:     
+ *                      type: string
+ *                      description: the user mobile for signUp/signIn
+ *          checkOTP:
+ *              type: object
+ *              required:
+ *                  -   mobile
+ *                  -   code
+ *              properties: 
+ *                  mobile:     
+ *                      type: string
+ *                      description: the user mobile for signUp/signIn
+ *                  code:     
+ *                      type: integer
+ *                      description: received code from getOTP
+ *          RefreshToken:
+ *              type: object
+ *              required:
+ *                  -   refreshToken
+ *              properties: 
+ *                  refreshToken:     
+ *                      type: string
+ *                      description: enter refresh-token for get fresh Token and refresh-token
+ */
 /**
  * @swagger
  *  tags:
@@ -11,15 +43,18 @@ const router = require("express").Router();
  * @swagger
  * /user/get-otp:
  *      post:
- *          summary: login user in userPanel with phone number
  *          tags: [User-Authentication]
+ *          summary: login user in userPanel with phone number
  *          description: one time password(otp) login
- *          parameters:
- *          -   name: mobile
- *              description: fa-IRI phoneNumber
- *              in: formData
+ *          requestBody:
  *              required: true
- *              type: string
+ *              content:    
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: '#/components/schemas/GetOTP'
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/GetOTP'
  *          responses:
  *              201:
  *                  description: Success
@@ -38,17 +73,15 @@ router.post("/get-otp" , UserAuthController.getOtp)
  *          summary: check-otp value in user controller
  *          tags: [User-Authentication]
  *          description: check-otp with code-mobile and expires date
- *          parameters:
- *          -   name: mobile
- *              description: fa-IRI phoneNumber
- *              in: formData
+ *          requestBody:
  *              required: true
- *              type: string
- *          -   name: code
- *              description: enter sms code received
- *              in: formData
- *              required: true
- *              type: string
+ *              content:    
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: '#/components/schemas/checkOTP'
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/checkOTP'
  *          responses:
  *              201:
  *                  description: Success
@@ -67,11 +100,15 @@ router.post("/check-otp" , UserAuthController.checkOtp)
  *          summary: send refresh token for get new token and refresh token
  *          tags: [User-Authentication]
  *          description: fresh token
- *          parameters:
- *              -   in: formData
- *                  required: true
- *                  type: string
- *                  name: refreshToken
+ *          requestBody:
+ *              required: true
+ *              content:    
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: '#/components/schemas/RefreshToken'
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/RefreshToken'
  *          responses:
  *              201:
  *                  description: Success

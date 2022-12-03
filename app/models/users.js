@@ -11,6 +11,7 @@ const Schema = new mongoose.Schema({
     discount : {type : Number , default : 0},
     birthday : {type : String },
     Roles : {type : [String] , default : ["USER"]},
+    Courses : {type : [mongoose.Types.ObjectId] , ref : "course",  default : []},
     otp : {type : Object , default : {
         code : 0,
         expiresIn : 0

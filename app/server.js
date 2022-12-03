@@ -42,6 +42,7 @@ module.exports = class Application {
         this.#app.use(express.static(path.join(__dirname , "..", "public")));
         this.#app.use( "/api-doc" , swaggerUI.serve , swaggerUI.setup(swaggerJsDoc({
             swaggerDefinition : {
+                openapi: "3.0.0", 
                 info : {
                     title : "Boto Start Store",
                     version : "2.0.0",
@@ -57,10 +58,23 @@ module.exports = class Application {
                     {
                         url : "http://localhost:5000"
                     }
-                ]
+                ],
+                components : {
+                    securitySchemes : {
+                      BearerAuth : {
+                        type: "http",
+                        scheme: "bearer",
+                        bearerFormat: "JWT",
+                        
+                      }
+                    }
+                  },
+                  security : [{BearerAuth : [] }]
             },
             apis : ["./app/router/**/*.js"]
-        })));
+        }),
+        {explorer : true},
+        ));
 
     }
 

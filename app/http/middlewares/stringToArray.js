@@ -5,6 +5,11 @@ const stringToArray = function(field) {
                 if(req.body[field].indexOf("#") >= 0){
                     req.body[field] = (req.body[field].split("#")).map(item => item.trim())
                 }
+                else if(req.body[field].indexOf(",") >= 0){
+                    req.body[field] = (req.body[field].split(",")).map(item => item.trim())
+                }else{
+                    req.body[field] = [req.body[field]]
+                }
             }
             else if((req.body[field].constructor).toString().tolowerCase().indexOf("array") >= 0){
                 req.body[field] = req.body[field].map(item => item.trim());
