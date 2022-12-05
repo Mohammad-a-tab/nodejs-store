@@ -5,7 +5,15 @@ const { BlogModel } = require("../../../models/blogs");
 const { deleteFilePublic } = require("../../../utils/function");
 const createHttpError = require("http-errors");
 const { StatusCodes:HttpStatus } = require("http-status-codes");
-
+const { MessageSpecial } = require("../../../utils/constants");
+const BlogBlackList = {
+    BOOKMARKS : "bookmarks",
+    DISLIKES : "dislikes",
+    LIKES : "likes",
+    AUTHOR : "author",
+    COMMENTS : "comments"
+ }
+ Object.freeze(BlogBlackList)
 class BlogController extends Controller {
     async createBlog (req,res,next) {
         try {
@@ -16,10 +24,10 @@ class BlogController extends Controller {
             const image = req.body.image
             const author = req.user._id
             const blogResult = await BlogModel.create({title,text,short_text,category,tags,image,author});
-            return res.status(201).json({
+            return res.status(HttpStatus.CREATED).json({
                 data: {
-                    statusCode : 201,
-                    message : "بلاگ با موفقیت ایجاد شد"
+                    statusCode : HttpStatus.CREATED,
+                    message : MessageSpecial.SUCCESSFUL_CREATED_BLOG_MESSAGE
                 }
             })
             
@@ -32,9 +40,9 @@ class BlogController extends Controller {
         try {
             const {id} = req.params;
             const blog = await this.findBlog(id);
-            return res.status(200).json({
+            return res.status(HttpStatus.OK).json({
                 data : {
-                    statusCode : 200,
+                    statusCode : HttpStatus.OK,
                     blog
                 }
             })
@@ -80,9 +88,9 @@ class BlogController extends Controller {
                     }
                 }
             ]);
-            return res.status(200).json({
+            return res.status(HttpStatus.OK).json({
                 data : {
-                    statusCode : 200,
+                    statusCode : HttpStatus.OK,
                     blogs
                 }
             })
@@ -104,11 +112,11 @@ class BlogController extends Controller {
             const {id} = req.params;
             await this.findBlog(id);
             const result = await BlogModel.deleteOne({_id : id});
-            if(result.deletedCount == 0) throw createHttpError.InternalServerError("حذف انجام نشد");
-            return res.status(200).json({
+            if(result.deletedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.INTERNAL_SERVER_ERROR}
+            return res.status(HttpStatus.OK).json({
                 data : {
-                    statusCode : 200,
-                    message : "حذف بلاگ با موفقیت انجام شد"
+                    statusCode : HttpStatus.OK,
+                    message : MessageSpecial.SUCCESSFUL_REMOVE_BLOG_MESSAGE
                 }
             })
         } catch (error) {
@@ -125,7 +133,7 @@ class BlogController extends Controller {
             }
             const data = req.body;
             let nullishData = ["", " ", "0", 0, null, undefined]
-            let blackListFields = ["bookmarks", "dislikes", "comments", "likes", "author"]
+            let blackListFields = Object.values(BlogBlackList);
             Object.keys(data).forEach(key => {
                 if(blackListFields.includes(key)) delete data[key]
                 if(typeof data[key] == "string") data[key] = data[key].trim();
@@ -133,12 +141,12 @@ class BlogController extends Controller {
                 if(nullishData.includes(data[key])) delete data[key];
             })
             const updateResult = await BlogModel.updateOne({_id : id}, {$set : data})
-            if(updateResult.modifiedCount == 0) throw createError.InternalServerError("به روز رسانی انجام نشد")
+            if(updateResult.modifiedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_UPDATED_MESSAGE}
 
             return res.status(HttpStatus.OK).json({
                 statusCode: HttpStatus.OK,
                 data : {
-                    message : "به روز رسانی بلاگ با موفقیت انجام شد"
+                    message : MessageSpecial.SUCCESSFUL_UPDATED_BLOG_MESSAGE
                 }
             })
             

@@ -5,6 +5,7 @@ const { ROLES } = require('../../../../utils/constants');
 const { RandomNumberGenerator, SignAccessToken, verifyRefreshToken, SignRefreshToken } = require('../../../../utils/function');
 const { checkOTPSchema , getOTPSchema } = require('../../../validators/user/auth.schema');
 const Controller = require('../../controller');
+const { StatusCodes: HttpStatus } = require("http-status-codes");
 
 
 class UserAuthController extends Controller{
@@ -15,8 +16,8 @@ class UserAuthController extends Controller{
           const code = RandomNumberGenerator()
           const result = await this.saveUser(mobile ,code)
           if(!result) throw createError.Unauthorized("ورود انجام نشد")
-          return res.status(200).send({
-            statusCode : 200,
+          return res.status(HttpStatus.OK).send({
+            statusCode : HttpStatus.OK,
             message : "کد اعتبار سنجی با موفقیت برای شما ارسال شد",
             code,
             mobile

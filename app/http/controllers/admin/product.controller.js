@@ -2,10 +2,23 @@ const { ProductModel } = require("../../../models/products");
 const { createProductSchema } = require("../../validators/admin/product.schema");
 const Controller = require("../controller");
 const { StatusCodes: HttpStatus } = require("http-status-codes");
-const { deleteFilePublic, ListOfImagesFromRequest, setFeatures } = require("../../../utils/function");
+const { deleteFilePublic, ListOfImagesFromRequest, setFeatures, copyObject, deleteInvalidPropertyInObject } = require("../../../utils/function");
 const { ObjectValidator } = require("../../validators/public.validator");
 const createHttpError = require("http-errors");
-
+const { MessageSpecial} = require("../../../utils/constants");
+const ProductBlackList = {
+    BOOKMARKS : "bookmarks",
+    DISLIKES : "dislikes",
+    LIKES : "likes",
+    SUPPLIER : "supplier",
+    COMMENTS : "comments",
+    COLORS : "colors",
+    WIDTH : "width",
+    WEIGHT : "weight",
+    HEIGHT : "height",
+    length : "length"
+ }
+ Object.freeze(ProductBlackList)
 class ProductController extends Controller {
         async addProduct (req, res, next) {
             try {
@@ -38,7 +51,7 @@ class ProductController extends Controller {
                 return res.status(HttpStatus.CREATED).json({
                     StatusCode : HttpStatus.CREATED,
                     data : {
-                        message : 'ثبت محصول با موفقیت انجام شد'
+                        message : MessageSpecial.SUCCESSFUL_CREATED_PRODUCT_MESSAGE
                     }
                 })
 
@@ -47,28 +60,22 @@ class ProductController extends Controller {
                 next(error)
             }
         }
-        editProduct (req, res, next) {
+        async editProduct (req, res, next) {
             try {
-                return res.json(req.body)
-                
-            } catch (error) {
-                next(error)
-            }
-        }
-        removeProduct (req, res, next) {
-            try {
-                
-            } catch (error) {
-                next(error)
-            }
-        }
-        async getALlProducts (req, res, next) {
-            try {
-                const products = await ProductModel.find({});
+                const {id} = req.params;
+                await this.findProduct(id);
+                const data = copyObject(req.body);
+                data.images = ListOfImagesFromRequest(req?.files || [], req.body.fileUploadPath);
+                data.features = setFeatures(req.body);
+                let blackListFields = Object.values(ProductBlackList);
+                deleteInvalidPropertyInObject(data , blackListFields)
+                const updateResult = await ProductModel.updateOne({_id : id}, {$set : data})
+                if(updateResult.modifiedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_UPDATED_MESSAGE}
+    
                 return res.status(HttpStatus.OK).json({
-                    StatusCode : 200,
+                    statusCode: HttpStatus.OK,
                     data : {
-                        products
+                        message : MessageSpecial.SUCCESSFUL_UPDATED_MESSAGE
                     }
                 })
                 
@@ -76,12 +83,48 @@ class ProductController extends Controller {
                 next(error)
             }
         }
+        async removeProduct (req, res, next) {
+            try {
+                const {id} = req.params;
+                await this.findProduct(id);
+                const deleteResult = await ProductModel.deleteOne({id : id});
+                if(deleteResult.deletedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.INTERNAL_SERVER_ERROR}
+                return res.status(HttpStatus.OK).json({
+                    statusCode : HttpStatus.OK,
+                    data : {
+                        message : MessageSpecial.SUCCESSFUL_REMOVE_PRODUCT_MESSAGE
+                    }
+                })
+                
+            } catch (error) {
+                next(error)
+            }
+        }
+        async getALlProducts (req, res, next) {
+            try {
+                const search = req?.query?.search || "";
+                let products;
+                if (search) {
+                     products = await ProductModel.find({  $text: { $search: `"${req.query.search }"`  } })
+                } else {
+                  products = await ProductModel.find({})
+                }
+                return res.status(HttpStatus.OK).json({
+                  statusCode: HttpStatus.OK,
+                  data: {
+                    products
+                  }
+                })
+              } catch (error) {
+                next(error);
+              }
+        }
         async getOneProduct (req, res, next) {
             try {
                 const {id} = req.params;
                 const product = await this.findProduct(id);
                 return res.status(HttpStatus.OK).json({
-                    statusCode : 200,   
+                    statusCode : HttpStatus.OK,   
                     data : {
                         product
                     }
