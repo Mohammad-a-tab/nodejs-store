@@ -13,7 +13,7 @@ const Chapter = new mongoose.Schema({
     text : {type : String , default : ""},
     episodes : {type : [Episodes] , default : []}
 });
-const Schema = new mongoose.Schema({
+const CourseSchema = new mongoose.Schema({
     title : {type : String , required : true},
     short_text : {type : String , required : true},
     text : {type : String , required : true},
@@ -29,11 +29,12 @@ const Schema = new mongoose.Schema({
     type : {type : String , default : 'free' , required : true}, // free - crash - special
     time : {type : String , default : "00:00:00" },
     teacher : {type : [mongoose.Types.ObjectId] , ref: "user",  required : true},
-    chapter : {type : [Chapter] , default : []},
+    chapters : {type : [Chapter] , default : []},
     students : {type : [mongoose.Types.ObjectId] , ref : "user",  default : []}
 
 });
+CourseSchema.index({title : "text", short_text : "text", text : "text"})
 
 module.exports = {
-    CourseModel :  mongoose.model("course", Schema) 
+    CourseModel :  mongoose.model("course", CourseSchema) 
 }

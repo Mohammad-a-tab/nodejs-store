@@ -105,7 +105,7 @@ class ProductController extends Controller {
                 const search = req?.query?.search || "";
                 let products;
                 if (search) {
-                     products = await ProductModel.find({  $text: { $search: `"${req.query.search }"`  } })
+                     products = await ProductModel.find({ $text: { $search: `"${req.query.search }"`  } })
                 } else {
                   products = await ProductModel.find({})
                 }
