@@ -1,6 +1,6 @@
 const { AdminProductController } = require("../../http/controllers/admin/product.controller");
 const { stringToArray } = require("../../http/middlewares/stringToArray");
-const { uploadFile } = require("../../utils/multer");
+const { uploadFileProduct } = require("../../utils/multer");
 const router = require("express").Router();
 /**
  * @swagger
@@ -145,7 +145,7 @@ const router = require("express").Router();
  *              201:
  *                  description: create new product  
  */
-router.post("/add" , uploadFile.array("images" ,10) , stringToArray("tags") , stringToArray("colors") , AdminProductController.addProduct)
+router.post("/add" , uploadFileProduct.array("images" ,10) , stringToArray("tags") , stringToArray("colors") , AdminProductController.addProduct)
 /**
  * @swagger
  * /admin/products/get-all:
@@ -219,7 +219,7 @@ router.delete("/remove/:id" , AdminProductController.removeProduct)
  *              200:
  *                  description: create new product  
  */
- router.patch("/edit/:id" , uploadFile.array("images" ,10) , stringToArray("tags", "colors") , AdminProductController.editProduct)
+ router.patch("/edit/:id" , uploadFileProduct.array("images" ,10) , stringToArray("tags", "colors") , AdminProductController.editProduct)
 module.exports = {
     AdminApiProductRouter : router
 }

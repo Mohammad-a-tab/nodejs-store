@@ -1,6 +1,6 @@
 const { AdminBlogController } = require("../../http/controllers/admin/blog.controller");
 const { stringToArray } = require("../../http/middlewares/stringToArray");
-const { uploadFile } = require("../../utils/multer");
+const { uploadFileBlog } = require("../../utils/multer");
 /**
  * @swagger
  *  components:
@@ -88,7 +88,7 @@ router.get("/", AdminBlogController.getListOfBlogs)
  *              201:
  *                  description: created
  */
- router.post("/add", uploadFile.single("image"), stringToArray("tags"), AdminBlogController.createBlog)
+ router.post("/add", uploadFileBlog.single("image"), stringToArray("tags"), AdminBlogController.createBlog)
  /**
  * @swagger
  * /admin/blogs/{id}:
@@ -142,7 +142,7 @@ router.delete("/remove/:id", AdminBlogController.deleteBlogByID)
  *              201:
  *                  description: created
  */
- router.patch("/update/:id", uploadFile.single("image"), stringToArray("tags"), AdminBlogController.updateBlogByID)
+ router.patch("/update/:id", uploadFileBlog.single("image"), stringToArray("tags"), AdminBlogController.updateBlogByID)
  
 module.exports = {
     AdminApiBlogRouter : router

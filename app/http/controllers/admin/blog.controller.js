@@ -27,7 +27,7 @@ class BlogController extends Controller {
             return res.status(HttpStatus.CREATED).json({
                 data: {
                     statusCode : HttpStatus.CREATED,
-                    message : MessageSpecial.SUCCESSFUL_CREATED_BLOG_MESSAGE
+                    message : MessageSpecial.SUCCESSFUL_CREATED_COURSE_MESSAGE
                 }
             })
             

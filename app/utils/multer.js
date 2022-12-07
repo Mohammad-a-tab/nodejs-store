@@ -2,7 +2,8 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 const createHttpError = require("http-errors");
-function createRoute(req) {
+
+function createRouteForBlogs(req) {
     const date = new Date();
     const monthNumber = date.getMonth() + 1;
     const Year = date.getFullYear().toString();
@@ -13,10 +14,68 @@ function createRoute(req) {
     fs.mkdirSync(directory , {recursive : true});
     return directory
 }
-const storage = multer.diskStorage({
+const storageForBlog = multer.diskStorage({
     destination : (req,file,cb) => {
         if(file?.originalname){
-            const filePath = createRoute(req);
+            const filePath = createRouteForBlogs(req);
+            return cb(null , filePath)
+        }
+        cb(null, null)
+    },
+    filename : (req,file,cb) => {
+        if(file.originalname){
+            const ext = path.extname(file.originalname);
+            const fileName = String(new Date().getTime() + ext);
+            req.body.filename = fileName;
+            return cb(null, fileName)
+        }
+        cb(null, null)
+    }
+});
+function createRouteForProduct(req) {
+    const date = new Date();
+    const monthNumber = date.getMonth() + 1;
+    const Year = date.getFullYear().toString();
+    const Month = monthNumber.toString();
+    const Day = date.getDate().toString();
+    const directory = path.join(__dirname , ".." , ".." , "public" , "uploads" , "products" , Year , Month , Day);
+    req.body.fileUploadPath = path.join("uploads" , "products" , Year , Month , Day)
+    fs.mkdirSync(directory , {recursive : true});
+    return directory
+}
+const storageForProduct = multer.diskStorage({
+    destination : (req,file,cb) => {
+        if(file?.originalname){
+            const filePath = createRouteForProduct(req);
+            return cb(null , filePath)
+        }
+        cb(null, null)
+    },
+    filename : (req,file,cb) => {
+        if(file.originalname){
+            const ext = path.extname(file.originalname);
+            const fileName = String(new Date().getTime() + ext);
+            req.body.filename = fileName;
+            return cb(null, fileName)
+        }
+        cb(null, null)
+    }
+});
+function createRouteForCourse(req) {
+    const date = new Date();
+    const monthNumber = date.getMonth() + 1;
+    const Year = date.getFullYear().toString();
+    const Month = monthNumber.toString();
+    const Day = date.getDate().toString();
+    const directory = path.join(__dirname , ".." , ".." , "public" , "uploads" , "courses" , Year , Month , Day);
+    req.body.fileUploadPath = path.join("uploads" , "courses" , Year , Month , Day)
+    fs.mkdirSync(directory , {recursive : true});
+    return directory
+}
+const storageForCourse = multer.diskStorage({
+    destination : (req,file,cb) => {
+        if(file?.originalname){
+            const filePath = createRouteForCourse(req);
             return cb(null , filePath)
         }
         cb(null, null)
@@ -40,7 +99,11 @@ function fileFilter(req, file, cb) {
     return cb(createHttpError.BadRequest("فرمت ارسال شده تصویر صحیح نمیباشد"));
 }
 const pictureMaxSize = 2 * 1000 * 1000;     //2MB
-const uploadFile = multer({storage , fileFilter , limits : {fileSize : pictureMaxSize}});
+const uploadFileBlog = multer({storage : storageForBlog , fileFilter , limits : {fileSize : pictureMaxSize}});
+const uploadFileProduct = multer({storage : storageForProduct , fileFilter , limits : {fileSize : pictureMaxSize}});
+const uploadFileCourse = multer({storage : storageForCourse , fileFilter , limits : {fileSize : pictureMaxSize}});
 module.exports = {
-    uploadFile
+    uploadFileBlog,
+    uploadFileProduct,
+    uploadFileCourse
 }

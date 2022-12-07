@@ -18,7 +18,7 @@ function SignAccessToken(userID){
             mobile : user.mobile
         }
         const options = {
-            expiresIn : "2d"
+            expiresIn : "20d"
         }
         JWT.sign(payload , ACCESS_TOKEN_SECRET_KEY , options , (err , token) => {
             if(err) reject(createError.InternalServerError("خطای سروری"));
@@ -72,6 +72,7 @@ function deleteFilePublic(fileAddress) {
     }
 }
 
+
 function ListOfImagesFromRequest(files, fileUploadPath) {
     if (files?.length > 0) {
         return ((files.map(file => path.join(fileUploadPath, file.filename))).map(item => item.replace(/\\/g, "/")))
@@ -119,5 +120,5 @@ module.exports = {
     ListOfImagesFromRequest,
     setFeatures,
     copyObject,
-    deleteInvalidPropertyInObject
+    deleteInvalidPropertyInObject   
 }
