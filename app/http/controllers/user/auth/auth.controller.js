@@ -16,11 +16,13 @@ class UserAuthController extends Controller{
           const code = RandomNumberGenerator()
           const result = await this.saveUser(mobile ,code)
           if(!result) throw createError.Unauthorized("ورود انجام نشد")
-          return res.status(HttpStatus.OK).send({
+          return res.status(HttpStatus.OK).json({
             statusCode : HttpStatus.OK,
-            message : "کد اعتبار سنجی با موفقیت برای شما ارسال شد",
-            code,
-            mobile
+            data : {
+               message : "کد اعتبار سنجی با موفقیت برای شما ارسال شد",
+               code,
+               mobile
+            }
 
           })
        } catch (error) {
@@ -38,7 +40,8 @@ class UserAuthController extends Controller{
          if(+user.otp.expiresIn < now) throw createError.Unauthorized("کد شما منقضی شده است")
          const accessToken = await SignAccessToken(user._id);
          const refreshToken = await SignRefreshToken(user._id);
-         return res.json({
+         return res.status(HttpStatus.OK).json({
+            statusCode: HttpStatus.OK,
             data : {
                accessToken,
                refreshToken
@@ -56,7 +59,8 @@ class UserAuthController extends Controller{
          const user = await UserModel.findOne({mobile});
          const accessToken = await SignAccessToken(user._id);
          const newRefreshToken = await SignRefreshToken(user._id);
-         return res.json({
+         return res.status(HttpStatus.OK).json({
+            statusCode : HttpStatus.OK,
             data : {
                accessToken,
                refreshToken : newRefreshToken

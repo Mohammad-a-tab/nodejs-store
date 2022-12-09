@@ -2,7 +2,7 @@ const { createBlogSchema } = require("../../validators/admin/blog.schema");
 const Controller = require("../controller");
 const path = require('path');
 const { BlogModel } = require("../../../models/blogs");
-const { deleteFilePublic } = require("../../../utils/function");
+const { deleteFilePublic , deleteInvalidPropertyInObject, copyObject } = require("../../../utils/function");
 const createHttpError = require("http-errors");
 const { StatusCodes:HttpStatus } = require("http-status-codes");
 const { MessageSpecial } = require("../../../utils/constants");
@@ -24,12 +24,15 @@ class BlogController extends Controller {
             const image = req.body.image
             const author = req.user._id
             const blogResult = await BlogModel.create({title,text,short_text,category,tags,image,author});
-            return res.status(HttpStatus.CREATED).json({
-                data: {
+            if(blogResult._id){
+                
+                return res.status(HttpStatus.CREATED).json({
                     statusCode : HttpStatus.CREATED,
-                    message : MessageSpecial.SUCCESSFUL_CREATED_COURSE_MESSAGE
-                }
-            })
+                    data: {
+                        message : MessageSpecial.SUCCESSFUL_CREATED_BLOG_MESSAGE
+                    }
+                })
+            }
             
         } catch (error) {
             deleteFilePublic(req.body.image)
@@ -41,8 +44,8 @@ class BlogController extends Controller {
             const {id} = req.params;
             const blog = await this.findBlog(id);
             return res.status(HttpStatus.OK).json({
+                statusCode : HttpStatus.OK,
                 data : {
-                    statusCode : HttpStatus.OK,
                     blog
                 }
             })
@@ -89,8 +92,8 @@ class BlogController extends Controller {
                 }
             ]);
             return res.status(HttpStatus.OK).json({
+                statusCode : HttpStatus.OK,
                 data : {
-                    statusCode : HttpStatus.OK,
                     blogs
                 }
             })
@@ -114,8 +117,8 @@ class BlogController extends Controller {
             const result = await BlogModel.deleteOne({_id : id});
             if(result.deletedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.INTERNAL_SERVER_ERROR}
             return res.status(HttpStatus.OK).json({
+                statusCode : HttpStatus.OK,
                 data : {
-                    statusCode : HttpStatus.OK,
                     message : MessageSpecial.SUCCESSFUL_REMOVE_BLOG_MESSAGE
                 }
             })
@@ -131,15 +134,9 @@ class BlogController extends Controller {
                 req.body.image =path.join(req.body.fileUploadPath, req.body.filename)
                 req.body.image = req.body.image.replace(/\\/g, "/")
             }
-            const data = req.body;
-            let nullishData = ["", " ", "0", 0, null, undefined]
+            const data = copyObject(req.body);
             let blackListFields = Object.values(BlogBlackList);
-            Object.keys(data).forEach(key => {
-                if(blackListFields.includes(key)) delete data[key]
-                if(typeof data[key] == "string") data[key] = data[key].trim();
-                if(Array.isArray(data[key]) && data[key].length > 0 ) data[key] = data[key].map(item => item.trim()) 
-                if(nullishData.includes(data[key])) delete data[key];
-            })
+            deleteInvalidPropertyInObject(data , blackListFields)
             const updateResult = await BlogModel.updateOne({_id : id}, {$set : data})
             if(updateResult.modifiedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_UPDATED_MESSAGE}
 

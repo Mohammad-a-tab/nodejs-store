@@ -48,12 +48,15 @@ class ProductController extends Controller {
                     features,
                     supplier
                 });
-                return res.status(HttpStatus.CREATED).json({
-                    StatusCode : HttpStatus.CREATED,
-                    data : {
-                        message : MessageSpecial.SUCCESSFUL_CREATED_PRODUCT_MESSAGE
-                    }
-                })
+                if(product._id){
+                    
+                    return res.status(HttpStatus.CREATED).json({
+                        StatusCode : HttpStatus.CREATED,
+                        data : {
+                            message : MessageSpecial.SUCCESSFUL_CREATED_PRODUCT_MESSAGE
+                        }
+                    })
+                }
 
             } catch (error) {
                 deleteFilePublic(req.body.image)

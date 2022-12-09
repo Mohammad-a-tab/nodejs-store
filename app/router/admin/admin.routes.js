@@ -18,8 +18,6 @@ const router =require("express").Router();
  *          description: all method and routes Category section
  *      -   name: Prisma(Api)
  *          description: create some api's with prisma and postgresSQL
- *      -   name: Blog(Admin-Panel)
- *          description: make blog management admin panel
  *          
  */
 

@@ -47,8 +47,8 @@ class CourseController extends Controller {
             });
             if(!courseResult?._id) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_CREATED_COURSE_MESSAGE}
             return res.status(HttpStatus.CREATED).json({
+                statusCode : HttpStatus.CREATED,
                 data: {
-                    statusCode : HttpStatus.CREATED,
                     message : MessageSpecial.SUCCESSFUL_CREATED_COURSE_MESSAGE
                 }
             })
