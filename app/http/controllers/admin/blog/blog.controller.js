@@ -1,11 +1,11 @@
-const { createBlogSchema } = require("../../validators/admin/blog.schema");
-const Controller = require("../controller");
+const { createBlogSchema } = require("../../../validators/admin/blog.schema");
+const Controller = require("../../controller");
 const path = require('path');
-const { BlogModel } = require("../../../models/blogs");
-const { deleteFilePublic , deleteInvalidPropertyInObject, copyObject } = require("../../../utils/function");
+const { BlogModel } = require("../../../../models/blogs");
+const { deleteFilePublic , deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
 const createHttpError = require("http-errors");
 const { StatusCodes:HttpStatus } = require("http-status-codes");
-const { MessageSpecial } = require("../../../utils/constants");
+const { MessageSpecial } = require("../../../../utils/constants");
 const BlogBlackList = {
     BOOKMARKS : "bookmarks",
     DISLIKES : "dislikes",

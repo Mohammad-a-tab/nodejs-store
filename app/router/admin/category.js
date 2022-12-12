@@ -1,4 +1,4 @@
-const { AdminCategoryController } = require("../../http/controllers/admin/category.controller");
+const { AdminCategoryController } = require("../../http/controllers/admin/category/category.controller");
 const router = require("express").Router();
               
 router.post("/add" , AdminCategoryController.addCategory)

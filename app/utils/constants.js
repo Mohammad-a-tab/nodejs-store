@@ -15,6 +15,7 @@ module.exports = {
         SUCCESSFUL_UPDATED_BLOG_MESSAGE : "بروزرسانی بلاگ با موفقیت انجام شد",
         SUCCESSFUL_REMOVE_PRODUCT_MESSAGE : "حذف محصول با موفقیت انجام شد",
         SUCCESSFUL_CREATED_PRODUCT_MESSAGE : "ثبت محصول با موفقیت انجام شد",
+        SUCCESSFUL_CREATED_CHAPTER_MESSAGE : "عملیات افزودن فصل با موفقیت انجام شد",
         SUCCESSFUL_CREATED_BLOG_MESSAGE : "ثبت بلاگ با موفقیت انجام شد",
         SUCCESSFUL_CREATED_COURSE_MESSAGE : "ثبت دوره با موفقیت انجام شد",
         SUCCESSFUL_REMOVE_CATEGORY_MESSAGE : "دسته بندی با زیر مجموعه های آن حذف شد",

@@ -1,11 +1,11 @@
-const { ProductModel } = require("../../../models/products");
-const { createProductSchema } = require("../../validators/admin/product.schema");
-const Controller = require("../controller");
+const { ProductModel } = require("../../../../models/products");
+const { createProductSchema } = require("../../../validators/admin/product.schema");
+const Controller = require("../../controller");
 const { StatusCodes: HttpStatus } = require("http-status-codes");
-const { deleteFilePublic, ListOfImagesFromRequest, setFeatures, copyObject, deleteInvalidPropertyInObject } = require("../../../utils/function");
-const { ObjectValidator } = require("../../validators/public.validator");
+const { deleteFilePublic, ListOfImagesFromRequest, setFeatures, copyObject, deleteInvalidPropertyInObject } = require("../../../../utils/function");
+const { ObjectValidator } = require("../../../validators/public.validator");
 const createHttpError = require("http-errors");
-const { MessageSpecial} = require("../../../utils/constants");
+const { MessageSpecial} = require("../../../../utils/constants");
 const ProductBlackList = {
     BOOKMARKS : "bookmarks",
     DISLIKES : "dislikes",

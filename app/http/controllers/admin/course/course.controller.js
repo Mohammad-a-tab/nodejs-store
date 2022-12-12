@@ -1,10 +1,11 @@
-const { CourseModel } = require("../../../models/course");
-const Controller = require("../controller");
+const { CourseModel } = require("../../../../models/course");
+const Controller = require("../../controller");
 const {StatusCodes : HttpStatus} = require("http-status-codes");
-const { createCourseSchema } = require("../../validators/admin/course.schema");
+const { createCourseSchema } = require("../../../validators/admin/course.schema");
 const path = require("path");
-const { MessageSpecial } = require("../../../utils/constants");
+const { MessageSpecial } = require("../../../../utils/constants");
 const createHttpError = require("http-errors");
+const { isValidObjectId } = require("mongoose");
 class CourseController extends Controller {
     async getAllCourses (req, res, next) {
         try {
@@ -71,6 +72,12 @@ class CourseController extends Controller {
         } catch (error) {
             next(error)
         }
+    }
+    async findCourseByID (id) {
+        if(!isValidObjectId(id)) throw createHttpError.BadRequest("شناسه وارد شده صحیح نمیباشد"); 
+       const course = await CourseModel.findById(id);
+       if(!course) throw createHttpError.NotFound("دوره ای یافت نشد");
+       return course
     }
 }
 
