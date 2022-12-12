@@ -2,7 +2,8 @@ const { CourseModel } = require("../../../../models/course");
 const { MessageSpecial } = require("../../../../utils/constants");
 const Controller = require("../../controller");
 const { AdminCourseController } = require("./course.controller");
-const {StatusCodes : HttpStatus} = require("http-status-codes")
+const {StatusCodes : HttpStatus} = require("http-status-codes");
+const createHttpError = require("http-errors");
 
 class ChapterController extends Controller {
     async addChapter (req , res , next) {
@@ -26,10 +27,22 @@ class ChapterController extends Controller {
     }
     async chaptersOfCourse (req , res , next) {
         try {
-            
+            const {id} = req.params;
+            const chapters = await this.getChapterOfCourse(id);
+            return res.status(HttpStatus.OK).json({
+                statusCode : HttpStatus.OK,
+                data : {
+                    chapters
+                }
+            })
         } catch (error) {
             next(error)
         }
+    }
+    async getChapterOfCourse(id) {
+        const chapters = await CourseModel.findOne({_id : id} , {chapters : 1});
+        if(!chapters) throw createHttpError.NotFound("دوره ای یافت نشد");
+        return chapters
     }
     async removeChapterById (req , res , next) {
         try {
