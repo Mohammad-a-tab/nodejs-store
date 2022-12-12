@@ -88,6 +88,7 @@
  *                  name: courseID
  *                  type: string
  *                  required: true
+ *                  value: 6391165a78f70a12a485ab7a
  *          responses:
  *              200:
  *                  description: success

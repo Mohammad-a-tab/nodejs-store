@@ -27,29 +27,50 @@ class ChapterController extends Controller {
     }
     async chaptersOfCourse (req , res , next) {
         try {
-            const {id} = req.params;
-            const chapters = await this.getChapterOfCourse(id);
+            const {courseID} = req.params;
+            const course = await this.getChapterOfCourse(courseID);
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
-                    chapters
+                    course
                 }
             })
         } catch (error) {
             next(error)
         }
     }
-    async getChapterOfCourse(id) {
-        const chapters = await CourseModel.findOne({_id : id} , {chapters : 1});
-        if(!chapters) throw createHttpError.NotFound("دوره ای یافت نشد");
-        return chapters
-    }
     async removeChapterById (req , res , next) {
         try {
+            const {chapterID} = req.params;
+            await this.getOneChapter(chapterID);
+            const removeChapterResults = await CourseModel.updateOne({"chapters._id" : chapterID} , {
+                $pull : {
+                    chapters : {
+                        _id : chapterID
+                    }
+                }
+            });
+            if(removeChapterResults.modifiedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_REMOVE_CHAPTER_MESSAGE}
+            return res.status(HttpStatus.OK).json({
+                statusCode : HttpStatus.OK,
+                data : {
+                    message : MessageSpecial.SUCCESSFUL_REMOVE_CHAPTER_MESSAGE
+                }
+            })
             
         } catch (error) {
             next(error)
         }
+    }
+    async getChapterOfCourse(courseID) {
+        const chapters = await CourseModel.findOne({_id : courseID} , {"chapters._id" : 1 , "chapters.title" : 1 , "chapters.text" : 1 , title : 1});
+        if(!chapters) throw createHttpError.NotFound("دوره ای یافت نشد");
+        return chapters
+    }
+    async getOneChapter(id) {
+        const chapter = await CourseModel.findOne({"chapters._id" : id} , {"chapters.$" : 1});
+        if(!chapter) throw createHttpError.NotFound("فصلی با این مشخصات یافت نشد");
+        return chapter
     }
     async updateChapterById (req , res , next) {
         try {
