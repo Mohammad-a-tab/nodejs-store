@@ -2,11 +2,11 @@ const { AdminEpisodeController } = require("../../http/controllers/admin/course/
 
 const router = require("express").Router()
 
-router.post("/add")
-router.get()
-router.get()
-router.patch()
-router.delete()
+router.put("/add" , AdminEpisodeController.addNewEpisode)
+// router.get("/get" , AdminEpisodeController.getOneChapter)
+// router.get()
+// router.patch()
+// router.delete()
 
 module.exports = {
     AdminApiEpisodeRouter : router
