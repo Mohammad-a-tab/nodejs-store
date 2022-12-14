@@ -4,6 +4,7 @@ const Controller = require("../../controller");
 const { AdminCourseController } = require("./course.controller");
 const {StatusCodes : HttpStatus} = require("http-status-codes");
 const createHttpError = require("http-errors");
+const { deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
 
 class ChapterController extends Controller {
     async addChapter (req , res , next) {
@@ -33,6 +34,26 @@ class ChapterController extends Controller {
                 statusCode : HttpStatus.OK,
                 data : {
                     course
+                }
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+    async updateChapterById (req , res , next) {
+        try {
+            const {chapterID} = req.params;
+            await this.getOneChapter(chapterID);
+            const data = copyObject(req.body);
+            deleteInvalidPropertyInObject(data , ["_id"]);
+            const updateChapterResults = await CourseModel.updateOne({"chapters._id" : chapterID} , {
+                $set : {"chapters.$" : data}
+            });
+            if(updateChapterResults.modifiedCount == 0) throw createHttpError.InternalServerError("فصل مورد نظر بروزرسانی نشد");
+            return res.status(HttpStatus.OK).json({
+                statusCode : HttpStatus.OK,
+                data : {
+                    message : MessageSpecial.SUCCESSFUL_UPDATED_CHAPTER_MESSAGE
                 }
             })
         } catch (error) {
@@ -71,13 +92,6 @@ class ChapterController extends Controller {
         const chapter = await CourseModel.findOne({"chapters._id" : id} , {"chapters.$" : 1});
         if(!chapter) throw createHttpError.NotFound("فصلی با این مشخصات یافت نشد");
         return chapter
-    }
-    async updateChapterById (req , res , next) {
-        try {
-            
-        } catch (error) {
-            next(error)
-        }
     }
 }
 module.exports = {
