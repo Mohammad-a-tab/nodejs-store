@@ -60,10 +60,10 @@
  */
 /**
  * @swagger
- *  /admin/episode/add:
+ *  /admin/episodes/add:
  *      post:
  *          tags: [Episode(Admin-Panel)]
- *          summary: create new Episode for courses
+ *          summary: create new episode for courses
  *          requestBody:
  *              required: true
  *              content:
@@ -80,7 +80,7 @@
  */
 /**
  * @swagger
- *  /admin/episode/remove/{episodeID}:
+ *  /admin/episodes/remove/{episodeID}:
  *      delete:
  *          tags: [Episode(Admin-Panel)]
  *          summary: remove episode of Chapter
@@ -92,26 +92,6 @@
  *          responses:
  *              200:
  *                  description: success
- *                  content:
- *                      application/json:
- *                          schema: 
- *                              $ref: '#/definitions/publicDefinition'
- */
-/**
- * @swagger
- *  /admin/episode/add:
- *      post:
- *          tags: [Episode(Admin-Panel)]
- *          summary: create new Chapter for courses
- *          requestBody:
- *              required: true
- *              content:
- *                  multipart/form-data: 
- *                      schema:
- *                          $ref: '#/components/schemas/AddEpisode'
- *          responses:
- *              201:
- *                  description: success - created
  *                  content:
  *                      application/json:
  *                          schema: 
