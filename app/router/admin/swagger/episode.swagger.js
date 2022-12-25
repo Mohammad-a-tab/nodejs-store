@@ -17,7 +17,7 @@
  *                      example: 6391165a78f70a12a485ab7a
  *                  chapterID: 
  *                      type: string
- *                      example: 63985eb981abd7d85fd4135f
+ *                      example: 63a459ce72f0b101cb9ecbf3
  *                  title:
  *                      type: string
  *                      description: the title of episode
@@ -99,7 +99,7 @@
  */
 /**
  * @swagger
- *  /admin/episode/update/{episodeID}:
+ *  /admin/episodes/update/{episodeID}:
  *      patch:
  *          tags: [Episode(Admin-Panel)]
  *          summary: edit episode of chapter
@@ -114,6 +114,25 @@
  *                  multipart/form-data: 
  *                      schema:
  *                          $ref: '#/components/schemas/EditEpisode'
+ *          responses:
+ *              201:
+ *                  description: success - created
+ *                  content:
+ *                      application/json:
+ *                          schema: 
+ *                              $ref: '#/definitions/publicDefinition'
+ */
+/**
+ * @swagger
+ *  /admin/episodes/get/{episodeID}:
+ *      get:
+ *          tags: [Episode(Admin-Panel)]
+ *          summary: get episode of chapter
+ *          parameters:
+ *              -   in: path
+ *                  name: episodeID
+ *                  type: string
+ *                  required: true
  *          responses:
  *              201:
  *                  description: success - created

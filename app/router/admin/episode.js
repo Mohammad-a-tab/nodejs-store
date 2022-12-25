@@ -4,10 +4,11 @@ const { uploadVideoEpisode } = require("../../utils/multer")
 const router = require("express").Router()
 
 router.post("/add" , uploadVideoEpisode.single("video"), AdminEpisodeController.addNewEpisode)
-// router.get("/get" , AdminEpisodeController.getOneChapter)
+router.get("/get/:episodeID" , AdminEpisodeController.getOneEpisode)
 // router.get()
 // router.patch()
-// router.delete()
+router.delete("/remove/:episodeID" , AdminEpisodeController.deleteOneEpisode)
+router.patch("/update/:episodeID" , uploadVideoEpisode.single("video"), AdminEpisodeController.updateOneEpisode)
 
 module.exports = {
     AdminApiEpisodeRouter : router

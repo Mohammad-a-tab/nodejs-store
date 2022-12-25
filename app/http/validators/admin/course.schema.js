@@ -21,7 +21,8 @@ const createEpisodeSchema = Joi.object({
     chapterID: Joi.string().regex(MongoIDPattern).error(createError.BadRequest("شناسه ی فصل صحیح نمیباشد")),
     courseID: Joi.string().regex(MongoIDPattern).error(createError.BadRequest("شناسه ی دوره صحیح نمیباشد")),
     filename: Joi.string().regex(/(\.mp4|\.mov|\.mkv|\.mpg)$/).error(createError.BadRequest("ویدیو ارسال شده صحیح نمیباشد")),
-    fileUploadPath : Joi.allow()
+    fileUploadPath : Joi.allow(),
+    episodeID : Joi.allow()
 });
 
 module.exports = {

@@ -5,6 +5,7 @@ const path = require("path");
 const createError = require("http-errors");
 const swaggerUI = require("swagger-ui-express");
 const cors =require("cors");
+require("dotenv").config();
 const swaggerJsDoc = require("swagger-jsdoc")
 const { AllRoutes } = require("./router/router");
 
