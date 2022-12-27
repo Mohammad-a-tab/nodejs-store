@@ -192,13 +192,13 @@
 
 /**
  * @swagger
- *  /admin/courses/update/{id}:
+ *  /admin/courses/update/{courseID}:
  *      patch:
  *          tags: [Course(Admin-Panel)]
  *          summary: edit and save course
  *          parameters:
  *              -   in: path
- *                  name: id
+ *                  name: courseID
  *                  type: string
  *                  required: true
  *          requestBody:

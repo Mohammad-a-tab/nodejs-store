@@ -62,7 +62,7 @@
  */
 /**
  * @swagger
- *  /admin/user/list:
+ *  /admin/users/list:
  *      get:
  *          tags: [Users(Admin-Panel)]
  *          summary: get all of users
@@ -81,7 +81,7 @@
  */
 /**
  * @swagger
- *  /admin/user/profile:
+ *  /admin/users/profile:
  *      get:
  *          tags: [Users(Admin-Panel)]
  *          summary: get user profile
@@ -91,7 +91,7 @@
  */
 /**
  * @swagger
- *  /admin/user/update-profile:
+ *  /admin/users/update-profile:
  *      patch:
  *          tags: [Users(Admin-Panel)]
  *          summary: update user detail and profile

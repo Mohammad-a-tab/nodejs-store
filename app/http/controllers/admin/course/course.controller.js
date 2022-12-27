@@ -6,6 +6,21 @@ const path = require("path");
 const { MessageSpecial } = require("../../../../utils/constants");
 const createHttpError = require("http-errors");
 const { isValidObjectId } = require("mongoose");
+const { deleteInvalidPropertyInObject, copyObject, deleteFilePublic } = require("../../../../utils/function");
+
+
+let BLACKLIST = {
+    TIME : "time",
+    COMMENTS : "comments",
+    LIKES : "likes",
+    DISLIKES : "dislikes",
+    EPISODES : "episode",
+    CHAPTERS : "chapters",
+    BOOKMARKS : "bookmarks",
+    STUDENTS : "students",
+    FILE_UPLOAD_PATH : "fileUploadPath",
+    FILE_NAME : "filename"
+}
 class CourseController extends Controller {
     async getAllCourses (req, res, next) {
         try {
@@ -53,7 +68,6 @@ class CourseController extends Controller {
                 , price
                 , discount
                 , type,
-                time : "00:00:00",
                 status : "notStarted",
             });
             if(!courseResult?._id) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_CREATED_COURSE_MESSAGE}
@@ -65,6 +79,7 @@ class CourseController extends Controller {
             })
             
         } catch (error) {
+            deleteFilePublic(req.body.image)
             next(error)
         }
     }
@@ -83,9 +98,36 @@ class CourseController extends Controller {
             next(error)
         }
     }
-    async findCourseByID (id) {
-        if(!isValidObjectId(id)) throw createHttpError.BadRequest("شناسه وارد شده صحیح نمیباشد"); 
-       const course = await CourseModel.findById(id);
+    async updateOneCourse (req ,res ,next) {
+        try {
+            const {courseID} = req.params;
+            const course = await this.findCourseByID(courseID);
+            const data = copyObject(req.body);
+            const {fileUploadPath, filename} = req.body;
+            let blackListFields = Object.values(BLACKLIST)
+            deleteInvalidPropertyInObject(data , blackListFields)
+            if(req.file){
+                data.image = path.join(fileUploadPath,filename);
+                deleteFilePublic(course.image)
+            }
+            const updateCourseResults = await CourseModel.updateOne({_id : courseID} , {
+                $set : data
+            });
+            if(updateCourseResults.modifiedCount == 0) throw createHttpError.InternalServerError("بروزرسانی دوره انجام نشد");
+            return res.status(HttpStatus.OK).json({
+                statusCode : HttpStatus.OK,
+                data : {
+                    message : MessageSpecial.SUCCESSFUL_UPDATED_COURSE_MESSAGE
+                }
+            })
+        } catch (error) {
+            deleteFilePublic(req.body.image)
+            next(error)
+        }
+    }
+    async findCourseByID (courseID) {
+        if(!isValidObjectId(courseID)) throw createHttpError.BadRequest("شناسه وارد شده صحیح نمیباشد"); 
+       const course = await CourseModel.findById(courseID);
        if(!course) throw createHttpError.NotFound("دوره ای یافت نشد");
        return course
     }

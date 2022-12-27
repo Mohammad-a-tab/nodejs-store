@@ -7,6 +7,7 @@ const {StatusCodes : HttpStatus} = require("http-status-codes")
 const { default: getVideoDurationInSeconds } = require("get-video-duration");
 const { getTime, copyObject, deleteInvalidPropertyInObject } = require("../../../../utils/function");
 const { MessageSpecial } = require("../../../../utils/constants");
+const { ObjectValidator } = require("../../../validators/public.validator");
 
 
 class EpisodeController extends Controller {
@@ -57,7 +58,7 @@ class EpisodeController extends Controller {
         try {
             const {
                 id: episodeID
-            } = await ObjectIdValidator.validateAsync({
+            } = await ObjectValidator.validateAsync({
                 id: req.params.episodeID
             });
             await this.getOneEpisode(episodeID)

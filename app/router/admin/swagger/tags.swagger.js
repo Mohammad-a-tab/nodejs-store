@@ -3,6 +3,8 @@
  *   tags:
  *      -   name: Admin-Panel
  *          description: action of admin (add, edit, remove and any do)
+ *      -   name: Users(Admin-Panel)
+ *          description: management User of website 
  *      -   name: Course(Admin-Panel)
  *          description: management course section like manage chapter,episode and courses
  *      -   name: Chapter(Admin-Panel)
