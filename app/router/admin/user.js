@@ -2,7 +2,7 @@ const { AdminUserController } = require("../../http/controllers/admin/user/user.
 
 const router = require("express").Router()
 // router.post()
-// router.patch()
+router.patch("/update-profile" , AdminUserController.updateUserProfile)
 // router.delete()
 router.get("/list" , AdminUserController.getAllUsers)
 module.exports = {

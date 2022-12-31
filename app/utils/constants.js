@@ -13,6 +13,7 @@ module.exports = {
         INTERNAL_SERVER_ERROR : "خطای داخلی رخ داده است",
         SUCCESSFUL_UPDATED_MESSAGE : "بروزرسانی با موفقیت انجام شد",
         SUCCESSFUL_UPDATED_BLOG_MESSAGE : "بروزرسانی بلاگ با موفقیت انجام شد",
+        SUCCESSFUL_UPDATED_USER_PROFILE_MESSAGE : "بروزرسانی پروفایل با موفقیت انجام شد",
         SUCCESSFUL_UPDATED_COURSE_MESSAGE : "بروزرسانی دوره با موفقیت انجام شد",
         SUCCESSFUL_UPDATED_CHAPTER_MESSAGE : "بروزرسانی فصل با موفقیت انجام شد",
         SUCCESSFUL_REMOVE_PRODUCT_MESSAGE : "حذف محصول با موفقیت انجام شد",
