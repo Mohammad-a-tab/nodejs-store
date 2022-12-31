@@ -1,7 +1,8 @@
+
 /**
  * @swagger
  *  definitions:
- *      ListOfPermissions:
+ *      ListOfRoles:
  *          type: object
  *          properties:
  *              statusCode: 
@@ -10,7 +11,7 @@
  *              data:
  *                  type: object
  *                  properties:
- *                      permissions:
+ *                      role:
  *                          type: array
  *                          items:
  *                              type: object
@@ -20,74 +21,94 @@
  *                                      example: "62822e4ff68cdded54aa928d"
  *                                  title:
  *                                      type: string
- *                                      example: "title of permission"
+ *                                      example: "title of role"
  *                                  description:
  *                                      type: string
- *                                      example: "desc of permission"
+ *                                      example: "desc of role"
+ *                                  permission:
+ *                                      type: array
+ *                                      items:
+ *                                          type: object
+ *                                          properties:
+ *                                              _id:
+ *                                                  type: string
+ *                                                  example: "62822e4ff68cdded54aa928d"
+ *                                              title:
+ *                                                  type: string
+ *                                                  example: "title of permission"
+ *                                              description:
+ *                                                  type: string
+ *                                                  example: "describe the permission"
  *                                          
  */
 /**
  * @swagger
  *  components:
  *      schemas:
- *          Permission:
+ *          Role:
  *              type: object
  *              required:
- *                  -   name
+ *                  -   title
  *                  -   description
  *              properties:
- *                  name:
+ *                  title:
  *                      type: string
- *                      description: the title of permission
+ *                      description: the title of role
  *                  description:
  *                      type: string
- *                      description: the describe of permission
+ *                      description: the desc of role
+ *                  permissions:
+ *                      type: array
+ *                      description: the permissionsID for role
  */
 /**
  * @swagger
  *  components:
  *      schemas:
- *          Edit-Permission:
+ *          Edit-Role:
  *              type: object
  *              properties:
- *                  name:
+ *                  title:
  *                      type: string
- *                      description: the title of permission
+ *                      description: the title of role
  *                  description:
  *                      type: string
- *                      description: the desc of permission
+ *                      description: the desc of role
+ *                  permissions:
+ *                      type: array
+ *                      description: the permissionsID for role
  */
 /**
  * @swagger
- *  /admin/permission/list:
+ *  /admin/role/list:
  *      get:
  *          tags: [RBAC(Admin-Panel)]
- *          summary: cget all Permissions    
+ *          summary: get all Role      
  *          responses:
  *              200:
- *                  description: get all permissions
+ *                  description: get all Role
  *                  content:
  *                      application/json:
  *                          schema:
- *                              $ref: '#/definitions/ListOfPermissions'
+ *                              $ref: '#/definitions/ListOfRoles'
  * 
  */
 /**
  * @swagger
- *  /admin/permission/add:
+ *  /admin/role/add:
  *      post:
  *          tags: [RBAC(Admin-Panel)]
- *          summary: create new Permission
+ *          summary: create new Role
  *          requestBody:
  *              required: true
  *              content:
  *                  application/x-www-form-urlencoded:
  *                      schema:
- *                          $ref: '#/components/schemas/Permission'
+ *                          $ref: '#/components/schemas/Role'
  *          
  *          responses:
  *              201:
- *                  description: created new Permission
+ *                  description: created new Role
  *                  content:
  *                      application/json:
  *                          schema:
@@ -96,10 +117,10 @@
  */
 /**
  * @swagger
- *  /admin/permission/update/{id}:
+ *  /admin/role/update/{id}:
  *      patch:
  *          tags: [RBAC(Admin-Panel)]
- *          summary: edit the Permission
+ *          summary: edit the Role
  *          parameters:
  *              -   in: path
  *                  name: id
@@ -110,11 +131,11 @@
  *              content:
  *                  application/x-www-form-urlencoded:
  *                      schema:
- *                          $ref: '#/components/schemas/Edit-Permission'
+ *                          $ref: '#/components/schemas/Edit-Role'
  *          
  *          responses:
  *              200:
- *                  description: edit the Permission
+ *                  description: edited the Role
  *                  content:
  *                      application/json:
  *                          schema:
@@ -123,18 +144,19 @@
  */
 /**
  * @swagger
- *  /admin/permission/remove/{id}:
+ *  /admin/role/remove/{field}:
  *      delete:
  *          tags: [RBAC(Admin-Panel)]
- *          summary: remove the Permission
+ *          summary: remove the Role
  *          parameters:
  *              -   in: path
- *                  name: id
+ *                  name: field
  *                  type: string
- *                  required: true        
+ *                  required: true    
+ *                  description: send title of role or objectId of role for remove that    
  *          responses:
  *              200:
- *                  description: removed the Permission
+ *                  description: removed the Role
  *                  content:
  *                      application/json:
  *                          schema:
