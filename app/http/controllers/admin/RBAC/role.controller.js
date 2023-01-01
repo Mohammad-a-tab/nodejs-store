@@ -5,6 +5,7 @@ const { addRoleSchema } = require("../../../validators/admin/RBAC.schema");
 const createHttpError = require("http-errors");
 const { MessageSpecial } = require("../../../../utils/constants");
 const { default: mongoose } = require("mongoose");
+const { copyObject, deleteInvalidPropertyInObject } = require("../../../../utils/function");
 
 class RoleController extends Controller {
     async getAllRoles (req,res,next) {
@@ -22,9 +23,9 @@ class RoleController extends Controller {
     }
     async createNewRole(req,res,next) {
         try {
-            const {title , description} = await addRoleSchema.validateAsync(req.body);
+            const {title , description , permissions} = await addRoleSchema.validateAsync(req.body);
             await this.findRoleWithTitle(title)
-            const role = await RoleModel.create({title, description})
+            const role = await RoleModel.create({title, description , permissions})
             if(!role) throw createHttpError.InternalServerError("Role not created")
             return res.status(HttpStatus.CREATED).json({
                 StatusCode : HttpStatus.CREATED,
@@ -46,9 +47,29 @@ class RoleController extends Controller {
             return res.status(HttpStatus.OK).json({
                 StatusCode : HttpStatus.OK,
                 data : {
-                    message : MessageSpecial.SUCCESSFUL_REMOVE_Role_MESSAGE
+                    message : MessageSpecial.SUCCESSFUL_REMOVE_ROLE_MESSAGE
                 }
             })
+        } catch (error) {
+            next(error)
+        }
+    }
+    async updateRole (req,res,next) {
+        try {
+            const {id} = req.params;
+            const role = await this.findRoleWithTitleOrID(id)
+            const data = copyObject(req.body)
+            deleteInvalidPropertyInObject(data , [])
+            const updateRoleResults = await RoleModel.updateOne({_id : role._id} , {$set : data})
+            if(updateRoleResults.modifiedCount == 0) throw createHttpError.InternalServerError("The Role was not edited")
+            return res.status(HttpStatus.OK).json({
+                StatusCode : HttpStatus.OK,
+                data : {
+                    message : MessageSpecial.SUCCESSFUL_UPDATED_ROLE_MESSAGE
+                }
+            })
+            
+
         } catch (error) {
             next(error)
         }

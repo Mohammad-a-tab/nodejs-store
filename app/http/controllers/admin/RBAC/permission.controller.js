@@ -4,6 +4,7 @@ const {StatusCodes : HttpStatus} = require("http-status-codes");
 const { addPermissionSchema } = require("../../../validators/admin/RBAC.schema");
 const createHttpError = require("http-errors");
 const { MessageSpecial } = require("../../../../utils/constants");
+const { copyObject, deleteInvalidPropertyInObject } = require("../../../../utils/function");
 
 class PermissionController extends Controller {
     async getAllPermissions (req,res,next) {
@@ -36,9 +37,50 @@ class PermissionController extends Controller {
         }
 
     }
+    async removePermission(req,res,next) {
+        try {
+            const {id} = req.params;
+            await this.findPermissionWithID(id)
+            const deletePermissionResults = await PermissionModel.deleteOne({_id : id})
+            if(!deletePermissionResults.deletedCount) throw createHttpError.InternalServerError("The permission was not deleted")
+            return res.status(HttpStatus.OK).json({
+                StatusCode : HttpStatus.OK,
+                data : {
+                    message : MessageSpecial.SUCCESSFUL_REMOVE_PERMISSION_MESSAGE
+                }
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+    async updatePermission(req,res,next){
+        try {
+            const {id} = req.params;
+            await this.findPermissionWithID(id)
+            const data = copyObject(req.body)
+            deleteInvalidPropertyInObject(data , [])
+            const updatePermissionResults = await PermissionModel.updateOne({_id : id} , {$set : data})
+            if(updatePermissionResults.modifiedCount == 0) throw createHttpError.InternalServerError("The Permission was not edited")
+            return res.status(HttpStatus.OK).json({
+                StatusCode : HttpStatus.OK,
+                data : {
+                    message : MessageSpecial.SUCCESSFUL_UPDATED_PERMISSION_MESSAGE
+                }
+            })
+            
+
+        } catch (error) {
+            next(error)
+        }
+    }
     async findPermissionWithName (name) {
         const permission = await PermissionModel.findOne({name})
         if(permission) throw createHttpError.BadRequest("Access has already been registered")
+    }
+    async findPermissionWithID (id) {
+        const permission = await PermissionModel.findById(id)
+        if(!permission) throw createHttpError.NotFound("The desired permission was not found")
+        
     }
 }
 module.exports = {
