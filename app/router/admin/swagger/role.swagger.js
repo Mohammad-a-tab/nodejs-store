@@ -45,6 +45,20 @@
  * @swagger
  *  components:
  *      schemas:
+ *          Title: 
+ *              type: string
+ *              enum:
+ *                  -   ADMIN
+ *                  -   USER
+ *                  -   TEACHER             
+ *                  -   STUDENT             
+ *                  -   AUTHOR                     
+ *                  -   SUPER_ADMIN                     
+ */ 
+/**
+ * @swagger
+ *  components:
+ *      schemas:
  *          Role:
  *              type: object
  *              required:
@@ -52,7 +66,7 @@
  *                  -   description
  *              properties:
  *                  title:
- *                      type: string
+ *                      $ref: '#/components/schemas/Title'
  *                      description: the title of role
  *                  description:
  *                      type: string

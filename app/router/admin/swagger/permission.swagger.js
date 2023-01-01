@@ -30,6 +30,20 @@
  * @swagger
  *  components:
  *      schemas:
+ *          Name: 
+ *              type: string
+ *              enum:
+ *                  -   Writer
+ *                  -   Reader
+ *                  -   Owner             
+ *                  -   Blog             
+ *                  -   Course                     
+ *                  -   Product                     
+ */ 
+/**
+ * @swagger
+ *  components:
+ *      schemas:
  *          Permission:
  *              type: object
  *              required:
@@ -37,7 +51,7 @@
  *                  -   description
  *              properties:
  *                  name:
- *                      type: string
+ *                      $ref: '#/components/schemas/Name'
  *                      description: the title of permission
  *                  description:
  *                      type: string
@@ -51,7 +65,7 @@
  *              type: object
  *              properties:
  *                  name:
- *                      type: string
+ *                      $ref: '#/components/schemas/Name'
  *                      description: the title of permission
  *                  description:
  *                      type: string
@@ -62,7 +76,7 @@
  *  /admin/permission/list:
  *      get:
  *          tags: [RBAC(Admin-Panel)]
- *          summary: cget all Permissions    
+ *          summary: get all Permissions    
  *          responses:
  *              200:
  *                  description: get all permissions

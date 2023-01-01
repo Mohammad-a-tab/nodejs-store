@@ -16,8 +16,8 @@ router.use("/courses",AdminApiCourseRouter)
 router.use("/chapters",AdminApiChapterRouter)
 router.use("/episodes",AdminApiEpisodeRouter)
 router.use("/users",AdminApiUserRouter)
-router.use("/permissions",AdminApiPermissionRouter)
-router.use("/roles",AdminApiRoleRouter)
+router.use("/permission",AdminApiPermissionRouter)
+router.use("/role",AdminApiRoleRouter)
 
 module.exports = {
     AdminRoutes : router
