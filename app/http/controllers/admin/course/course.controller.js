@@ -87,7 +87,7 @@ class CourseController extends Controller {
         try {
             const {id} = req.params;
             const course = await CourseModel.findById(id);
-            if(!course) throw createHttpError.NotFound("دوره ای یافت نشد");
+            if(!course) throw createHttpError.NotFound("Course not found");
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
@@ -113,7 +113,7 @@ class CourseController extends Controller {
             const updateCourseResults = await CourseModel.updateOne({_id : courseID} , {
                 $set : data
             });
-            if(updateCourseResults.modifiedCount == 0) throw createHttpError.InternalServerError("بروزرسانی دوره انجام نشد");
+            if(updateCourseResults.modifiedCount == 0) throw createHttpError.InternalServerError("Course update failed");
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
@@ -121,14 +121,14 @@ class CourseController extends Controller {
                 }
             })
         } catch (error) {
-            deleteFilePublic(req.body.image)
+            deleteFilePublic(req?.body?.image)
             next(error)
         }
     }
     async findCourseByID (courseID) {
-        if(!isValidObjectId(courseID)) throw createHttpError.BadRequest("شناسه وارد شده صحیح نمیباشد"); 
+        if(!isValidObjectId(courseID)) throw createHttpError.BadRequest("The entered ID is not correct"); 
        const course = await CourseModel.findById(courseID);
-       if(!course) throw createHttpError.NotFound("دوره ای یافت نشد");
+       if(!course) throw createHttpError.NotFound("Course not found");
        return course
     }
 }

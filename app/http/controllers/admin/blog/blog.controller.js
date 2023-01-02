@@ -6,6 +6,8 @@ const { deleteFilePublic , deleteInvalidPropertyInObject, copyObject } = require
 const createHttpError = require("http-errors");
 const { StatusCodes:HttpStatus } = require("http-status-codes");
 const { MessageSpecial } = require("../../../../utils/constants");
+const { CategoryModel } = require("../../../../models/categories");
+const { any } = require("@hapi/joi");
 const BlogBlackList = {
     BOOKMARKS : "bookmarks",
     DISLIKES : "dislikes",
@@ -23,7 +25,11 @@ class BlogController extends Controller {
             const {title , text , short_text , tags , category} = blogDataBody;
             const image = req.body.image
             const author = req.user._id
-            const blogResult = await BlogModel.create({title,text,short_text,category,tags,image,author});
+            let blogResult = any;
+            if(await this.existCategoryOfBlogByID(category)){
+                
+                blogResult = await BlogModel.create({title,text,short_text,category,tags,image,author});
+            }
             if(blogResult._id){
                 
                 return res.status(HttpStatus.CREATED).json({
@@ -129,15 +135,20 @@ class BlogController extends Controller {
     async updateBlogByID (req,res,next) {
         try {
             const {id} = req.params;
-            await this.findBlog(id);
+            const blog = await this.findBlog(id);
             if(req?.body?.fileUploadPath && req?.body?.filename){
                 req.body.image =path.join(req.body.fileUploadPath, req.body.filename)
                 req.body.image = req.body.image.replace(/\\/g, "/")
+                deleteFilePublic(blog.image)
             }
             const data = copyObject(req.body);
             let blackListFields = Object.values(BlogBlackList);
             deleteInvalidPropertyInObject(data , blackListFields)
-            const updateResult = await BlogModel.updateOne({_id : id}, {$set : data})
+            let updateResult = any;
+            if(await this.existCategoryOfBlogByID(blog.category)){
+                
+               updateResult = await BlogModel.updateOne({_id : id}, {$set : data})
+            }
             if(updateResult.modifiedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_UPDATED_MESSAGE}
 
             return res.status(HttpStatus.OK).json({
@@ -155,9 +166,14 @@ class BlogController extends Controller {
     }
     async findBlog(id) {
         const blog = await BlogModel.findById(id).populate([{path : "category" , select : ['title']} , {path : "author" , select  : ['mobile', 'first_name' , 'last_name' , 'username']}]);
-        if(!blog) throw createHttpError.NotFound("مقاله ای یافت نشد");
+        if(!blog) throw createHttpError.NotFound("No Blog found");
         return blog
     }
+    async existCategoryOfBlogByID(id){
+        const category = await CategoryModel.findOne({_id : id})
+        if(!category) throw createHttpError.NotFound("There is no category with ID")
+        return category
+    } 
    
 }
 

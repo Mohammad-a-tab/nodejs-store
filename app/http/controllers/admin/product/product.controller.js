@@ -23,6 +23,7 @@ class ProductController extends Controller {
         async addProduct (req, res, next) {
             try {
                 const images = ListOfImagesFromRequest(req?.files || [], req.body.fileUploadPath)
+                req.body.images = images;
                 const productBody = await createProductSchema.validateAsync(req.body);
                 const {title , text , short_text , category , tags , count , price , discount} = productBody;
                 const supplier = req.user._id;
@@ -59,17 +60,22 @@ class ProductController extends Controller {
                 }
 
             } catch (error) {
-                deleteFilePublic(req.body.image)
+                deleteFilePublic(req?.body?.images)
                 next(error)
             }
         }
         async editProduct (req, res, next) {
             try {
                 const {id} = req.params;
-                await this.findProduct(id);
+                const product = await this.findProduct(id);
                 const data = copyObject(req.body);
-                data.images = ListOfImagesFromRequest(req?.files || [], req.body.fileUploadPath);
-                data.features = setFeatures(req.body);
+                if(req.files && req.body.fileUploadPath){
+                    data.images = ListOfImagesFromRequest(req.files, req.body.fileUploadPath);
+                    data.features = setFeatures(req.body);
+                    deleteFilePublic(product.images)
+                    req.body.images = data.images;
+                    console.log(req.body.images)
+                }
                 let blackListFields = Object.values(ProductBlackList);
                 deleteInvalidPropertyInObject(data , blackListFields)
                 const updateResult = await ProductModel.updateOne({_id : id}, {$set : data})
@@ -83,6 +89,7 @@ class ProductController extends Controller {
                 })
                 
             } catch (error) {
+                deleteFilePublic(reg?.body?.images)
                 next(error)
             }
         }

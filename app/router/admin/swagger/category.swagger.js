@@ -13,6 +13,15 @@
  *                  parent:
  *                      type: string
  *                      description: the title of category
+ *          Edit-tCategory:
+ *              type: object
+ *              properties:
+ *                  title:
+ *                      type: string
+ *                      description: the title of category
+ *                  parent:
+ *                      type: string
+ *                      description: the title of category
  */
 /**
  * @swagger
@@ -156,13 +165,13 @@
  *              content:
  *                  application/x-www-form-urlencoded:
  *                      schema:
- *                          $ref: '#/components/schemas/Category'
+ *                          $ref: '#/components/schemas/Edit-tCategory'
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/Category'
+ *                          $ref: '#/components/schemas/Edit-tCategory'
  *          responses:
  *              200:
  *                  description: success
  *              500:    
- *                  description: internalServerErorr
+ *                  description: internalServerError
  */

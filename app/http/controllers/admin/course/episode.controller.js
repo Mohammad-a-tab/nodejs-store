@@ -5,7 +5,7 @@ const createHttpError = require("http-errors");
 const path = require("path");
 const {StatusCodes : HttpStatus} = require("http-status-codes")
 const { default: getVideoDurationInSeconds } = require("get-video-duration");
-const { getTime, copyObject, deleteInvalidPropertyInObject } = require("../../../../utils/function");
+const { getTime, copyObject, deleteInvalidPropertyInObject, deleteFilePublic } = require("../../../../utils/function");
 const { MessageSpecial } = require("../../../../utils/constants");
 const { ObjectValidator } = require("../../../validators/public.validator");
 
@@ -24,6 +24,7 @@ class EpisodeController extends Controller {
             } = await createEpisodeSchema.validateAsync(req.body);
             const fileAddress = path.join(fileUploadPath , filename);
             const videoAddress = fileAddress.replace(/\\/g ,"/");
+            req.body.videoAddress = fileAddress.replace(/\\/g ,"/");
             const videoURL = `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${videoAddress}`
             const seconds = await getVideoDurationInSeconds(videoURL);
             const time = getTime(seconds);
@@ -51,6 +52,7 @@ class EpisodeController extends Controller {
             })
 
         } catch (error) {
+            deleteFilePublic(req?.body?.videoAddress)
             next(error)
         }
     }
@@ -73,7 +75,7 @@ class EpisodeController extends Controller {
             });
 
             if (removeEpisodeResult.modifiedCount == 0)
-                throw new createHttpError.InternalServerError("حذف اپیزود انجام نشد")
+                throw new createHttpError.InternalServerError("Episode remove failed")
             return res.status(HttpStatus.OK).json({
                 statusCode: HttpStatus.OK,
                 data: {
@@ -117,7 +119,7 @@ class EpisodeController extends Controller {
                }
            })
            if (!editEpisodeResult.modifiedCount)
-               throw new createHttpError.InternalServerError("ویرایش اپیزود انجام نشد")
+               throw new createHttpError.InternalServerError("The episode was not edited")
            return res.status(HttpStatus.OK).json({
                statusCode: HttpStatus.OK,
                data: {
@@ -125,14 +127,15 @@ class EpisodeController extends Controller {
                }
            })
        } catch (error) {
+           deleteFilePublic(req?.body?.videoAddress)
            next(error)
        }
     }
     async getOneEpisode(episodeID){
         const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
-        if(!course) throw new createHttpError.NotFound("اپیزودی یافت نشد")
+        if(!course) throw new createHttpError.NotFound("Episode not found")
         const episode = await course?.chapters?.[0]?.episodes?.[0]
-        if(!episode) throw new createHttpError.NotFound("اپیزودی یافت نشد")
+        if(!episode) throw new createHttpError.NotFound("Episode not found")
         return copyObject(episode)
     }
 

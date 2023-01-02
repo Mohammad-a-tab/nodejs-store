@@ -14,7 +14,7 @@
  *              properties:
  *                  title:
  *                      type: string
- *                      description: the title of category
+ *                      description: the title of Blog
  *                  short_text:
  *                      type: string
  *                      description: the summary of text of blog
@@ -22,7 +22,7 @@
  *                      type: string
  *                      description: the text of blog
  *                  tags:
- *                      type: string
+ *                      type: array
  *                      description: the list of tags for example(tag1#tag2#tag_foo)
  *                  category:
  *                      type: string
@@ -35,7 +35,7 @@
  *              properties:
  *                  title:
  *                      type: string
- *                      description: the title of category
+ *                      description: the title of blog
  *                  short_text:
  *                      type: string
  *                      description: the summary of text of blog
@@ -43,7 +43,7 @@
  *                      type: string
  *                      description: the text of blog
  *                  tags:
- *                      type: string
+ *                      type: array
  *                      description: the list of tags for example(tag1#tag2#tag_foo)
  *                  category:
  *                      type: string
@@ -163,7 +163,7 @@
  */
 /**
  * @swagger
- *  /admin/blogs/{id}:
+ *  /admin/blogs/remove/{id}:
  *      delete:
  *          summary: remove blog by ID 
  *          tags: [ Blog(Admin-Panel) ]

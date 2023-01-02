@@ -63,7 +63,12 @@ function deleteFilePublic(fileAddress) {
     if (fileAddress) {
         const pathFile = path.join(__dirname, "..", "..", "public", fileAddress)
         if (fs.existsSync(pathFile)) fs.unlinkSync(pathFile)
+    }else if(Array.isArray(fileAddress)){
+       for (const image of fileAddress) {
+        if (fs.existsSync(image)) fs.unlinkSync(image)
+       }
     }
+
 }
 function ListOfImagesFromRequest(files, fileUploadPath) {
     if (files?.length > 0) {

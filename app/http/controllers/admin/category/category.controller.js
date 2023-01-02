@@ -1,3 +1,4 @@
+const { any } = require("@hapi/joi");
 const createHttpError = require("http-errors");
 const { StatusCodes: HttpStatus } = require("http-status-codes");
 const { default: mongoose } = require("mongoose");
@@ -10,9 +11,17 @@ const Controller = require("../../controller");
 class CategoryController extends Controller {
     async addCategory(req,res,next){
         try {
-            await addCategorySchema.validateAsync(req.body);
-            const {title,parent} = req.body;
-            const category = await CategoryModel.create({title,parent})
+            // const {title,parent} = await addCategorySchema.validateAsync(req.body);
+            let category = any;
+            if(req?.body?.parent){
+                const {title,parent} = await addCategorySchema.validateAsync(req.body);
+                category = await CategoryModel.create({title,parent})
+
+            }
+            else{
+                const {title} = await addCategorySchema.validateAsync(req.body);
+                category = await CategoryModel.create({title})
+            }
             if(!category) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.INTERNAL_SERVER_ERROR}
             return res.status(HttpStatus.CREATED).json({
                 statusCode: HttpStatus.CREATED,

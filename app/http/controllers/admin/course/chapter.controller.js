@@ -14,7 +14,7 @@ class ChapterController extends Controller {
             const saveChapterResults = await CourseModel.updateOne({_id : id} , {$push : {
                 chapters : {title , text , episodes : []}
             }});
-            if(saveChapterResults.modifiedCount == 0) throw createHttpError.InternalServerError("عملیات افزودن فصل انجام نشد");
+            if(saveChapterResults.modifiedCount == 0) throw createHttpError.InternalServerError("Add chapter failed");
             return res.status(HttpStatus.CREATED).json({
                 statusCode : HttpStatus.CREATED,
                 data : {
@@ -49,7 +49,7 @@ class ChapterController extends Controller {
             const updateChapterResults = await CourseModel.updateOne({"chapters._id" : chapterID} , {
                 $set : {"chapters.$" : data}
             });
-            if(updateChapterResults.modifiedCount == 0) throw createHttpError.InternalServerError("فصل مورد نظر بروزرسانی نشد");
+            if(updateChapterResults.modifiedCount == 0) throw createHttpError.InternalServerError("The desired chapter was not updated");
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
@@ -84,13 +84,14 @@ class ChapterController extends Controller {
         }
     }
     async getChapterOfCourse(courseID) {
-        const chapters = await CourseModel.findOne({_id : courseID} , {"chapters._id" : 1 , "chapters.title" : 1 , "chapters.text" : 1 , title : 1});
-        if(!chapters) throw createHttpError.NotFound("دوره ای یافت نشد");
+        const chapters = await CourseModel.findOne({_id : courseID} , 
+            {"chapters._id" : 1 , "chapters.title" : 1 , "chapters.text" : 1 , title : 1});
+        if(!chapters) throw createHttpError.NotFound("Course not found");
         return chapters
     }
     async getOneChapter(id) {
         const chapter = await CourseModel.findOne({"chapters._id" : id} , {"chapters.$" : 1});
-        if(!chapter) throw createHttpError.NotFound("فصلی با این مشخصات یافت نشد");
+        if(!chapter) throw createHttpError.NotFound("No chapter was found with this specification");
         return chapter
     }
 }

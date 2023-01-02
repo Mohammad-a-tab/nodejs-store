@@ -1,4 +1,3 @@
-const date = require('@hapi/joi/lib/types/date');
 const createError = require('http-errors');
 const { UserModel } = require('../../../../models/users');
 const { ROLES } = require('../../../../utils/constants');
