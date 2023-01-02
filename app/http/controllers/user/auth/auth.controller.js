@@ -81,7 +81,7 @@ class UserAuthController extends Controller{
            return (await this.updateUser(mobile , {otp}))
             
         }
-        return !!(await UserModel.create({mobile,otp,Roles : [ROLES.USER]}))
+        return !!(await UserModel.create({mobile,otp,Role : ROLES.USER}))
 
     }
     async checkExistIUser(mobile){

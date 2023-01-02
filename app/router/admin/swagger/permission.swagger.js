@@ -33,12 +33,14 @@
  *          Name: 
  *              type: string
  *              enum:
- *                  -   Writer
- *                  -   Reader
- *                  -   Owner             
- *                  -   Blog             
- *                  -   Course                     
- *                  -   Product                     
+ *                  -   profile
+ *                  -   all
+ *                  -   course             
+ *                  -   blog             
+ *                  -   category                     
+ *                  -   product                     
+ *                  -   chapter                     
+ *                  -   episode                     
  */ 
 /**
  * @swagger

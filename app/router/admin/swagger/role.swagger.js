@@ -50,10 +50,9 @@
  *              enum:
  *                  -   ADMIN
  *                  -   USER
- *                  -   TEACHER             
- *                  -   STUDENT             
- *                  -   AUTHOR                     
- *                  -   SUPER_ADMIN                     
+ *                  -   TEACHER                          
+ *                  -   WRITER                    
+ *                  -   SUPPLIER                  
  */ 
 /**
  * @swagger

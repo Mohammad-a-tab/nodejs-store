@@ -1,12 +1,21 @@
 module.exports = {
-    MongoIDPattern : /^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i, 
-    ROLES : {
+    MongoIDPattern : /^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i ,
+    ROLES : Object.freeze({
         USER : "USER",
         ADMIN : "ADMIN",
         WRITER : "WRITER",
         TEACHER : "TEACHER",
         SUPPLIER : "SUPPLIER"
-    },
+    }),
+    PERMISSIONS : Object.freeze({
+        USER : ["profile"],
+        ADMIN : ["all"],
+        SUPERADMIN : ["all"],
+        CONTENT_MANAGER :[ "course", "blog", "category", "product" , "episode" , "chapter"],
+        TEACHER :[ "course", "blog" , "episode" , "chapter"],
+        SUPPLIER : ["product"],
+        ALL : "all"
+    }),
     ACCESS_TOKEN_SECRET_KEY : "CD3B35AB88A13C9D7B4DDA84B40D399CCD51B9E9A5D8B8EF3C18F71251F753B6",
     REFRESH_TOKEN_SECRET_KEY : "BC5AB452A780C757B9A119C5D2459CC320B2BD6B0BF4E73AF53CC2BC0CCCF7E8",
     MessageSpecial : {

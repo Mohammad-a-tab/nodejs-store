@@ -8,7 +8,7 @@ const { UserAuthRoutes } = require("./user/auth");
 const router = require("express").Router();
 
 router.use("/user", UserAuthRoutes);
-router.use("/admin", VerifyAccessToken,checkRole("ADMIN"),AdminRoutes);
+router.use("/admin", VerifyAccessToken,AdminRoutes);
 router.use("/developer", DeveloperRoutes);
 router.use("/blogs", blogApiPrisma)
 router.use("/category", CategoryApiPrisma)
