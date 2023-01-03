@@ -43,11 +43,16 @@ class ChapterController extends Controller {
     async updateChapterById (req , res , next) {
         try {
             const {chapterID} = req.params;
-            await this.getOneChapter(chapterID);
+            const chapter = await this.getOneChapter(chapterID);
+            console.log(chapter)
             const data = copyObject(req.body);
             deleteInvalidPropertyInObject(data , ["_id"]);
+            const newChapter = {
+                ...chapter,
+                ...data
+            }
             const updateChapterResults = await CourseModel.updateOne({"chapters._id" : chapterID} , {
-                $set : {"chapters.$" : data}
+                $set : {"chapters.$" : newChapter}
             });
             if(updateChapterResults.modifiedCount == 0) throw createHttpError.InternalServerError("The desired chapter was not updated");
             return res.status(HttpStatus.OK).json({
@@ -89,10 +94,12 @@ class ChapterController extends Controller {
         if(!chapters) throw createHttpError.NotFound("Course not found");
         return chapters
     }
-    async getOneChapter(id) {
-        const chapter = await CourseModel.findOne({"chapters._id" : id} , {"chapters.$" : 1});
-        if(!chapter) throw createHttpError.NotFound("No chapter was found with this specification");
-        return chapter
+    async getOneChapter(chapterID) {
+        const course = await CourseModel.findOne({"chapters._id" : chapterID} , {"chapters.$" : 1});
+        if(!course) throw createHttpError.NotFound("No chapter was found with this specification");
+        const chapter = await course?.chapters?.[0]
+        if(!chapter) throw new createHttpError.NotFound("Chapter not found")
+        return copyObject(chapter)
     }
 }
 module.exports = {

@@ -60,13 +60,16 @@ function verifyRefreshToken(token){
     })
 }
 function deleteFilePublic(fileAddress) {
-    if (fileAddress) {
+    if (!Array.isArray(fileAddress) && fileAddress.length > 0) {
         const pathFile = path.join(__dirname, "..", "..", "public", fileAddress)
         if (fs.existsSync(pathFile)) fs.unlinkSync(pathFile)
-    }else if(Array.isArray(fileAddress)){
+    }else if(Array.isArray(fileAddress) && fileAddress.length > 0){
        for (const image of fileAddress) {
-        if (fs.existsSync(image)) fs.unlinkSync(image)
+        const pathFile = path.join(__dirname, "..", "..", "public", image)
+        if (fs.existsSync(pathFile)) fs.unlinkSync(pathFile)
        }
+    }else if(fileAddress == null || undefined || "" || [""]){
+        return "not found"
     }
 
 }

@@ -30,6 +30,8 @@ const CourseSchema = new mongoose.Schema({
     bookmarks : {type : [mongoose.Types.ObjectId] , default : []},
     price : {type : Number , default : 0},
     discount : {type : Number , default : 0},
+    discountedPrice : {type : Number , default : 0},
+    discountStatus : {type : Boolean , default : false},
     type : {type : String , default : 'free' , required : true}, // free - crash - special
     status : {type : String , default : 'notStarted'}, // Holding - Completed - notStarted
     teacher : {type : [mongoose.Types.ObjectId] , ref: "user",  required : true},

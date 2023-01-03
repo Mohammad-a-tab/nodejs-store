@@ -7,6 +7,7 @@ const { MessageSpecial } = require("../../../../utils/constants");
 const createHttpError = require("http-errors");
 const { isValidObjectId } = require("mongoose");
 const { deleteInvalidPropertyInObject, copyObject, deleteFilePublic } = require("../../../../utils/function");
+const { CategoryModel } = require("../../../../models/categories");
 
 
 let BLACKLIST = {
@@ -53,10 +54,15 @@ class CourseController extends Controller {
             const courseDataBody = await createCourseSchema.validateAsync(req.body);
             req.body.image =path.join(courseDataBody.fileUploadPath, courseDataBody.filename)
             req.body.image = req.body.image.replace(/\\/g, "/")
-            let {title , text , short_text , tags , category , price , discount = 0 , type} = courseDataBody;
+            let {title , text , short_text , tags , category , price , discount = 0 , type , discountedPrice} = courseDataBody;
             const image = req.body.image
             const teacher = req.user._id
             if(Number(price) > 0 && type === "free") throw createHttpError.BadRequest("برای دوره ی رایگان نمیتوان قیمت ثبت کرد")
+            let discountStatus = false
+            if(Number(discount) > 0){
+                discountStatus = true
+            }
+            await this.existCategoryByID(category)
             const courseResult = await CourseModel.create({
                 title
                 , text
@@ -67,6 +73,8 @@ class CourseController extends Controller {
                 , teacher
                 , price
                 , discount
+                , discountedPrice
+                , discountStatus
                 , type,
                 status : "notStarted",
             });
@@ -79,7 +87,7 @@ class CourseController extends Controller {
             })
             
         } catch (error) {
-            deleteFilePublic(req.body.image)
+            deleteFilePublic(req?.body?.image)
             next(error)
         }
     }
@@ -102,6 +110,11 @@ class CourseController extends Controller {
         try {
             const {courseID} = req.params;
             const course = await this.findCourseByID(courseID);
+            let discountStatus = false
+            if(Number(req?.body?.discount) > 0){
+                discountStatus = true
+                req.body.discountStatus = discountStatus
+            }
             const data = copyObject(req.body);
             const {fileUploadPath, filename} = req.body;
             let blackListFields = Object.values(BLACKLIST)
@@ -110,7 +123,15 @@ class CourseController extends Controller {
                 data.image = path.join(fileUploadPath,filename);
                 deleteFilePublic(course.image)
             }
-            const updateCourseResults = await CourseModel.updateOne({_id : courseID} , {
+            let updateCourseResults = any;
+            if(data.category){
+                if(await this.existCategoryByID(data.category)){
+                    updateCourseResults = await CourseModel.updateOne({_id : courseID} , {
+                        $set : data
+                    });
+                }
+            }
+            updateCourseResults = await CourseModel.updateOne({_id : courseID} , {
                 $set : data
             });
             if(updateCourseResults.modifiedCount == 0) throw createHttpError.InternalServerError("Course update failed");
@@ -130,6 +151,11 @@ class CourseController extends Controller {
        const course = await CourseModel.findById(courseID);
        if(!course) throw createHttpError.NotFound("Course not found");
        return course
+    }
+    async existCategoryByID (categoryID) {
+        const category = await CategoryModel.findOne({_id : categoryID})
+        if(!category) throw createHttpError.NotFound("Category not found")
+        return category
     }
 }
 

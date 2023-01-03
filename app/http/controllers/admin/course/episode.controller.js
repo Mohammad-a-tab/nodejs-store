@@ -8,6 +8,7 @@ const { default: getVideoDurationInSeconds } = require("get-video-duration");
 const { getTime, copyObject, deleteInvalidPropertyInObject, deleteFilePublic } = require("../../../../utils/function");
 const { MessageSpecial } = require("../../../../utils/constants");
 const { ObjectValidator } = require("../../../validators/public.validator");
+const { any } = require("@hapi/joi");
 
 
 class EpisodeController extends Controller {
@@ -63,7 +64,8 @@ class EpisodeController extends Controller {
             } = await ObjectValidator.validateAsync({
                 id: req.params.episodeID
             });
-            await this.getOneEpisode(episodeID)
+            const episode = await this.getOneEpisodeForUpdate(episodeID)
+            deleteFilePublic(episode?.videoAddress)
             const removeEpisodeResult = await CourseModel.updateOne({
                 "chapters.episodes._id": episodeID,
             }, {
@@ -79,7 +81,7 @@ class EpisodeController extends Controller {
             return res.status(HttpStatus.OK).json({
                 statusCode: HttpStatus.OK,
                 data: {
-                    message: "حذف اپیزود با موفقیت انجام شد"
+                    message: MessageSpecial.SUCCESSFUL_REMOVE_EPISODE_MESSAGE
                 }
             })
         } catch (error) {
@@ -89,7 +91,7 @@ class EpisodeController extends Controller {
     async updateOneEpisode (req,res,next) {
         try {
             const {episodeID} = req.params;
-           const episode = await this.getOneEpisode(episodeID)
+           const episode = await this.getOneEpisodeForUpdate(episodeID)
            const { filename, fileUploadPath } = req.body
            let blackListFields = ["_id"]
            if(filename && fileUploadPath){
@@ -123,7 +125,7 @@ class EpisodeController extends Controller {
            return res.status(HttpStatus.OK).json({
                statusCode: HttpStatus.OK,
                data: {
-                   message: "ویرایش اپیزود با موفقیت انجام شد"
+                   message: MessageSpecial.SUCCESSFUL_CREATED_EPISODE_MESSAGE
                }
            })
        } catch (error) {
@@ -131,12 +133,42 @@ class EpisodeController extends Controller {
            next(error)
        }
     }
-    async getOneEpisode(episodeID){
-        const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
-        if(!course) throw new createHttpError.NotFound("Episode not found")
-        const episode = await course?.chapters?.[0]?.episodes?.[0]
+    async getOneEpisodeForUpdate(episodeID){
+        const course1 = await CourseModel.findOne({"chapters.episodes._id": episodeID} , {"chapters.episodes.$" :1})
+        if(!course1) throw new createHttpError.NotFound("Episode not found")
+        let array = []
+        array.push(course1)
+        let index = 0
+        index = array.map(item => item.chapters?.[0]).map(i => i.episodes).map(k => k.findIndex(n => n._id == episodeID))
+        const course2 = await CourseModel.findOne({"chapters.episodes._id": episodeID} , {"chapters.episodes.$" :1})
+        if(!course2) throw new createHttpError.NotFound("Episode not found")
+        const episode = course2?.chapters?.[0]?.episodes?.[index]
         if(!episode) throw new createHttpError.NotFound("Episode not found")
         return copyObject(episode)
+    }
+    async getOneEpisode(req,res,next){
+        try {
+            const {episodeID} = req.params;
+            const course1 = await CourseModel.findOne({"chapters.episodes._id": episodeID} , {"chapters.episodes.$" :1})
+            if(!course1) throw new createHttpError.NotFound("Episode not found")
+            let array = []
+            array.push(course1)
+            let index = 0
+            index = array.map(item => item.chapters?.[0]).map(i => i.episodes).map(k => k.findIndex(n => n._id == episodeID))
+            const course2 = await CourseModel.findOne({"chapters.episodes._id": episodeID} , {"chapters.episodes.$" :1})
+            if(!course2) throw new createHttpError.NotFound("Episode not found")
+            const episode = course2?.chapters?.[0]?.episodes?.[index]
+            if(!episode) throw new createHttpError.NotFound("Episode not found")
+            return res.status(HttpStatus.OK).json({
+            statusCode : HttpStatus.OK,
+            data : {
+                episode
+            }
+        })
+            
+        } catch (error) {
+            next(error)
+        }
     }
 
 }

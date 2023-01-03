@@ -2,10 +2,16 @@ const { ProductModel } = require("../../../../models/products");
 const { createProductSchema } = require("../../../validators/admin/product.schema");
 const Controller = require("../../controller");
 const { StatusCodes: HttpStatus } = require("http-status-codes");
-const { deleteFilePublic, ListOfImagesFromRequest, setFeatures, copyObject, deleteInvalidPropertyInObject } = require("../../../../utils/function");
+const { deleteFilePublic,
+     ListOfImagesFromRequest,
+      setFeatures, copyObject,
+       deleteInvalidPropertyInObject
+     } = require("../../../../utils/function");
 const { ObjectValidator } = require("../../../validators/public.validator");
 const createHttpError = require("http-errors");
 const { MessageSpecial} = require("../../../../utils/constants");
+const { CategoryModel } = require("../../../../models/categories");
+const { any } = require("@hapi/joi");
 const ProductBlackList = {
     BOOKMARKS : "bookmarks",
     DISLIKES : "dislikes",
@@ -23,7 +29,7 @@ class ProductController extends Controller {
         async addProduct (req, res, next) {
             try {
                 const images = ListOfImagesFromRequest(req?.files || [], req.body.fileUploadPath)
-                req.body.images = images;
+                req.body.images = images
                 const productBody = await createProductSchema.validateAsync(req.body);
                 const {title , text , short_text , category , tags , count , price , discount} = productBody;
                 const supplier = req.user._id;
@@ -35,6 +41,7 @@ class ProductController extends Controller {
                 else{
                   type = "virtual"
                 }
+                await this.ExistCorrectCategoryID(category)
                 const product = await ProductModel.create({
                     title,
                     text,
@@ -69,18 +76,25 @@ class ProductController extends Controller {
                 const {id} = req.params;
                 const product = await this.findProduct(id);
                 const data = copyObject(req.body);
+                data.features = setFeatures(req.body);
                 if(req.files && req.body.fileUploadPath){
                     data.images = ListOfImagesFromRequest(req.files, req.body.fileUploadPath);
-                    data.features = setFeatures(req.body);
                     deleteFilePublic(product.images)
-                    req.body.images = data.images;
-                    console.log(req.body.images)
+                    req.body.images = data?.images;
                 }
                 let blackListFields = Object.values(ProductBlackList);
                 deleteInvalidPropertyInObject(data , blackListFields)
-                const updateResult = await ProductModel.updateOne({_id : id}, {$set : data})
-                if(updateResult.modifiedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_UPDATED_MESSAGE}
-    
+                let updateResult = any;
+                if(data.category) {
+                    if(await this.ExistCorrectCategoryID(data.category)){
+                        updateResult = await ProductModel.updateOne({_id : id}, {$set : data})
+                    }
+                }else{
+
+                    updateResult = await ProductModel.updateOne({_id : id}, {$set : data})
+                }
+                if(updateResult.modifiedCount == 0) 
+                    throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_UPDATED_MESSAGE}
                 return res.status(HttpStatus.OK).json({
                     statusCode: HttpStatus.OK,
                     data : {
@@ -89,16 +103,18 @@ class ProductController extends Controller {
                 })
                 
             } catch (error) {
-                deleteFilePublic(reg?.body?.images)
+                deleteFilePublic(req?.body?.images)
                 next(error)
             }
         }
         async removeProduct (req, res, next) {
             try {
                 const {id} = req.params;
-                await this.findProduct(id);
+                const products = await this.findProduct(id);
+                deleteFilePublic(products?.images)
                 const deleteResult = await ProductModel.deleteOne({id : id});
-                if(deleteResult.deletedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.INTERNAL_SERVER_ERROR}
+                if(deleteResult.deletedCount == 0) 
+                    throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.INTERNAL_SERVER_ERROR}
                 return res.status(HttpStatus.OK).json({
                     statusCode : HttpStatus.OK,
                     data : {
@@ -147,8 +163,13 @@ class ProductController extends Controller {
     async findProduct (productID){
         const {id} = await ObjectValidator.validateAsync({id : productID});
         const product = await ProductModel.findById(id);
-        if(!product) throw createHttpError.NotFound("محصولی یافت نشد");
+        if(!product) throw createHttpError.NotFound("Product not found");
         return product 
+    }
+    async ExistCorrectCategoryID(categoryID){
+        const category = await CategoryModel.findOne({_id  : categoryID})
+        if(!category) throw createHttpError.BadRequest("Category ID is not correct")
+        return category
     }
     
 }

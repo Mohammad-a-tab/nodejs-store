@@ -20,9 +20,9 @@ router.use("/products", checkPermission([PERMISSIONS.SUPPLIER,
     ]), AdminApiProductRouter)
 router.use("/courses", checkPermission([PERMISSIONS.TEACHER]),
     AdminApiCourseRouter)
-router.use("/chapter", checkPermission([PERMISSIONS.TEACHER]),
+router.use("/chapters", checkPermission([PERMISSIONS.TEACHER]),
     AdminApiChapterRouter)
-router.use("/episode", checkPermission([PERMISSIONS.TEACHER]), 
+router.use("/episodes", checkPermission([PERMISSIONS.TEACHER]), 
     AdminApiEpisodeRouter)
 router.use("/user", AdminApiUserRouter)
 router.use("/permission", checkPermission([PERMISSIONS.ADMIN]),

@@ -219,37 +219,6 @@
  */
 /**
  * @swagger
- *  /admin/courses/change-discount-status/{id}:
- *      patch:
- *          tags: [Course(Admin-Panel)]
- *          summary: edit and save discount-status
- *          parameters:
- *              -   in: path
- *                  name: id
- *                  type: string
- *                  required: true
- *          requestBody:
- *              required: true
- *              content:
- *                  application/x-www-form-urlencoded:
- *                      schema:
- *                          $ref: '#/components/schemas/Edit-discount-course-status'
- *                  application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/Edit-discount-course-status'
- *          
- *          responses:
- *              200:
- *                  description: change discount status
- *                  content:
- *                      application/json:
- *                          schema:
- *                              $ref: '#/definitions/publicDefinition'
- * 
- */
-
-/**
- * @swagger
  *  /admin/courses/list:
  *      get:
  *          tags: [Course(Admin-Panel)]

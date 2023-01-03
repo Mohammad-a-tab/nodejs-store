@@ -238,7 +238,7 @@
 
 /**
  * @swagger
- *  /admin/products/list:
+ *  /admin/products/get-all:
  *      get:
  *          tags: [Product(Admin-Panel)]
  *          summary: get all products

@@ -82,13 +82,13 @@
 
 /**
  * @swagger
- *  /admin/category/children/{parent}:
+ *  /admin/category/children/{parentID}:
  *      get:
  *          tags: [Category(Admin-Panel)]
  *          summary: get All children of Parents Category 
  *          parameters:
  *              -   in: path
- *                  name: parent
+ *                  name: parentID
  *                  type: string
  *                  required: true
  *          responses:

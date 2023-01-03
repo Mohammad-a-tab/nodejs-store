@@ -96,7 +96,7 @@ class BlogController extends Controller {
                         "author.otp" : 0
                     }
                 }
-            ]);
+            ]).sort({_id : -1});
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
@@ -119,7 +119,8 @@ class BlogController extends Controller {
     async deleteBlogByID (req,res,next) {
         try {
             const {id} = req.params;
-            await this.findBlog(id);
+            const blog = await this.findBlog(id);
+            deleteFilePublic(blog?.image)
             const result = await BlogModel.deleteOne({_id : id});
             if(result.deletedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.INTERNAL_SERVER_ERROR}
             return res.status(HttpStatus.OK).json({
@@ -145,10 +146,13 @@ class BlogController extends Controller {
             let blackListFields = Object.values(BlogBlackList);
             deleteInvalidPropertyInObject(data , blackListFields)
             let updateResult = any;
-            if(await this.existCategoryOfBlogByID(blog.category)){
+            if(data.category){
+                if(await this.existCategoryOfBlogByID(data.category)){
                 
-               updateResult = await BlogModel.updateOne({_id : id}, {$set : data})
+                    updateResult = await BlogModel.updateOne({_id : id}, {$set : data})
+                }
             }
+            updateResult = await BlogModel.updateOne({_id : id}, {$set : data})
             if(updateResult.modifiedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_UPDATED_MESSAGE}
 
             return res.status(HttpStatus.OK).json({

@@ -11,12 +11,12 @@ const Controller = require("../../controller");
 class CategoryController extends Controller {
     async addCategory(req,res,next){
         try {
-            // const {title,parent} = await addCategorySchema.validateAsync(req.body);
             let category = any;
             if(req?.body?.parent){
                 const {title,parent} = await addCategorySchema.validateAsync(req.body);
-                category = await CategoryModel.create({title,parent})
-
+                if(await this.existCorrectParent(parent)){
+                    category = await CategoryModel.create({title,parent})
+                }
             }
             else{
                 const {title} = await addCategorySchema.validateAsync(req.body);
@@ -55,10 +55,15 @@ class CategoryController extends Controller {
     async editCategoryTitle(req,res,next){
         try {
             const {id} = req.params;
-            const {title} = req.body;
+            const {title , parent} =  await updateCategorySchema.validateAsync(req.body);
             const category = await this.checkExistCategory(id);
-            await updateCategorySchema.validateAsync(req.body);
-            const updateResult = await CategoryModel.updateOne({_id : category._id} , {$set : {title}});
+            let updateResult = any;
+            if(parent){
+                if(await this.existCorrectParent(parent)){
+                    updateResult = await CategoryModel.updateOne({_id : category._id} , {$set : {title , parent}});
+                }
+            }
+            updateResult = await CategoryModel.updateOne({_id : category._id} , {$set : {title}});
             if(updateResult.modifiedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_UPDATED_MESSAGE}
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
@@ -120,7 +125,7 @@ class CategoryController extends Controller {
             //         }
             //     }
             // ]);
-            const categories = await CategoryModel.find({parent : undefined} , {__v : 0})
+            const categories = await CategoryModel.find({parent : undefined} , {__v : 0}).sort({_id : -1})
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
@@ -171,7 +176,7 @@ class CategoryController extends Controller {
     }
     async getAllParents(req,res,next){
         try {
-            const parents = await CategoryModel.find({parent : undefined} , {__v : 0});
+            const parents = await CategoryModel.find({parent : undefined} , {__v : 0}).sort({_id : -1});
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
@@ -185,8 +190,8 @@ class CategoryController extends Controller {
     }
     async getChildOfParents(req,res,next){
         try {
-            const {parent} = req.params;
-            const children = await CategoryModel.find({parent}, {__v : 0 , parent : 0});
+            const {parentID} = req.params;
+            const children = await CategoryModel.findOne({parent : parentID}, {__v : 0 , parent : 0});
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
@@ -200,7 +205,7 @@ class CategoryController extends Controller {
     }
     async getAllCategoryWithoutPopulate(req,res,next) {
         try {
-            const categories = await CategoryModel.aggregate([{$match : {}}]);
+            const categories = await CategoryModel.aggregate([{$match : {}}]).sort({_id : -1});
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
@@ -218,8 +223,12 @@ class CategoryController extends Controller {
         return category
     }
 
+    async existCorrectParent (id) {
+        const parent = await CategoryModel.findOne({parent : id})
+        if(!parent) throw createHttpError.BadRequest("The parent sent is not correct")
+        return parent
+    } 
 }
-
 
 module.exports = {
     AdminCategoryController : new CategoryController()
