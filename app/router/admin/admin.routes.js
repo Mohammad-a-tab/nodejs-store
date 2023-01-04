@@ -24,7 +24,7 @@ router.use("/chapters", checkPermission([PERMISSIONS.TEACHER]),
     AdminApiChapterRouter)
 router.use("/episodes", checkPermission([PERMISSIONS.TEACHER]), 
     AdminApiEpisodeRouter)
-router.use("/user", AdminApiUserRouter)
+router.use("/users", AdminApiUserRouter)
 router.use("/permission", checkPermission([PERMISSIONS.ADMIN]),
     AdminApiPermissionRouter)
 router.use("/role", checkPermission(PERMISSIONS.ADMIN),

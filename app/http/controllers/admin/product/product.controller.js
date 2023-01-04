@@ -133,9 +133,53 @@ class ProductController extends Controller {
                 const search = req?.query?.search || "";
                 let products;
                 if (search) {
-                     products = await ProductModel.find({ $text: { $search: `"${req.query.search }"`  } })
+                     products = await ProductModel.aggregate([
+                        {
+                            $match : { $text: { $search: `"${req.query.search }"`  } }
+                        },
+                        {
+                            $lookup : {
+                                from : "categories",
+                                localField : "category",
+                                foreignField : "_id",
+                                as : "category"
+                            }
+                        },
+                        {
+                            $unwind : "$category"
+                        },
+                        {
+                            $project : {
+                                "category.__v" : 0,
+                                "category.parent" : 0,
+                                "category._id" : 0,
+                            }
+                        }
+                  ])
                 } else {
-                  products = await ProductModel.find({})
+                  products = await ProductModel.aggregate([
+                        {
+                            $match : {}
+                        },
+                        {
+                            $lookup : {
+                                from : "categories",
+                                localField : "category",
+                                foreignField : "_id",
+                                as : "category"
+                            }
+                        },
+                        {
+                            $unwind : "$category"
+                        },
+                        {
+                            $project : {
+                                "category.__v" : 0,
+                                "category.parent" : 0,
+                                "category._id" : 0,
+                            }
+                        }
+                  ])
                 }
                 return res.status(HttpStatus.OK).json({
                   statusCode: HttpStatus.OK,

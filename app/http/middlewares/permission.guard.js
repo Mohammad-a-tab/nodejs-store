@@ -1,7 +1,7 @@
-const createHttpError = require("http-errors");
 const { PermissionModel } = require("../../models/permission");
-const { RoleModel } = require("../../models/role");
 const { PERMISSIONS } = require("../../utils/constants");
+const { RoleModel } = require("../../models/role");
+const createHttpError = require("http-errors");
 
 function checkPermission(requiredPermissions = []) {
     return async function (req, res, next) {
@@ -16,7 +16,7 @@ function checkPermission(requiredPermissions = []) {
         })
         if(userPermissions.includes(PERMISSIONS.ALL)) return next()
         if(allPermissions.length == 0 || hasPermission) return next();
-        throw createHttpError.Forbidden("شما به این قسمت دسترسی ندارید");
+        throw createHttpError.Forbidden("You do not have access to this section");
       } catch (error) {
         next(error);
       }

@@ -53,7 +53,7 @@ class UserController extends Controller{
             deleteInvalidPropertyInObject(data , blackListFields)
             const updateUserResults = await UserModel.updateOne({_id : userID} , {$set : data})
             if(updateUserResults.modifiedCount == 0) 
-                throw createHttpError.InternalServerError("بروزرسانی پروفایل انجام نشد")
+                throw createHttpError.InternalServerError("Updated Profile Failed")
             return res.status(HttpStatus.OK).json({
                 StatusCode : HttpStatus.OK,
                 data : {
@@ -68,7 +68,7 @@ class UserController extends Controller{
         try {
             const user = req.user;
             //bill, courses, discount, 
-            console.log(await getBasketOfUser(user._id));
+            // console.log(await getBasketOfUser(user._id));
             return res.status(HttpStatus.OK).json({
                 statusCode: HttpStatus.OK,
                 data: {

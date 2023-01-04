@@ -1,10 +1,10 @@
-const JWT = require("jsonwebtoken");
-const createError = require("http-errors");
-const fs = require("fs")
-const { UserModel } = require("../models/users");
 const { ACCESS_TOKEN_SECRET_KEY, REFRESH_TOKEN_SECRET_KEY } = require("./constants");
+const { UserModel } = require("../models/users");
 const redisClient = require("./init_redis");
+const createError = require("http-errors");
+const JWT = require("jsonwebtoken");
 const path = require("path");
+const fs = require("fs")
 
 function RandomNumberGenerator(){
     return Math.floor((Math.random() * 90000) + 10000)
@@ -19,7 +19,7 @@ function SignAccessToken(userID){
             expiresIn : "20d"
         }
         JWT.sign(payload , ACCESS_TOKEN_SECRET_KEY , options , (err , token) => {
-            if(err) reject(createError.InternalServerError("خطای سروری"));
+            if(err) reject(createError.InternalServerError("Internal server error"));
             resolve(token)
         })
     });
@@ -35,7 +35,7 @@ function SignAccessToken(userID){
             expiresIn : "365d"
         }
         JWT.sign(payload , REFRESH_TOKEN_SECRET_KEY , options , async (err , token) => {
-            if(err) reject(createError.InternalServerError("خطای سروری"));
+            if(err) reject(createError.InternalServerError("Internal Server Error"));
             await redisClient.SETEX(String(userID), (365 * 24 * 60 * 60) ,token);
             resolve(token)
         })
@@ -45,14 +45,14 @@ function SignAccessToken(userID){
 function verifyRefreshToken(token){
     return new Promise((resolve , reject) => {
         JWT.verify(token , REFRESH_TOKEN_SECRET_KEY , async (err , payload) => {
-            if(err) reject(createError.Unauthorized("لطفا وارد حساب کاربری خود شوید"));
+            if(err) reject(createError.Unauthorized("Please log in to your account"));
             const {mobile} = payload || {}
             const user = await UserModel.findOne({mobile} , {password : 0 , otp : 0});
-            if(!user) reject(createError.Unauthorized("حساب کاربری یافت نشد"));
+            if(!user) reject(createError.Unauthorized("User account not found"));
             const refreshToken = await redisClient.get(String(user?._id || "key-default"));
-            if(!refreshToken) reject(createError.Unauthorized("ورود به حساب کاربری انجام نشد"))
+            if(!refreshToken) reject(createError.Unauthorized("Login to user account failed"))
             if(token === refreshToken) return resolve(mobile);
-            reject(createError.Unauthorized("ورود به حساب کاربری انجام نشد"));
+            reject(createError.Unauthorized("Login to user account failed"));
            
            
         });
@@ -69,7 +69,7 @@ function deleteFilePublic(fileAddress) {
         if (fs.existsSync(pathFile)) fs.unlinkSync(pathFile)
        }
     }else if(fileAddress == null || undefined || "" || [""]){
-        return "not found"
+        return "Not found"
     }
 
 }

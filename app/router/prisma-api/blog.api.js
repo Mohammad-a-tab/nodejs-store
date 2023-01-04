@@ -1,6 +1,4 @@
 const createError = require("http-errors");
-
-
 const router = require("express").Router();
 const prisma = (new (require("@prisma/client")).PrismaClient())
 /**
