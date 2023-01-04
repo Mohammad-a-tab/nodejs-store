@@ -1,13 +1,13 @@
+const {  deleteFilePublic, deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
 const { createBlogSchema } = require("../../../validators/admin/blog.schema");
-const Controller = require("../../controller");
-const path = require('path');
-const { BlogModel } = require("../../../../models/blogs");
-const { deleteFilePublic , deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
-const createHttpError = require("http-errors");
-const { StatusCodes:HttpStatus } = require("http-status-codes");
-const { MessageSpecial } = require("../../../../utils/constants");
 const { CategoryModel } = require("../../../../models/categories");
+const { MessageSpecial } = require("../../../../utils/constants");
+const { StatusCodes:HttpStatus } = require("http-status-codes");
+const { BlogModel } = require("../../../../models/blogs");
+const createHttpError = require("http-errors");
+const Controller = require("../../controller");
 const { any } = require("@hapi/joi");
+const path = require('path');
 const BlogBlackList = {
     BOOKMARKS : "bookmarks",
     DISLIKES : "dislikes",
@@ -120,9 +120,10 @@ class BlogController extends Controller {
         try {
             const {id} = req.params;
             const blog = await this.findBlog(id);
-            deleteFilePublic(blog?.image)
             const result = await BlogModel.deleteOne({_id : id});
-            if(result.deletedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.INTERNAL_SERVER_ERROR}
+            if(result.deletedCount == 0) 
+                throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.INTERNAL_SERVER_ERROR}
+            deleteFilePublic(blog?.image)
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
@@ -178,7 +179,6 @@ class BlogController extends Controller {
         if(!category) throw createHttpError.NotFound("There is no category with ID")
         return category
     } 
-   
 }
 
 module.exports = {

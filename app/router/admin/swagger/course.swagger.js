@@ -252,3 +252,22 @@
  *              200:
  *                  description: success
  */
+/**
+ * @swagger
+ *  /admin/courses/remove/{CourseID}:
+ *      delete:
+ *          tags: [Course(Admin-Panel)]
+ *          summary: delete One Course
+ *          parameters:
+ *              -   in: path
+ *                  name: CourseID
+ *                  type: string
+ *                  description: objectId of Course
+ *          responses:
+ *              200:
+ *                  description: success
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/definitions/publicDefinition'
+ */

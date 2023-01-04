@@ -1,16 +1,13 @@
+const { getTime, copyObject, deleteInvalidPropertyInObject, deleteFilePublic } = require("../../../../utils/function");
 const { createEpisodeSchema } = require("../../../validators/admin/course.schema");
-const Controller = require("../../controller");
+const { default: getVideoDurationInSeconds } = require("get-video-duration");
+const { ObjectValidator } = require("../../../validators/public.validator");
+const { MessageSpecial } = require("../../../../utils/constants");
+const {StatusCodes : HttpStatus} = require("http-status-codes")
 const {CourseModel} = require("../../../../models/course");
 const createHttpError = require("http-errors");
+const Controller = require("../../controller");
 const path = require("path");
-const {StatusCodes : HttpStatus} = require("http-status-codes")
-const { default: getVideoDurationInSeconds } = require("get-video-duration");
-const { getTime, copyObject, deleteInvalidPropertyInObject, deleteFilePublic } = require("../../../../utils/function");
-const { MessageSpecial } = require("../../../../utils/constants");
-const { ObjectValidator } = require("../../../validators/public.validator");
-const { any } = require("@hapi/joi");
-
-
 class EpisodeController extends Controller {
     async addNewEpisode (req, res , next) {
         try {
@@ -90,7 +87,7 @@ class EpisodeController extends Controller {
     }
     async updateOneEpisode (req,res,next) {
         try {
-            const {episodeID} = req.params;
+           const {episodeID} = req.params;
            const episode = await this.getOneEpisodeForUpdate(episodeID)
            const { filename, fileUploadPath } = req.body
            let blackListFields = ["_id"]
@@ -112,7 +109,6 @@ class EpisodeController extends Controller {
                ...episode,
                ...data
            }
-           console.log(newEpisode)
            const editEpisodeResult = await CourseModel.updateOne({
                "chapters.episodes._id": episodeID
            }, {
@@ -140,9 +136,7 @@ class EpisodeController extends Controller {
         array.push(course1)
         let index = 0
         index = array.map(item => item.chapters?.[0]).map(i => i.episodes).map(k => k.findIndex(n => n._id == episodeID))
-        const course2 = await CourseModel.findOne({"chapters.episodes._id": episodeID} , {"chapters.episodes.$" :1})
-        if(!course2) throw new createHttpError.NotFound("Episode not found")
-        const episode = course2?.chapters?.[0]?.episodes?.[index]
+        const episode = course1?.chapters?.[0]?.episodes?.[index]
         if(!episode) throw new createHttpError.NotFound("Episode not found")
         return copyObject(episode)
     }
@@ -155,9 +149,7 @@ class EpisodeController extends Controller {
             array.push(course1)
             let index = 0
             index = array.map(item => item.chapters?.[0]).map(i => i.episodes).map(k => k.findIndex(n => n._id == episodeID))
-            const course2 = await CourseModel.findOne({"chapters.episodes._id": episodeID} , {"chapters.episodes.$" :1})
-            if(!course2) throw new createHttpError.NotFound("Episode not found")
-            const episode = course2?.chapters?.[0]?.episodes?.[index]
+            const episode = course1?.chapters?.[0]?.episodes?.[index]
             if(!episode) throw new createHttpError.NotFound("Episode not found")
             return res.status(HttpStatus.OK).json({
             statusCode : HttpStatus.OK,
@@ -170,7 +162,6 @@ class EpisodeController extends Controller {
             next(error)
         }
     }
-
 }
 
 module.exports = {

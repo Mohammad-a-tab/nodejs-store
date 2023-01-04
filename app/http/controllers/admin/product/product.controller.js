@@ -1,17 +1,19 @@
-const { ProductModel } = require("../../../../models/products");
 const { createProductSchema } = require("../../../validators/admin/product.schema");
-const Controller = require("../../controller");
-const { StatusCodes: HttpStatus } = require("http-status-codes");
-const { deleteFilePublic,
-     ListOfImagesFromRequest,
-      setFeatures, copyObject,
-       deleteInvalidPropertyInObject
-     } = require("../../../../utils/function");
 const { ObjectValidator } = require("../../../validators/public.validator");
-const createHttpError = require("http-errors");
-const { MessageSpecial} = require("../../../../utils/constants");
 const { CategoryModel } = require("../../../../models/categories");
+const { MessageSpecial} = require("../../../../utils/constants");
+const { StatusCodes: HttpStatus } = require("http-status-codes");
+const { ProductModel } = require("../../../../models/products");
+const createHttpError = require("http-errors");
+const Controller = require("../../controller");
 const { any } = require("@hapi/joi");
+const { 
+    deleteFilePublic 
+    , ListOfImagesFromRequest 
+    , setFeatures
+    , copyObject
+    , deleteInvalidPropertyInObject
+} = require("../../../../utils/function");
 const ProductBlackList = {
     BOOKMARKS : "bookmarks",
     DISLIKES : "dislikes",
@@ -112,7 +114,7 @@ class ProductController extends Controller {
                 const {id} = req.params;
                 const products = await this.findProduct(id);
                 deleteFilePublic(products?.images)
-                const deleteResult = await ProductModel.deleteOne({id : id});
+                const deleteResult = await ProductModel.deleteOne({_id : id});
                 if(deleteResult.deletedCount == 0) 
                     throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.INTERNAL_SERVER_ERROR}
                 return res.status(HttpStatus.OK).json({
@@ -160,18 +162,17 @@ class ProductController extends Controller {
                 next(error)
             }
         }
-    async findProduct (productID){
+        async findProduct (productID){
         const {id} = await ObjectValidator.validateAsync({id : productID});
         const product = await ProductModel.findById(id);
         if(!product) throw createHttpError.NotFound("Product not found");
         return product 
-    }
-    async ExistCorrectCategoryID(categoryID){
+        }
+        async ExistCorrectCategoryID(categoryID){
         const category = await CategoryModel.findOne({_id  : categoryID})
         if(!category) throw createHttpError.BadRequest("Category ID is not correct")
         return category
-    }
-    
+        }   
 }
 module.exports =  {
     AdminProductController : new ProductController()

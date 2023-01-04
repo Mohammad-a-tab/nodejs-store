@@ -31,6 +31,7 @@ module.exports = {
         SUCCESSFUL_REMOVE_PRODUCT_MESSAGE : "The product has been removed successfully",
         SUCCESSFUL_REMOVE_CHAPTER_MESSAGE : "The chapter has been removed successfully",
         SUCCESSFUL_REMOVE_EPISODE_MESSAGE : "The Episode has been removed successfully",
+        SUCCESSFUL_REMOVE_COURSE_MESSAGE : "The Course has been removed successfully",
         SUCCESSFUL_REMOVE_ROLE_MESSAGE : "The role has been removed successfully",
         SUCCESSFUL_REMOVE_PERMISSION_MESSAGE : "The permission has been removed successfully",
         SUCCESSFUL_REMOVE_CATEGORY_MESSAGE : "The category with its subsets was removed",

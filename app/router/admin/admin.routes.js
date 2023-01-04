@@ -1,14 +1,14 @@
 const { checkPermission } = require("../../http/middlewares/permission.guard");
+const { AdminApiPermissionRouter } = require("./permission");
 const { PERMISSIONS } = require("../../utils/constants");
-const { AdminApiBlogRouter } = require("./blog");
 const { AdminApiCategoryRouter } = require("./category");
+const { AdminApiProductRouter } = require("./product");
+const { AdminApiEpisodeRouter } = require("./episode");
 const { AdminApiChapterRouter } = require("./chapter");
 const { AdminApiCourseRouter } = require("./course");
-const { AdminApiEpisodeRouter } = require("./episode");
-const { AdminApiPermissionRouter } = require("./permission");
-const { AdminApiProductRouter } = require("./product");
 const { AdminApiRoleRouter } = require("./role");
 const { AdminApiUserRouter } = require("./user");
+const { AdminApiBlogRouter } = require("./blog");
 const router =require("express").Router();
 
 router.use("/category", checkPermission([PERMISSIONS.CONTENT_MANAGER]), 

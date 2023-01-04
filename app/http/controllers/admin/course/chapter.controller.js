@@ -1,11 +1,10 @@
-const { CourseModel } = require("../../../../models/course");
+const { deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
 const { MessageSpecial } = require("../../../../utils/constants");
-const Controller = require("../../controller");
 const { AdminCourseController } = require("./course.controller");
 const {StatusCodes : HttpStatus} = require("http-status-codes");
+const { CourseModel } = require("../../../../models/course");
+const Controller = require("../../controller");
 const createHttpError = require("http-errors");
-const { deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
-
 class ChapterController extends Controller {
     async addChapter (req , res , next) {
         try {
@@ -14,7 +13,8 @@ class ChapterController extends Controller {
             const saveChapterResults = await CourseModel.updateOne({_id : id} , {$push : {
                 chapters : {title , text , episodes : []}
             }});
-            if(saveChapterResults.modifiedCount == 0) throw createHttpError.InternalServerError("Add chapter failed");
+            if(saveChapterResults.modifiedCount == 0) 
+                throw createHttpError.InternalServerError("Add chapter failed");
             return res.status(HttpStatus.CREATED).json({
                 statusCode : HttpStatus.CREATED,
                 data : {

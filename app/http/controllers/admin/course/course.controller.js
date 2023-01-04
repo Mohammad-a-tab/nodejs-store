@@ -1,14 +1,13 @@
-const { CourseModel } = require("../../../../models/course");
-const Controller = require("../../controller");
-const {StatusCodes : HttpStatus} = require("http-status-codes");
-const { createCourseSchema } = require("../../../validators/admin/course.schema");
-const path = require("path");
-const { MessageSpecial } = require("../../../../utils/constants");
-const createHttpError = require("http-errors");
-const { isValidObjectId } = require("mongoose");
 const { deleteInvalidPropertyInObject, copyObject, deleteFilePublic } = require("../../../../utils/function");
+const { createCourseSchema } = require("../../../validators/admin/course.schema");
 const { CategoryModel } = require("../../../../models/categories");
-
+const { MessageSpecial } = require("../../../../utils/constants");
+const {StatusCodes : HttpStatus} = require("http-status-codes");
+const { CourseModel } = require("../../../../models/course");
+const { isValidObjectId } = require("mongoose");
+const Controller = require("../../controller");
+const createHttpError = require("http-errors");
+const path = require("path");
 
 let BLACKLIST = {
     TIME : "time",
@@ -22,6 +21,7 @@ let BLACKLIST = {
     FILE_UPLOAD_PATH : "fileUploadPath",
     FILE_NAME : "filename"
 }
+Object.freeze(BLACKLIST)
 class CourseController extends Controller {
     async getAllCourses (req, res, next) {
         try {
@@ -54,10 +54,21 @@ class CourseController extends Controller {
             const courseDataBody = await createCourseSchema.validateAsync(req.body);
             req.body.image =path.join(courseDataBody.fileUploadPath, courseDataBody.filename)
             req.body.image = req.body.image.replace(/\\/g, "/")
-            let {title , text , short_text , tags , category , price , discount = 0 , type , discountedPrice} = courseDataBody;
+            let {
+                title 
+                , text 
+                , short_text 
+                , tags 
+                , category 
+                , price 
+                , discount = 0 
+                , type 
+                , discountedPrice 
+            } = courseDataBody;
             const image = req.body.image
             const teacher = req.user._id
-            if(Number(price) > 0 && type === "free") throw createHttpError.BadRequest("برای دوره ی رایگان نمیتوان قیمت ثبت کرد")
+            if(Number(price) > 0 && type === "free") 
+                throw createHttpError.BadRequest("برای دوره ی رایگان نمیتوان قیمت ثبت کرد")
             let discountStatus = false
             if(Number(discount) > 0){
                 discountStatus = true
@@ -78,7 +89,8 @@ class CourseController extends Controller {
                 , type,
                 status : "notStarted",
             });
-            if(!courseResult?._id) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_CREATED_COURSE_MESSAGE}
+            if(!courseResult?._id) 
+                throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_CREATED_COURSE_MESSAGE}
             return res.status(HttpStatus.CREATED).json({
                 statusCode : HttpStatus.CREATED,
                 data: {
@@ -143,6 +155,25 @@ class CourseController extends Controller {
             })
         } catch (error) {
             deleteFilePublic(req?.body?.image)
+            next(error)
+        }
+    }
+    async removeCourse (req, res, next) {
+        try {
+            const {CourseID} = req.params;
+            const course = await this.findCourseByID(CourseID);
+            const deleteCourseResult = await CourseModel.deleteOne({_id : CourseID});
+            if(deleteCourseResult.deletedCount == 0) 
+                throw createHttpError.InternalServerError("The course delete Unsuccessfully")
+            deleteFilePublic(course?.image)
+            return res.status(HttpStatus.OK).json({
+                statusCode : HttpStatus.OK,
+                data : {
+                    message : MessageSpecial.SUCCESSFUL_REMOVE_COURSE_MESSAGE
+                }
+            })
+            
+        } catch (error) {
             next(error)
         }
     }

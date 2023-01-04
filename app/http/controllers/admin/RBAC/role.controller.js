@@ -1,12 +1,11 @@
-const { RoleModel } = require("../../../../models/role");
-const Controller = require("../../controller");
-const {StatusCodes : HttpStatus} = require("http-status-codes");
-const { addRoleSchema } = require("../../../validators/admin/RBAC.schema");
-const createHttpError = require("http-errors");
-const { MessageSpecial } = require("../../../../utils/constants");
-const { default: mongoose } = require("mongoose");
 const { copyObject, deleteInvalidPropertyInObject } = require("../../../../utils/function");
-
+const { addRoleSchema } = require("../../../validators/admin/RBAC.schema");
+const { MessageSpecial } = require("../../../../utils/constants");
+const {StatusCodes : HttpStatus} = require("http-status-codes");
+const { RoleModel } = require("../../../../models/role");
+const { default: mongoose } = require("mongoose");
+const Controller = require("../../controller");
+const createHttpError = require("http-errors");
 class RoleController extends Controller {
     async getAllRoles (req,res,next) {
         try {

@@ -1,11 +1,10 @@
-const { PermissionModel } = require("../../../../models/permission");
-const Controller = require("../../controller");
-const {StatusCodes : HttpStatus} = require("http-status-codes");
-const { addPermissionSchema } = require("../../../validators/admin/RBAC.schema");
-const createHttpError = require("http-errors");
-const { MessageSpecial } = require("../../../../utils/constants");
 const { copyObject, deleteInvalidPropertyInObject } = require("../../../../utils/function");
-
+const { addPermissionSchema } = require("../../../validators/admin/RBAC.schema");
+const { PermissionModel } = require("../../../../models/permission");
+const { MessageSpecial } = require("../../../../utils/constants");
+const {StatusCodes : HttpStatus} = require("http-status-codes");
+const createHttpError = require("http-errors");
+const Controller = require("../../controller");
 class PermissionController extends Controller {
     async getAllPermissions (req,res,next) {
         try {
