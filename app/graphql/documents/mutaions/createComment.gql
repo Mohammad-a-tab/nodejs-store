@@ -1,0 +1,31 @@
+mutation {
+  CreateCommentForBlog(
+    comment: "hello",
+    blogID: "63d2981a5bfb72bea1ab0e5e",
+    parent: "63d2984c5bfb72bea1ab0e"
+  ){
+    statusCode
+    data
+  }
+}
+mutation {
+  CreateCommentForProduct(
+    comment: "hello product2",
+    productID: "63b607f032b5fef6bb3c2723",
+    parent: "63d3cc4d602cead68c81e478"
+    
+  ){
+    statusCode
+    data
+  }
+}
+mutation {
+  CreateCommentForCourse(
+    comment: "hello Course1",
+    courseID: "6391165a78f70a12a485ab7a",
+    parent: "63d3bdbff7c5622f1ae1a035"
+  ){
+    statusCode
+    data
+  }
+}

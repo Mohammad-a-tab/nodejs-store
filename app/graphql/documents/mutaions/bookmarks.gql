@@ -1,0 +1,18 @@
+mutation{
+  BookmarkProduct(productID: "63b607f032b5fef6bb3c2723"),{
+    statusCode
+    data
+  }
+}
+mutation{
+  BookmarkCourse(CourseID: "6391165a78f70a12a485ab7a"),{
+    statusCode
+    data
+  }
+}
+mutation{
+  BookmarkBlog(blogID: "63d2981a5bfb72bea1ab0e5e"),{
+    statusCode
+    data
+  }
+}
