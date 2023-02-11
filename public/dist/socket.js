@@ -24,7 +24,7 @@ function initNameSpaceConnection(endpoint) {
                 roomsElement.appendChild(html)
             }
             const roomNodes = document.querySelectorAll("ul li.contact")
-            // const room = document.querySelector("#roomName h3")
+            const room = document.querySelector("#roomName h3")
             for (const room of roomNodes) {
                 room.addEventListener("click", () => {
                     
