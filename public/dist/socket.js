@@ -23,6 +23,16 @@ function initNameSpaceConnection(endpoint) {
                  </li>`)
                 roomsElement.appendChild(html)
             }
+            const roomNodes = document.querySelectorAll("ul li.contact")
+            // const room = document.querySelector("#roomName h3")
+            for (const room of roomNodes) {
+                room.addEventListener("click", () => {
+                    
+                    const des = room.querySelector(".preview").textContent;
+                    document.getElementById("roomName").innerText = des
+                    document.getElementById("roomName").classList.add("h3")
+                })
+            }
         })
     })
 }

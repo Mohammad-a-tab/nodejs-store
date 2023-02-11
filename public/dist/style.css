@@ -371,6 +371,10 @@
       padding-right: 10px;
       text-align: right;
     }
+    .h3{
+      color:rgb(245, 247, 249) !important;
+      font-size: medium;
+    }
     #onlineCount strong{
       padding-right: 10px;
       
