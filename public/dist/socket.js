@@ -1,11 +1,12 @@
 const socket = io("http://localhost:5000");
+let nameSpaceSocket;
 function stringTOHTML(str) {
     const parser = new DOMParser()
     const doc = parser.parseFromString(str, "text/html")
     return doc.body.firstChild
 }
 function initNameSpaceConnection(endpoint) {
-    const nameSpaceSocket = io(`http://localhost:5000/${endpoint}`);
+    nameSpaceSocket = io(`http://localhost:5000/${endpoint}`);
     nameSpaceSocket.on("connect", () => {
         nameSpaceSocket.on("roomList", rooms => {
             const roomsElement = document.querySelector("#contacts ul");
@@ -34,6 +35,9 @@ function initNameSpaceConnection(endpoint) {
             }
         })
     })
+}
+function getRoomInfo(endpoint, roomName) {
+
 }
 socket.on("connect", () => {
     socket.on("nameSpaceList", nameSpacesList => {
