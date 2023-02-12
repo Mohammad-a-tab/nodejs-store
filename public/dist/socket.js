@@ -9,6 +9,7 @@ function initNameSpaceConnection(endpoint) {
     nameSpaceSocket = io(`http://localhost:5000/${endpoint}`);
     nameSpaceSocket.on("connect", () => {
         nameSpaceSocket.on("roomList", rooms => {
+            getRoomInfo(rooms[0]?.name)
             const roomsElement = document.querySelector("#contacts ul");
             roomsElement.innerHTML = ""
             for (const room of rooms) {
@@ -36,11 +37,16 @@ function initNameSpaceConnection(endpoint) {
 }
 function getRoomInfo(roomName) {
     nameSpaceSocket.emit("joinRoom", roomName)
+    nameSpaceSocket.off("roomInfo")
+    nameSpaceSocket.on("roomInfo", roomInfo => {
+        document.querySelector("#roomName h3").innerText = roomInfo.description
+    })
 }
 socket.on("connect", () => {
     socket.on("nameSpaceList", nameSpacesList => {
         const nameSpaceElement = document.getElementById("namespaces");
         nameSpaceElement.innerHTML = ""
+        initNameSpaceConnection(nameSpacesList[0].endpoint)
         for (const nameSpace of nameSpacesList) {
             const li = document.createElement("li");
             const p = document.createElement("p");

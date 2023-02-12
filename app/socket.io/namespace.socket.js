@@ -34,7 +34,8 @@ module. exports = class NameSpaceSocketHandler {
                         socket.leave(lastRoom)
                     }
                     socket.join(roomName);
-                    console.log(socket.rooms);
+                    const roomInfo = conversation.rooms.find(item => item.name == roomName)
+                    socket.emit("roomInfo", roomInfo)
                 })
             })
         }
