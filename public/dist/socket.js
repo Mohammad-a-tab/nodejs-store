@@ -13,7 +13,7 @@ function initNameSpaceConnection(endpoint) {
             roomsElement.innerHTML = ""
             for (const room of rooms) {
                 const html = stringTOHTML(`
-                <li class="contact">
+                <li class="contact" roomName = "${room.name}">
                     <div class="wrap">
                         <img src="${room.image}" height="40"/>
                         <div class="meta">
@@ -27,17 +27,15 @@ function initNameSpaceConnection(endpoint) {
             const roomNodes = document.querySelectorAll("ul li.contact")
             for (const room of roomNodes) {
                 room.addEventListener("click", () => {
-                    
-                    const des = room.querySelector(".preview").textContent;
-                    document.getElementById("roomName").innerText = des
-                    document.getElementById("roomName").classList.add("h3")
+                    const roomName = room.getAttribute("roomName");
+                    getRoomInfo(roomName)
                 })
             }
         })
     })
 }
-function getRoomInfo(room) {
-    room.emit("joinRoom", room)
+function getRoomInfo(roomName) {
+    nameSpaceSocket.emit("joinRoom", roomName)
 }
 socket.on("connect", () => {
     socket.on("nameSpaceList", nameSpacesList => {

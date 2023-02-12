@@ -29,7 +29,7 @@ module. exports = class NameSpaceSocketHandler {
                 }).sort({_id : -1});
                 socket.emit("roomList", conversation.rooms)
                 socket.on("joinRoom", async roomName => {
-                    
+                    console.log(roomName);
                 })
             })
         }
