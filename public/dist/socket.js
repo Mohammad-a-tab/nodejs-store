@@ -6,6 +6,7 @@ function stringTOHTML(str) {
     return doc.body.firstChild
 }
 function initNameSpaceConnection(endpoint) {
+    if (nameSpaceSocket) nameSpaceSocket.close();
     nameSpaceSocket = io(`http://localhost:5000/${endpoint}`);
     nameSpaceSocket.on("connect", () => {
         nameSpaceSocket.on("roomList", rooms => {
@@ -68,4 +69,16 @@ socket.on("connect", () => {
         }
     });
 
-})
+});
+function sendMessage (){
+    let message = document.querySelector(".message-input input#messageInput").value;
+    if(message.trim() == ""){
+        return alert("Input message can not be empty")
+    }
+    nameSpaceSocket.emit("newMessage", {
+        message
+    });
+    nameSpaceSocket.on("confirmMessage", data => {
+        console.log(data);
+    })
+}
