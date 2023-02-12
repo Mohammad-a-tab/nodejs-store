@@ -113,6 +113,14 @@ module.exports = class Application {
     }
     initClientSession() {
         this.#app.use(cookieParser(COOKIE_PARSER_SECRET_KEY));
+        this.#app.use(session({
+            secret: COOKIE_PARSER_SECRET_KEY,
+            resave: true,
+            saveUninitialized: true,
+            cookie: {
+                secure: true
+            }
+        }))
     }
     initRedis(){
         require("./utils/initRedis")
