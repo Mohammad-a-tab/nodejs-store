@@ -1,16 +1,19 @@
+const { COOKIE_PARSER_SECRET_KEY } = require("./utils/constants");
 const ExpressEjsLayouts = require("express-ejs-layouts");
 const { initialSocket } = require("./utils/initSocket");
+const { socketHandler } = require("./socket.io/index");
 const { clientHelper } = require("./utils/client");
 const { default: mongoose } = require("mongoose");
 const { AllRoutes } = require("./router/router");
 const swaggerUI = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
 const createError = require("http-errors");
 const express = require("express");
 const morgan = require("morgan");
 const path = require("path");
 const cors =require("cors");
-const { socketHandler } = require("./socket.io/index");
 require("dotenv").config();
 
 const options = {
@@ -107,6 +110,9 @@ module.exports = class Application {
             process.exit();
         })
 
+    }
+    initClientSession() {
+        this.#app.use(cookieParser(COOKIE_PARSER_SECRET_KEY));
     }
     initRedis(){
         require("./utils/initRedis")

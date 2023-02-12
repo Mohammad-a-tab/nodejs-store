@@ -12,19 +12,22 @@ class SupportController extends Controller {
     }
     loginForm (req, res, next) {
         try {
-            return res.render("login.ejs")
+            return res.render("login.ejs", {
+                error : undefined
+            })
         } catch (error) {
             next(error)
         }
     }
-    async login (req, res, next) {
+    async login(req, res, next) {
         try {
             const {mobile} = req.body;
             const user = await UserModel.findOne({mobile});
-            if(user) return res.render("login.ejs", {
+            if(!user) return res.render("login.ejs", {
                 error : "Username is not correct"
             })
-            SignAccessToken(user._id)
+            const token = await SignAccessToken(user._id)
+            return res.json(token)
         } catch (error) {
             next(error)
         }
