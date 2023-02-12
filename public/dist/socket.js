@@ -36,8 +36,8 @@ function initNameSpaceConnection(endpoint) {
         })
     })
 }
-function getRoomInfo(endpoint, roomName) {
-
+function getRoomInfo(room) {
+    room.emit("joinRoom", room)
 }
 socket.on("connect", () => {
     socket.on("nameSpaceList", nameSpacesList => {

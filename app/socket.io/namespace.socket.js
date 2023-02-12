@@ -28,6 +28,9 @@ module. exports = class NameSpaceSocketHandler {
                     rooms : 1
                 }).sort({_id : -1});
                 socket.emit("roomList", conversation.rooms)
+                socket.on("joinRoom", async roomName => {
+                    
+                })
             })
         }
     }
