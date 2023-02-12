@@ -40,6 +40,9 @@ function getRoomInfo(roomName) {
     nameSpaceSocket.off("roomInfo")
     nameSpaceSocket.on("roomInfo", roomInfo => {
         document.querySelector("#roomName h3").innerText = roomInfo.description
+    });
+    nameSpaceSocket.on("countOfOnlineUsers", count => {
+        document.getElementById("onlineCount").innerHTML = count
     })
 }
 socket.on("connect", () => {
