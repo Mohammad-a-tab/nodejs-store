@@ -1,5 +1,4 @@
 const { ConversationModel } = require("../models/conversation");
-
 module. exports = class NameSpaceSocketHandler {
     #io;
     constructor(io){
@@ -38,6 +37,7 @@ module. exports = class NameSpaceSocketHandler {
                     await this.getCountOfOnlineUsers(nameSpace.endpoint, roomName)
                     const roomInfo = conversation.rooms.find(item => item.name == roomName)
                     socket.emit("roomInfo", roomInfo);
+                    this.getNewMessage(socket)
                     socket.on("disconnect", async () => {
                         await this.getCountOfOnlineUsers(nameSpace.endpoint, roomName)
                     })
@@ -48,5 +48,20 @@ module. exports = class NameSpaceSocketHandler {
     async getCountOfOnlineUsers(endpoint, roomName) {
         const onlineUsers = await this.#io.of(`/${endpoint}`).in(roomName).allSockets()
         this.#io.of(`/${endpoint}`).in(roomName).emit("countOfOnlineUsers", Array.from(onlineUsers).length)
+    }
+    getNewMessage(socket) {
+        socket.on("newMessage", async data => {
+            const {message, roomName, endpoint, sender} = data;
+            await ConversationModel.updateOne({endpoint, "rooms.name" : roomName}, {
+                $push : {
+                  "rooms.$.messages" : {
+                        message,
+                        sender : "636ab4a0bf1a099aca67c3b2",
+                        dateTime : Date.now()
+
+                  }
+                }
+            })
+        })
     }
 }

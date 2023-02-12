@@ -10,7 +10,7 @@ function initNameSpaceConnection(endpoint) {
     nameSpaceSocket = io(`http://localhost:5000/${endpoint}`);
     nameSpaceSocket.on("connect", () => {
         nameSpaceSocket.on("roomList", rooms => {
-            getRoomInfo(rooms[0]?.name)
+            getRoomInfo(endpoint, rooms[0]?.name)
             const roomsElement = document.querySelector("#contacts ul");
             roomsElement.innerHTML = ""
             for (const room of rooms) {
@@ -30,13 +30,15 @@ function initNameSpaceConnection(endpoint) {
             for (const room of roomNodes) {
                 room.addEventListener("click", () => {
                     const roomName = room.getAttribute("roomName");
-                    getRoomInfo(roomName)
+                    getRoomInfo(endpoint, roomName)
                 })
             }
         })
     })
 }
-function getRoomInfo(roomName) {
+function getRoomInfo(endpoint, roomName) {
+    document.querySelector("#roomName h3").setAttribute("roomName", roomName)
+    document.querySelector("#roomName h3").setAttribute("endpoint", endpoint)
     nameSpaceSocket.emit("joinRoom", roomName)
     nameSpaceSocket.off("roomInfo")
     nameSpaceSocket.on("roomInfo", roomInfo => {
@@ -45,6 +47,34 @@ function getRoomInfo(roomName) {
     nameSpaceSocket.on("countOfOnlineUsers", count => {
         document.getElementById("onlineCount").innerHTML = count
     })
+}
+function sendMessage (){
+    const roomName = document.querySelector("#roomName h3").getAttribute("roomName")
+    const endpoint = document.querySelector("#roomName h3").getAttribute("endpoint")
+    let message = document.querySelector(".message-input input#messageInput").value;
+    if(message.trim() == ""){
+        return alert("Input message can not be empty")
+    }
+    nameSpaceSocket.emit("newMessage", {
+        message,
+        roomName,
+        endpoint,
+        // sender
+    });
+    nameSpaceSocket.on("confirmMessage", data => {
+        console.log(data);
+    })
+    const li = stringTOHTML(`
+        <li class="sent">
+            <img class="css-shadow" src="https://avatars.githubusercontent.com/u/116511190?v=4"
+            alt="" />
+            <p>${message}</p>
+        </li>
+    `)
+    document.querySelector(".messages ul").appendChild(li);
+    document.querySelector(".message-input input#messageInput").value = ""
+    const messageElement = document.querySelector("div.messages");
+    messageElement.scrollTo(0, messageElement.scrollHeight);
 }
 socket.on("connect", () => {
     socket.on("nameSpaceList", nameSpacesList => {
@@ -68,17 +98,12 @@ socket.on("connect", () => {
             })
         }
     });
-
-});
-function sendMessage (){
-    let message = document.querySelector(".message-input input#messageInput").value;
-    if(message.trim() == ""){
-        return alert("Input message can not be empty")
-    }
-    nameSpaceSocket.emit("newMessage", {
-        message
+    window.addEventListener("keydown", (e) => {
+        if(e.code == "Enter"){
+            sendMessage()
+        }
     });
-    nameSpaceSocket.on("confirmMessage", data => {
-        console.log(data);
+    document.querySelector("button.submit").addEventListener("click", () => {
+        sendMessage()
     })
-}
+});
