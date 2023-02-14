@@ -29,7 +29,7 @@ class SupportController extends Controller {
             const token = await SignAccessToken(user._id);
             user.token = token;
             user.save();
-            res.cookie("authorization", token, {signed: true, httpOnly: true, expires: new Date(Date.now() + 1000*60*60*1)})
+            res.cookie("authorization", token, {signed: true, httpOnly: true, expires: new Date(Date.now() + 1000*60*60*24*1)})
             return res.redirect("/support")
         } catch (error) {
             next(error)

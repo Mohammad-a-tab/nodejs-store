@@ -17,6 +17,22 @@ async function checkLogin (req, res, next) {
         next(error)
     }
 }
+async function checkAccessLogin (req, res, next) {
+    try {
+        const token = req.signedCookies["authorization"]
+        if(token){
+            const user = await UserModel.findOne({token})
+            if(user){
+                req.user = user
+                return res.redirect("/support")
+            }
+        }
+        return next()
+    } catch (error) {
+        next(error)
+    }
+}
 module.exports = {
-    checkLogin
+    checkLogin,
+    checkAccessLogin
 }
