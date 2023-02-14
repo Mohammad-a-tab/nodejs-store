@@ -52,16 +52,18 @@ module. exports = class NameSpaceSocketHandler {
     getNewMessage(socket) {
         socket.on("newMessage", async data => {
             const {message, roomName, endpoint, sender} = data;
+            console.log(message);
             await ConversationModel.updateOne({endpoint, "rooms.name" : roomName}, {
                 $push : {
                   "rooms.$.messages" : {
-                        message,
                         sender,
+                        message,
                         dateTime : Date.now()
 
                   }
                 }
-            })
+            });
+            this.#io.of(`/${endpoint}`).in(roomName).emit("confirmMessage", data)
         })
     }
 }

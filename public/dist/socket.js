@@ -42,8 +42,23 @@ function getRoomInfo(endpoint, roomName) {
     nameSpaceSocket.emit("joinRoom", roomName)
     nameSpaceSocket.off("roomInfo")
     nameSpaceSocket.on("roomInfo", roomInfo => {
+        document.querySelector(".messages ul").innerHTML = ""
         document.querySelector("#roomName h3").innerText = roomInfo.description
-    });
+        const messages = roomInfo.messages;
+        // const locations = roomInfo.locations;
+        // const data = [...messages, ...locations].sort((con1, con2) => con1.dateTime - con2.dateTime)
+        const userID = document.getElementById("userID").value;
+        for (const message of messages) {
+            const li = stringTOHTML(`
+                <li class="${(userID == message.sender)? 'sent' : 'replies'}">
+                    <img src="https://avatars.githubusercontent.com/u/116511190?v=4"
+                        alt="" />
+                    <p>${message.message}</p>
+                </li>   
+            `)
+            document.querySelector(".messages ul").appendChild(li)
+        }
+    })
     nameSpaceSocket.on("countOfOnlineUsers", count => {
         document.getElementById("onlineCount").innerHTML = count
     })
@@ -53,7 +68,7 @@ function sendMessage (){
     const endpoint = document.querySelector("#roomName h3").getAttribute("endpoint")
     let message = document.querySelector(".message-input input#messageInput").value;
     if(message.trim() == ""){
-        return alert("Input message can not be empty")
+        return alert("input message can not be empty")
     }
     const userID = document.getElementById("userID").value;
     nameSpaceSocket.emit("newMessage", {
@@ -61,21 +76,21 @@ function sendMessage (){
         roomName,
         endpoint,
         sender: userID
-    });
-    nameSpaceSocket.on("confirmMessage", data => {
-        console.log(data);
     })
-    const li = stringTOHTML(`
-        <li class="sent">
-            <img class="css-shadow" src="https://avatars.githubusercontent.com/u/116511190?v=4"
-            alt="" />
-            <p>${message}</p>
-        </li>
-    `)
-    document.querySelector(".messages ul").appendChild(li);
-    document.querySelector(".message-input input#messageInput").value = ""
-    const messageElement = document.querySelector("div.messages");
-    messageElement.scrollTo(0, messageElement.scrollHeight);
+    nameSpaceSocket.off("confirmMessage")
+    nameSpaceSocket.on("confirmMessage", data => {
+        const li = stringTOHTML(`
+                <li class="${(userID == data.sender)? 'sent' : 'replies'}">
+                    <img class="css-shadow" src="https://avatars.githubusercontent.com/u/116511190?v=4"
+                        alt="" />
+                    <p>${data.message}</p>
+                </li>   
+        `)
+        document.querySelector(".messages ul").appendChild(li)
+        document.querySelector(".message-input input#messageInput").value = ""
+        const messagesElement = document.querySelector("div.messages");
+        messagesElement.scrollTo(0, messagesElement.scrollHeight);
+    })
 }
 socket.on("connect", () => {
     socket.on("nameSpaceList", nameSpacesList => {
