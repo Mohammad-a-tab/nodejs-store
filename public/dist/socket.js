@@ -55,11 +55,12 @@ function sendMessage (){
     if(message.trim() == ""){
         return alert("Input message can not be empty")
     }
+    const userID = document.getElementById("userID").value;
     nameSpaceSocket.emit("newMessage", {
         message,
         roomName,
         endpoint,
-        // sender
+        sender: userID
     });
     nameSpaceSocket.on("confirmMessage", data => {
         console.log(data);

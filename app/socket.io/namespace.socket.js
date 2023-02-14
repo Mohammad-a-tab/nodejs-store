@@ -56,7 +56,7 @@ module. exports = class NameSpaceSocketHandler {
                 $push : {
                   "rooms.$.messages" : {
                         message,
-                        sender : "636ab4a0bf1a099aca67c3b2",
+                        sender,
                         dateTime : Date.now()
 
                   }

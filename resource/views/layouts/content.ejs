@@ -2,7 +2,14 @@
     <div class="contact-profile">
         <img class="css-shadow" src="https://avatars.githubusercontent.com/u/116511190?v=4"
         alt="" />
-        <p>Mohammad Aali</p>
+        <%if(req.user.first_name && req.user.last_name){%>
+            <p><%=req.user.first_name+" "+ req.user.last_name%></p>
+        <%}else if(req.user.username){%>
+            <p><%=req.user.username%></p>
+        <%}else{%>
+            <p><%=req.user.mobile%></p>
+        <%}%>
+        <input type="hidden" id="userID" value="<%=req.user._id%>">
         <div class="social-media">
             <span id="onlinesCount"><strong>افراد آنلاین :</strong><span id="onlineCount"></span></span>
         </div>

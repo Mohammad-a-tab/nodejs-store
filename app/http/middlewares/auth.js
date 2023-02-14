@@ -4,7 +4,7 @@ async function checkLogin (req, res, next) {
     try {
         const token = req.signedCookies["authorization"]
         if(token){
-            const user = await UserModel.findOne({token})
+            const user = await UserModel.findOne({token}, {username: 1, email: 1, first_name: 1, last_name: 1, mobile: 1, token: 1})
             if(user){
                 req.user = user
                 return next()
@@ -21,7 +21,7 @@ async function checkAccessLogin (req, res, next) {
     try {
         const token = req.signedCookies["authorization"]
         if(token){
-            const user = await UserModel.findOne({token})
+            const user = await UserModel.findOne({token}, {username: 1, email: 1, first_name: 1, last_name: 1, mobile: 1, token: 1})
             if(user){
                 req.user = user
                 return res.redirect("/support")
