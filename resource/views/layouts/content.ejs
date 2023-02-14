@@ -1,7 +1,7 @@
 <div class="content">
     <div class="contact-profile">
         <img class="css-shadow" src="https://avatars.githubusercontent.com/u/116511190?v=4"
-        alt="" />
+            alt="" />
         <%if(req.user.first_name && req.user.last_name){%>
             <p><%=req.user.first_name+" "+ req.user.last_name%></p>
         <%}else if(req.user.username){%>
@@ -10,32 +10,36 @@
             <p><%=req.user.mobile%></p>
         <%}%>
         <input type="hidden" id="userID" value="<%=req.user._id%>">
-        <div class="social-media">
-            <span id="onlinesCount"><strong>افراد آنلاین :</strong><span id="onlineCount"></span></span>
-        </div>
+                    <div class="social-media">
+                        <span id="onlinesCount"><strong>افراد آنلاین : </strong><span id="onlineCount">-</span></span>
+                    </div>
     </div>
     <div id="roomName">
         <h3></h3>
     </div>
-    <div class="messages">
-        <ul>
+    <div class="messages pb-5">
+        <ul style="padding-bottom: 50px;">
             <li class="sent">
-                <img class="css-shadow" src="https://avatars.githubusercontent.com/u/116511190?v=4"
-                alt="" />
-                <p>salam dostan haleton chetore? az design in site khosheton maiad</p>
-
+                <img src="https://media-exp1.licdn.com/dms/image/C5603AQE3g9gHNfxGrQ/profile-displayphoto-shrink_200_200/0/1645507738281?e=1659571200&v=beta&t=wtwELdT1gp6ICp3UigC2EgutGAQgDP2sZKUx0mjCTwI"
+                    alt="" />
+                <p>salam dostan haleton chetore ? az course nodejs razi hastin?</p>
             </li>
             <li class="replies">
-                <img class="css-shadow" src="http://emilcarlsson.se/assets/harveyspecter.png" alt="">
-                <p>salam are baba</p>
+                <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+                <p>salam are babab khialet rahat</p>
             </li>
         </ul>
     </div>
     <div class="message-input">
         <div class="wrap">
-            <input type="text" id="messageInput" placeholder="Write your message...">
-            <i class="fa fa-paperclip attachment" aria-hidden="=true"></i>
-            <button class="submit">send</i></button>
+            <input type="text" id="messageInput" placeholder="Write your message..." />
+            <!-- <input type="file" onchange="sendFile(this.files)"/> -->
+            <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+            <div>
+                <button class="submit">send</i></button>
+                <!-- <button class="location" onclick="getLocation()">location</i></button> -->
+            </div>
+
         </div>
     </div>
 </div>

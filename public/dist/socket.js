@@ -1,57 +1,59 @@
 const socket = io("http://localhost:5000");
-let nameSpaceSocket;
-function stringTOHTML(str) {
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(str, "text/html")
+let namespaceSocket;
+
+function stringToHTML(str) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(str, "text/html");
     return doc.body.firstChild
 }
-function initNameSpaceConnection(endpoint) {
-    if (nameSpaceSocket) nameSpaceSocket.close();
-    nameSpaceSocket = io(`http://localhost:5000/${endpoint}`);
-    nameSpaceSocket.on("connect", () => {
-        nameSpaceSocket.on("roomList", rooms => {
+function initNamespaceConnection(endpoint) {
+    if (namespaceSocket) namespaceSocket.close();
+    namespaceSocket = io(`http://localhost:5000/${endpoint}`)
+    namespaceSocket.on("connect", () => {
+        namespaceSocket.on("roomList", rooms => {
             getRoomInfo(endpoint, rooms[0]?.name)
-            const roomsElement = document.querySelector("#contacts ul");
+            const roomsElement = document.querySelector("#contacts ul")
             roomsElement.innerHTML = ""
             for (const room of rooms) {
-                const html = stringTOHTML(`
-                <li class="contact" roomName = "${room.name}">
+                const html = stringToHTML(`
+                <li class="contact" roomName="${room.name}">
                     <div class="wrap">
                         <img src="${room.image}" height="40"/>
                         <div class="meta">
                             <p class="name">${room.name}</p>
-                            <p class="preview">${room.description}</p>
+                            <p class="preview" >${room.description}</p>
                         </div>
                     </div>
-                 </li>`)
+                </li>`)
                 roomsElement.appendChild(html)
             }
-            const roomNodes = document.querySelectorAll("ul li.contact")
+            const roomNodes = document.querySelectorAll("ul li.contact");
             for (const room of roomNodes) {
-                room.addEventListener("click", () => {
-                    const roomName = room.getAttribute("roomName");
-                    getRoomInfo(endpoint, roomName)
+                room.addEventListener("click", function(){
+                    const roomName = this.getAttribute("roomName");
+                    getRoomInfo(endpoint, roomName);
                 })
             }
         })
     })
 }
+
 function getRoomInfo(endpoint, roomName) {
     document.querySelector("#roomName h3").setAttribute("roomName", roomName)
     document.querySelector("#roomName h3").setAttribute("endpoint", endpoint)
-    nameSpaceSocket.emit("joinRoom", roomName)
-    nameSpaceSocket.off("roomInfo")
-    nameSpaceSocket.on("roomInfo", roomInfo => {
+    namespaceSocket.emit("joinRoom", roomName)
+    namespaceSocket.off("roomInfo")
+    namespaceSocket.on("roomInfo", roomInfo => {
         document.querySelector(".messages ul").innerHTML = ""
         document.querySelector("#roomName h3").innerText = roomInfo.description
         const messages = roomInfo.messages;
-        // const locations = roomInfo.locations;
-        // const data = [...messages, ...locations].sort((con1, con2) => con1.dateTime - con2.dateTime)
+        const locations = roomInfo.locations;
+        const data = [...messages, ...locations].sort((con1, con2) => con1.dateTime - con2.dateTime)
         const userID = document.getElementById("userID").value;
         for (const message of messages) {
-            const li = stringTOHTML(`
+            const li = stringToHTML(`
                 <li class="${(userID == message.sender)? 'sent' : 'replies'}">
-                    <img src="https://avatars.githubusercontent.com/u/116511190?v=4"
+                    <img class="css-shadow" src="https://avatars.githubusercontent.com/u/116511190?v=4"
                         alt="" />
                     <p>${message.message}</p>
                 </li>   
@@ -59,11 +61,12 @@ function getRoomInfo(endpoint, roomName) {
             document.querySelector(".messages ul").appendChild(li)
         }
     })
-    nameSpaceSocket.on("countOfOnlineUsers", count => {
+    namespaceSocket.on("countOfOnlineUsers", count => {
         document.getElementById("onlineCount").innerHTML = count
     })
 }
-function sendMessage (){
+
+function sendMessage(){
     const roomName = document.querySelector("#roomName h3").getAttribute("roomName")
     const endpoint = document.querySelector("#roomName h3").getAttribute("endpoint")
     let message = document.querySelector(".message-input input#messageInput").value;
@@ -71,15 +74,15 @@ function sendMessage (){
         return alert("input message can not be empty")
     }
     const userID = document.getElementById("userID").value;
-    nameSpaceSocket.emit("newMessage", {
+    namespaceSocket.emit("newMessage", {
         message,
         roomName,
         endpoint,
         sender: userID
     })
-    nameSpaceSocket.off("confirmMessage")
-    nameSpaceSocket.on("confirmMessage", data => {
-        const li = stringTOHTML(`
+    namespaceSocket.off("confirmMessage")
+    namespaceSocket.on("confirmMessage", data => {
+        const li = stringToHTML(`
                 <li class="${(userID == data.sender)? 'sent' : 'replies'}">
                     <img class="css-shadow" src="https://avatars.githubusercontent.com/u/116511190?v=4"
                         alt="" />
@@ -92,34 +95,34 @@ function sendMessage (){
         messagesElement.scrollTo(0, messagesElement.scrollHeight);
     })
 }
-socket.on("connect", () => {
-    socket.on("nameSpaceList", nameSpacesList => {
-        const nameSpaceElement = document.getElementById("namespaces");
-        nameSpaceElement.innerHTML = ""
-        initNameSpaceConnection(nameSpacesList[0].endpoint)
-        for (const nameSpace of nameSpacesList) {
-            const li = document.createElement("li");
-            const p = document.createElement("p");
+socket.on("connect", async () => {
+    socket.on("namespacesList", namespacesList => {
+        const namespacesElement = document.getElementById("namespaces");
+        namespacesElement.innerHTML = ""
+        initNamespaceConnection(namespacesList[0].endpoint)
+        for (const namespace of namespacesList) {
+            const li = document.createElement("li")
+            const p = document.createElement("p")
             p.setAttribute("class", "namespaceTitle")
-            p.setAttribute("endpoint", nameSpace.endpoint)
-            p.innerText = nameSpace.title;
+            p.setAttribute("endpoint", namespace.endpoint)
+            p.innerText = namespace.title;
             li.appendChild(p)
-            nameSpaceElement.appendChild(li);
+            namespacesElement.appendChild(li)
         }
-        const nameSpaceNodes = document.querySelectorAll("#namespaces li p.namespaceTitle");
-        for (const nameSpace of nameSpaceNodes) {
-            nameSpace.addEventListener("click", () => {
-                const endpoint = nameSpace.getAttribute("endpoint")
-                initNameSpaceConnection(endpoint)
+        const namespaceNodes = document.querySelectorAll("#namespaces li p.namespaceTitle");
+        for (const namespace of namespaceNodes) {
+            namespace.addEventListener("click", () => {
+                const endpoint = namespace.getAttribute("endpoint");
+                initNamespaceConnection(endpoint)
             })
         }
-    });
+    })
     window.addEventListener("keydown", (e) => {
-        if(e.code == "Enter"){
-            sendMessage()
+        if(e.code === "Enter"){
+            sendMessage();
         }
-    });
+    })
     document.querySelector("button.submit").addEventListener("click", () => {
         sendMessage()
     })
-});
+})
