@@ -26,8 +26,11 @@ class SupportController extends Controller {
             if(!user) return res.render("login.ejs", {
                 error : "Username is not correct"
             })
-            const token = await SignAccessToken(user._id)
-            return res.json(token)
+            const token = await SignAccessToken(user._id);
+            user.token = token;
+            user.save();
+            res.cookie("authorization", token, {signed: true, httpOnly: true, expires: new Date(Date.now() + 1000*60*60*1)})
+            return res.redirect("/support")
         } catch (error) {
             next(error)
         }

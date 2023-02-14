@@ -22,6 +22,7 @@ const UserSchema = new mongoose.Schema({
     discount : {type : Number, default : 0},
     birthday : {type : String},
     Role : {type : String, default : "USER"},
+    token : {type : String, default: ""},
     Courses : {type: [mongoose.Types.ObjectId], ref : "course", default : []},
     Products : {type: [mongoose.Types.ObjectId], ref : "product", default : []},
     basket: {type: BasketSchema},

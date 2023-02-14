@@ -35,6 +35,7 @@ module.exports = class Application {
         this.#PORT = PORT;
         this.#DB_URI = DB_URL;
         this.configApplication();
+        this.initClientSession();
         this.initTemplateEngine();
         this.initRedis();
         this.connectTOMongoDB();
