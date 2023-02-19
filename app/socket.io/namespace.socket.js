@@ -44,7 +44,7 @@ module.exports = class NamespaceSocketHandler {
                     socket.emit("roomInfo", roomInfo)
                     this.getNewMessage(socket)
                     this.getNewLocation(socket)
-                    // this.uploadFiles(socket)
+                    this.uploadFiles(socket)
                     socket.on("disconnect", async () => {
                         await this.getCountOfOnlineUsers(namespace.endpoint, roomName)
                     })
@@ -89,20 +89,12 @@ module.exports = class NamespaceSocketHandler {
             this.#io.of(`/${endpoint}`).in(roomName).emit("confirmLocation", data)
         })
     }
-    // uploadFiles(socket){
-    //     socket.on("upload", ({file, filename}, callback) => {
-    //         const ext = path.extname(filename)
-    //         fs.writeFile("public/uploads/sockets/" + String(Date.now() + ext) , file, (err) => {
-    //           callback({ message: err ? "failure" : "success" });
-    //         });
-    //     });
-    // }
-    // extractValue(arr, key) {
-    //     let newArr = []
-    //     return arr.reduce(function(accum, nextVal) {
-    //       if(nextVal !== key)
-    //         newArr.push(accum[key] + ', '+ nextVal[key])
-    //         return newArr
-    //     })
-    //   }
+    uploadFiles(socket){
+        socket.on("upload", ({file, filename}, callback) => {
+            const ext = path.extname(filename)
+            fs.writeFile("public/uploads/sockets/" + String(Date.now() + ext) , file, (err) => {
+              callback({ message: err ? "failure" : "success" });
+            });
+        });
+    }
 }
