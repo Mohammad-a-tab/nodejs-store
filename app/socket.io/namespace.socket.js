@@ -43,7 +43,7 @@ module.exports = class NamespaceSocketHandler {
                     const roomInfo = conversation.rooms.find(item => item.name == roomName)
                     socket.emit("roomInfo", roomInfo)
                     this.getNewMessage(socket)
-                    // this.getNewLocation(socket)
+                    this.getNewLocation(socket)
                     // this.uploadFiles(socket)
                     socket.on("disconnect", async () => {
                         await this.getCountOfOnlineUsers(namespace.endpoint, roomName)
@@ -74,21 +74,21 @@ module.exports = class NamespaceSocketHandler {
             this.#io.of(`/${endpoint}`).in(roomName).emit("confirmMessage", data)
         })
     }
-    // getNewLocation(socket){
-    //     socket.on("newLocation", async data => {
-    //         const {location, roomName, endpoint, sender} = data
-    //         await ConversationModel.updateOne({endpoint, "rooms.name": roomName}, {
-    //             $push : {
-    //                 "rooms.$.locations" : {
-    //                     sender,
-    //                     location, 
-    //                     dateTime: Date.now()
-    //                 } 
-    //             }
-    //         })
-    //         this.#io.of(`/${endpoint}`).in(roomName).emit("confirmLocation", data)
-    //     })
-    // }
+    getNewLocation(socket){
+        socket.on("newLocation", async data => {
+            const {location, roomName, endpoint, sender} = data
+            await ConversationModel.updateOne({endpoint, "rooms.name": roomName}, {
+                $push : {
+                    "rooms.$.locations" : {
+                        sender,
+                        location, 
+                        dateTime: Date.now()
+                    } 
+                }
+            })
+            this.#io.of(`/${endpoint}`).in(roomName).emit("confirmLocation", data)
+        })
+    }
     // uploadFiles(socket){
     //     socket.on("upload", ({file, filename}, callback) => {
     //         const ext = path.extname(filename)
@@ -97,12 +97,12 @@ module.exports = class NamespaceSocketHandler {
     //         });
     //     });
     // }
-    extractValue(arr, key) {
-        let newArr = []
-        return arr.reduce(function(accum, nextVal) {
-          if(nextVal !== key)
-            newArr.push(accum[key] + ', '+ nextVal[key])
-            return newArr
-        })
-      }
+    // extractValue(arr, key) {
+    //     let newArr = []
+    //     return arr.reduce(function(accum, nextVal) {
+    //       if(nextVal !== key)
+    //         newArr.push(accum[key] + ', '+ nextVal[key])
+    //         return newArr
+    //     })
+    //   }
 }
