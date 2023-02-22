@@ -1,8 +1,8 @@
 const { ConversationModel } = require("../../../models/conversation");
 const {StatusCodes: HttpStatus} = require("http-status-codes");
-const path = require("path")
 const Controller = require("../controller");
 const createHttpError = require("http-errors");
+const path = require("path")
 
 class RoomController extends Controller {
     async addRoom (req, res, next) {

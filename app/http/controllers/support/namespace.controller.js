@@ -1,7 +1,7 @@
 const { ConversationModel } = require("../../../models/conversation");
 const {StatusCodes: HttpStatus} = require("http-status-codes");
-const Controller = require("../controller");
 const createHttpError = require("http-errors");
+const Controller = require("../controller");
 
 class NameSpaceController extends Controller {
     async addNameSpace (req, res, next) {

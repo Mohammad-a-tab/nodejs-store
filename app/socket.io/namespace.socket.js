@@ -1,8 +1,6 @@
-const {
-    ConversationModel
-} = require("../models/conversation");
-const fs = require("fs");
+const { ConversationModel } = require("../models/conversation");
 const path = require("path");
+const fs = require("fs");
 module.exports = class NamespaceSocketHandler {
     #io;
     constructor(io) {

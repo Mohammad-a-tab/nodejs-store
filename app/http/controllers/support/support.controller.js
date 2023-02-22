@@ -1,5 +1,5 @@
-const { UserModel } = require("../../../models/users");
 const { SignAccessToken } = require("../../../utils/function");
+const { UserModel } = require("../../../models/users");
 const Controller = require("../controller");
 
 class SupportController extends Controller {
