@@ -19,7 +19,7 @@ message Result {
     string status = 1;
 }
 service UserService {
-    rpc getUserList (Empty) returns (User);
+    rpc getListOfUser (Empty) returns (User);
     rpc UpdateUser (Update) returns (Result);
 }
 

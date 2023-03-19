@@ -1,18 +1,19 @@
-async function getUserList (req, res, next) {
+const { UserModel } = require("../../../../models/users")
+async function getListOfUser (call, callback) {
     try {
         
     } catch (error) {
-        next(error)
+        callback(error, null)
     }
 }
-async function UpdateUser (req, res, next) {
+async function UpdateUser (call, callback) {
     try {
         
     } catch (error) {
-        next(error)
+        callback(error, null)
     }
 }
 module.exports = {
-    getUserList,
+    getListOfUser,
     UpdateUser
 }
