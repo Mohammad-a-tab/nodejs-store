@@ -2,11 +2,13 @@ syntax = "proto3";
 package UserPackage;
 
 message User { 
-    string first_name = 1;
-    string last_name = 2;
-    string email = 3;
-    string usernames = 4;
-    string mobile = 5;    
+    // string first_name = 1;
+    string email = 2;
+    string username = 3;
+    string mobile = 4;
+    string token = 5;
+    string Role = 6;
+    string Name = 7;   
 }
 message Update {
     string mobile = 1;
@@ -19,7 +21,7 @@ message Result {
     string status = 1;
 }
 service UserService {
-    rpc getListOfUser (Empty) returns (User);
+    rpc getListOfUser (Empty) returns (UserList);
     rpc UpdateUser (Update) returns (Result);
 }
 

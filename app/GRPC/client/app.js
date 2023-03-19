@@ -22,7 +22,7 @@ app.use( "/api-doc" , swaggerUI.serve , swaggerUI.setup(swaggerJsDoc({
             },
             servers : [
                 {
-                    url : "http://localhost:4000"
+                    url : "http://localhost:3500"
                 }
             ],
             
@@ -46,6 +46,6 @@ app.use((err, req, res, next) => {
         ]
     })
 });
-app.listen(4000, () => {
-    console.log("Client running over port 4000");
+app.listen(3500, () => {
+    console.log("Client running over port 3500");
 })

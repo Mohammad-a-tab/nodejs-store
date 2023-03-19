@@ -1,12 +1,12 @@
 require("./config/db.connection");
 const grpc = require("@grpc/grpc-js");
 const protoLoader = require("@grpc/proto-loader");
+const path = require("path");
 const protoPath = path.join(__dirname, "..", "..", "protos","user.proto");
 const userProto = protoLoader.loadSync(protoPath);
-const { getListOfUser, UpdateUser } = require('./functions/user.grpc');
 const {UserPackage} = grpc.loadPackageDefinition(userProto);
+const { getListOfUser, UpdateUser } = require('./functions/user.grpc');
 const UserServiceURL = "localhost:4001";
-const path = require("path");
 
 function main() {
     const server = new grpc.Server();
