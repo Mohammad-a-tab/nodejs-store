@@ -1,0 +1,25 @@
+syntax = "proto3";
+package UserPackage;
+
+message User { 
+    string first_name = 1;
+    string last_name = 2;
+    string email = 3;
+    string usernames = 4;
+    string mobile = 5;    
+}
+message Update {
+    string mobile = 1;
+}
+message UserList {
+    repeated User users = 1;
+}
+message Empty{}
+message Result { 
+    string status = 1;
+}
+service UserService {
+    rpc getUserList (Empty) returns (User);
+    rpc UpdateUser (Update) returns (Result);
+}
+
