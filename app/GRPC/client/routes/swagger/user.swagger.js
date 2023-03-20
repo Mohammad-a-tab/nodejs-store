@@ -8,9 +8,21 @@
  *                  id:
  *                      type: string
  *                      description: the id of the user
- *                  first_name:
+ *                  username:
  *                      type: string
- *                      description: the first_name of the user
+ *                      description: the username of the user
+ *                  mobile:
+ *                      type: string
+ *                      description: the mobile of the user
+ *                  email:
+ *                      type: string
+ *                      description: the email of the user
+ *                  password:
+ *                      type: string
+ *                      description: the password of the user
+ *                  bills:
+ *                      type: array
+ *                      description: the bills of the user
  */
 /**
  * @swagger

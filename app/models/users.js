@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema({
     mobile : {type : String, required : true, unique: true},
     email : {type : String, lowercase : true},
     password : {type : String},
-    bills : {type : [], default : []},
+    bills : {type : [String], default : []},
     discount : {type : Number, default : 0},
     birthday : {type : String},
     Role : {type : String, default : "USER"},

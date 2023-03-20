@@ -15,13 +15,12 @@ class UserController {
             })
         } catch (error) {
             next(error);
-            console.log(error);
         }
     }
     UpdateUser (req, res, next) {
         try {
-            const {id, first_name} = req.body;
-            userClient.UpdateUser({id, first_name}, (err, data) => {
+            const {id, username, mobile, email, bills, password} = req.body;
+            userClient.UpdateUser({id, username, mobile, email, password, bills}, (err, data) => {
                 if(err) return next(err);
                 return res.status(200).json(data);
             })
