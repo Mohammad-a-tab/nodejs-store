@@ -4,16 +4,15 @@
  *      schemas:
  *          Update-User:
  *              type: object
+ *              required: 
+ *                  -   mobile
  *              properties:
- *                  id:
- *                      type: string
- *                      description: the id of the user
- *                  username:
- *                      type: string
- *                      description: the username of the user
  *                  mobile:
  *                      type: string
  *                      description: the mobile of the user
+ *                  username:
+ *                      type: string
+ *                      description: the username of the user
  *                  email:
  *                      type: string
  *                      description: the email of the user

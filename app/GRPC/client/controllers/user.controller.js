@@ -19,8 +19,8 @@ class UserController {
     }
     UpdateUser (req, res, next) {
         try {
-            const {id, username, mobile, email, bills, password} = req.body;
-            userClient.UpdateUser({id, username, mobile, email, password, bills}, (err, data) => {
+            const { username, mobile, email, bills, password } = req.body;
+            userClient.UpdateUser({ username, mobile, email, password, bills }, (err, data) => {
                 if(err) return next(err);
                 return res.status(200).json(data);
             })
