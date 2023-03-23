@@ -70,24 +70,23 @@ class UserAuthController extends Controller{
        }
    }
    async saveUser(mobile , code){
-    let otp = {
-        code,
-        expiresIn : (new Date().getTime() + 120000),
-    }
-        const result = await this.checkExistIUser(mobile);
-        if(result){
+      let otp = {
+         code,
+         expiresIn : (new Date().getTime() + 120000),
+      }
+      const result = await this.checkExistIUser(mobile);
+      if(result){
           
-           return (await this.updateUser(mobile , {otp}))
+         return (await this.updateUser(mobile , {otp}))
             
-        }
-        return !!(await UserModel.create({mobile,otp,Role : ROLES.USER}))
+      }
+      return !!(await UserModel.create({mobile,otp,Role : ROLES.USER}))
 
     }
-    async checkExistIUser(mobile){
-        const user = await UserModel.findOne({mobile});
-        return !!user
-
-     }
+   async checkExistIUser(mobile){
+      const user = await UserModel.findOne({mobile});
+      return !!user
+   }
    async updateUser(mobile , objectData = {}){
       Object.keys(objectData).forEach(key => {
          if(["" , " " , 0 , null , undefined , -1 , "0" , NaN].includes(objectData[key])) delete objectData[key]
