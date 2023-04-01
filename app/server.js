@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { COOKIE_PARSER_SECRET_KEY } = require("./utils/constants");
 const ExpressEjsLayouts = require("express-ejs-layouts");
 const { initialSocket } = require("./utils/initSocket");
@@ -14,7 +15,6 @@ const express = require("express");
 const morgan = require("morgan");
 const path = require("path");
 const cors =require("cors");
-require("dotenv").config();
 
 const options = {
     useNewUrlParser: true,

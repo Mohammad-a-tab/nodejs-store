@@ -1,7 +1,7 @@
-import createHttpError from "http-errors"
-import {StatusCodes as HttpStatus} from "http-status-codes"
-import { elasticClient } from "../config/elastic.config"
-export class IndicesController {
+const { StatusCodes: HttpStatus } = require("http-status-codes");
+const { elasticClient } = require("../config/elastic.config");
+const createHttpError = require("http-errors");
+class IndicesController {
     async createNewIndex (req, res, next) {
         try {
             const {indexName} = req.body;
@@ -43,4 +43,6 @@ export class IndicesController {
         }
     }
 }
-export default IndicesController = new IndicesController()
+module.exports = {
+    IndicesController : new IndicesController()
+}
