@@ -5,14 +5,9 @@ const indexBlog = "blog"
 async function createNewBlog (blog) {
     const createResults = await elasticClient.index({
         index: indexBlog,
-        document: {...data} 
+        document: {...blog} 
     })
-    return res.status(HttpStatus.CREATED).json({
-        StatusCode: HttpStatus.CREATED,
-        data : {
-            createResults
-        }
-    })
+    return console.log(createResults);
 }
 module.exports = {
     createNewBlog

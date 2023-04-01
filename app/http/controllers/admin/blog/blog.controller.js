@@ -8,6 +8,7 @@ const createHttpError = require("http-errors");
 const Controller = require("../../controller");
 const { any } = require("@hapi/joi");
 const path = require('path');
+const { createNewBlog } = require("../../../../ElasticSearch/controller/admin/blog.controller");
 const BlogBlackList = {
     BOOKMARKS : "bookmarks",
     DISLIKES : "dislikes",
@@ -27,11 +28,11 @@ class BlogController extends Controller {
             const data = blogDataBody;
             data.image = req.body.image
             data.author = req.user._id
-            console.log(data);
             let blogResult = any;
             if(await this.existCategoryOfBlogByID(data?.category)){
                 
                 blogResult = await BlogModel.create({...data});
+                await createNewBlog(data)
             }
             if(blogResult._id){
                 
