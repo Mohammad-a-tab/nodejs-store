@@ -1,5 +1,5 @@
 const { VerifyAccessToken, checkRole } = require("../http/middlewares/verifyAccessToken");
-const { IndicesRoutes } = require("../ElasticSearch/router/indices.routes");
+const { ElasticRouter } = require("../ElasticSearch/router/elastic.routes");
 const { SupportSectionRouter } = require("./support/support.router");
 const { CategoryApiPrisma } = require("./prisma-api/category.api");
 const { graphqlConfig } = require("../utils/graphql.config");
@@ -19,7 +19,7 @@ router.use("/blogs", blogApiPrisma)
 router.use("/category", CategoryApiPrisma)
 router.use("/graphql", graphqlHTTP(graphqlConfig))
 router.use("/", HomeRoutes);
-router.use("/elastic/index", IndicesRoutes);
+router.use("/elastic", ElasticRouter);
 router.use("/support", SupportSectionRouter);
 router.use("/", ApiPayment);
 

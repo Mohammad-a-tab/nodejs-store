@@ -15,6 +15,7 @@ const express = require("express");
 const morgan = require("morgan");
 const path = require("path");
 const cors =require("cors");
+const { ElasticRouter } = require("./ElasticSearch/router/elastic.routes");
 
 const options = {
     useNewUrlParser: true,
@@ -140,7 +141,6 @@ module.exports = class Application {
     }
     createRoutes(){
         this.#app.use(AllRoutes)
-
     }
     errorHandling(){
        this.#app.use((req,res,next) => {

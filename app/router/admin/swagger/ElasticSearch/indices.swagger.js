@@ -5,22 +5,27 @@
  *          Create_Indices:
  *              type: object
  *              required:
- *                  -   indexName
+ *                  -   Name
  *              properties:
- *                  indexName:
+ *                  Name:
  *                      type: string
  *                      description: the Index Name of Indices
  */ 
 /**
  * @swagger
- *  /elastic/index/create:
+ *  /elastic/create:
  *      post:
  *          tags: [Elastic_Panel]
- *          summary: create Index in Elastic Search
+ *          summary: create Indices in Elastic Search
+ *          parameters:
+ *              -   in: path
+ *                  required: true
+ *                  name: NameP
+ *                  type: string
  *          requestBody:
  *              required: true
  *              content:
- *                  multipart/form-data:
+ *                  application/x-www-form-urlencoded:
  *                      schema:
  *                          $ref: '#/components/schemas/Create_Indices'
  *          responses:
