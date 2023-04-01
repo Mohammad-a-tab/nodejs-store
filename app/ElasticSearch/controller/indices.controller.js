@@ -4,19 +4,13 @@ const createHttpError = require("http-errors");
 class IndicesController {
     async createNewIndex (req, res, next) {
         try {
-            console.log("salam");
-            console.log(req.body);
-            console.log(req.params);
-            const {Name} = req.body;
-            const {NameP} = req.params;
-            console.log(Name);
-            console.log(NameP);
-            // if(!indexName) throw createHttpError.BadRequest("Invalid value of index name");
-            // const results = await elasticClient.indices.create({index : indexName});
+            const {indexName} = req.body;
+            if(!indexName) throw createHttpError.BadRequest("Invalid value of index name");
+            const results = await elasticClient.indices.create({index : indexName});
             return res.status(HttpStatus.CREATED).json({
                 statusCode : HttpStatus.CREATED,
                 data : {
-                    message : "هر زادو"
+                    results
                 }
             })
         } catch (error) {
@@ -25,7 +19,6 @@ class IndicesController {
     }
     async removeIndex (req, res, next) {
         try {
-            console.log("salam");
             const {indexName} = req.body;
             if(!indexName) throw createHttpError.BadRequest("Invalid value of index name");
             await elasticClient.indices.delete({index : indexName});

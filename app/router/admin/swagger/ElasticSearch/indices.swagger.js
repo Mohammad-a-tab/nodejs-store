@@ -5,23 +5,18 @@
  *          Create_Indices:
  *              type: object
  *              required:
- *                  -   Name
+ *                  -   indexName
  *              properties:
- *                  Name:
+ *                  indexName:
  *                      type: string
  *                      description: the Index Name of Indices
  */ 
 /**
  * @swagger
- *  /elastic/create:
+ *  /elastic/index/create:
  *      post:
  *          tags: [Elastic_Panel]
- *          summary: create Indices in Elastic Search
- *          parameters:
- *              -   in: path
- *                  required: true
- *                  name: NameP
- *                  type: string
+ *          summary: create Index in Elastic Search
  *          requestBody:
  *              required: true
  *              content:
@@ -31,4 +26,30 @@
  *          responses:
  *              201:
  *                  description: created
+ */
+/**
+ * @swagger
+ *  /elastic/index/list:
+ *      get:
+ *          tags: [Elastic_Panel]
+ *          summary: Gets a list of Indices
+ *          responses:
+ *              200:
+ *                  description: successfully
+ */
+/**
+ * @swagger
+ *  /elastic/index/remove:
+ *      delete:
+ *          tags: [Elastic_Panel]
+ *          summary: remove Index in Elastic Search
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Create_Indices'
+ *          responses:
+ *              201:
+ *                  description: successfully Removed index
  */
