@@ -1,7 +1,7 @@
 import { ELASTIC_USERNAME, ELASTIC_PASSWORD, ELASTIC_HOST } from process.env
 import {Client} from "@elastic/elasticsearch"
 
-const elasticSearch = new Client({
+export const elasticClient = new Client({
     node: ELASTIC_HOST,
     auth: {
         username: ELASTIC_USERNAME,
@@ -12,4 +12,4 @@ const elasticSearch = new Client({
     }
 })
 
-export default elasticSearch
+export default elasticClient
