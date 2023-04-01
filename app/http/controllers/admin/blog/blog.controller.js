@@ -22,13 +22,16 @@ class BlogController extends Controller {
             const blogDataBody = await createBlogSchema.validateAsync(req.body);
             req.body.image =path.join(blogDataBody.fileUploadPath, blogDataBody.filename)
             req.body.image = req.body.image.replace(/\\/g, "/")
-            const {title , text , short_text , tags , category} = blogDataBody;
-            const image = req.body.image
-            const author = req.user._id
+            delete blogDataBody.fileUploadPath
+            delete blogDataBody.filename
+            const data = blogDataBody;
+            data.image = req.body.image
+            data.author = req.user._id
+            console.log(data);
             let blogResult = any;
-            if(await this.existCategoryOfBlogByID(category)){
+            if(await this.existCategoryOfBlogByID(data?.category)){
                 
-                blogResult = await BlogModel.create({title,text,short_text,category,tags,image,author});
+                blogResult = await BlogModel.create({...data});
             }
             if(blogResult._id){
                 
