@@ -66,7 +66,6 @@ class BlogController extends Controller {
     }
     async getListOfBlogs (req,res,next) {
         try {
-            // const {value} = req?.params;
             const blogs = await BlogModel.aggregate([
                 {$match : {}},
                 {
@@ -94,11 +93,20 @@ class BlogController extends Controller {
                 {
                     $project : {
                         "author.bills" : 0,
+                        "author.basket" : 0,
                         "category.__v" : 0,
                         "author.discount" : 0,
                         "author.__v" : 0,
-                        "author.Roles" : 0,
-                        "author.otp" : 0
+                        "author.updatedAt" : 0,
+                        "author.Role" : 0,
+                        "author.otp" : 0,
+                        "author.token" : 0,
+                        "author.Products" : 0,
+                        "author.Courses" : 0,
+                        "author.password" : 0,
+                        "author._id" : 0,
+                        "createdAt" : 0,
+                        "updatedAt" : 0
                     }
                 }
             ]).sort({_id : -1});

@@ -9,7 +9,7 @@ async function createNewBlog (blog) {
     })
     return console.log(createResults);
 }
-async function getAllBlogs(value = "") {
+async function getAllBlogs() {
     const blogs = await elasticClient.search({
         index : indexBlog,
         query : {
