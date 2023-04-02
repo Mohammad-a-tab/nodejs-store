@@ -1,7 +1,8 @@
 const { 
     createNewBlogAtElasticSearch,
     getAllBlogsFromElasticSearch,
-    removeBlogFromElasticSearch
+    removeBlogFromElasticSearch,
+    updateBlogAtElasticSearch
  } = require("../../../../ElasticSearch/controller/admin/blog.controller");
 const {  deleteFilePublic, deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
 const { createBlogSchema } = require("../../../validators/admin/blog.schema");
@@ -172,15 +173,18 @@ class BlogController extends Controller {
                 if(await this.existCategoryOfBlogByID(data.category)){
                 
                     updateResult = await BlogModel.updateOne({_id : id}, {$set : data})
+                    
                 }
             }
             updateResult = await BlogModel.updateOne({_id : id}, {$set : data})
-            if(updateResult.modifiedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_UPDATED_MESSAGE}
-
+            if(updateResult.modifiedCount == 0) 
+                throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_UPDATED_MESSAGE}
+            const updateBlogAtElasticResult = await updateBlogAtElasticSearch(blog, data)
             return res.status(HttpStatus.OK).json({
                 statusCode: HttpStatus.OK,
                 data : {
-                    message : MessageSpecial.SUCCESSFUL_UPDATED_BLOG_MESSAGE
+                    message : MessageSpecial.SUCCESSFUL_UPDATED_BLOG_MESSAGE,
+                    ElasticResult : updateBlogAtElasticResult.result
                 }
             })
             
