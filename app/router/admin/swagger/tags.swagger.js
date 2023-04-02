@@ -3,6 +3,8 @@
  *   tags:
  *      -   name: Admin-Panel
  *          description: action of admin (add, edit, remove and any do)
+ *      -   name: Blog(Admin-Panel)
+ *          description: operation CRUD (add, edit, remove and any do) blog
  *      -   name: RBAC(Admin-Panel)
  *          description: RoleBaseAccessControl System create and manage role and permissions
  *      -   name: Users(Admin-Panel)

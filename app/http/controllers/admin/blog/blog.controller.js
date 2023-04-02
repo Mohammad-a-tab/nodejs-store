@@ -66,7 +66,7 @@ class BlogController extends Controller {
     }
     async getListOfBlogs (req,res,next) {
         try {
-            const {value} = req?.params;
+            // const {value} = req?.params;
             const blogs = await BlogModel.aggregate([
                 {$match : {}},
                 {
@@ -102,7 +102,7 @@ class BlogController extends Controller {
                     }
                 }
             ]).sort({_id : -1});
-            const elasticBlog =  await getAllBlogs(value)
+            const elasticBlog = await getAllBlogs()
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {

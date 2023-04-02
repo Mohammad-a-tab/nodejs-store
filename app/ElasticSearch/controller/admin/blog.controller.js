@@ -10,15 +10,13 @@ async function createNewBlog (blog) {
     return console.log(createResults);
 }
 async function getAllBlogs(value = "") {
-    try {
-        const blogs = await elasticClient.search({
-            index : indexBlog,
-            q: value
-        });
-        return blogs.hits.hits
-    } catch (error) {
-            next(error)
-    }
+    const blogs = await elasticClient.search({
+        index : indexBlog,
+        query : {
+            "match_all" : {}
+        }
+    });
+    return blogs.hits.hits
 }
 module.exports = {
     createNewBlog,
