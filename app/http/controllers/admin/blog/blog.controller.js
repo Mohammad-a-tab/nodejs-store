@@ -8,7 +8,7 @@ const createHttpError = require("http-errors");
 const Controller = require("../../controller");
 const { any } = require("@hapi/joi");
 const path = require('path');
-const { createNewBlog } = require("../../../../ElasticSearch/controller/admin/blog.controller");
+const { createNewBlog, getAllBlogs } = require("../../../../ElasticSearch/controller/admin/blog.controller");
 const BlogBlackList = {
     BOOKMARKS : "bookmarks",
     DISLIKES : "dislikes",
@@ -66,6 +66,7 @@ class BlogController extends Controller {
     }
     async getListOfBlogs (req,res,next) {
         try {
+            const {value} = req?.params;
             const blogs = await BlogModel.aggregate([
                 {$match : {}},
                 {
@@ -101,10 +102,12 @@ class BlogController extends Controller {
                     }
                 }
             ]).sort({_id : -1});
+            const elasticBlog =  await getAllBlogs(value)
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
-                    blogs
+                    blogs,
+                    elasticBlog
                 }
             })
 

@@ -9,6 +9,18 @@ async function createNewBlog (blog) {
     })
     return console.log(createResults);
 }
+async function getAllBlogs(value = "") {
+    try {
+        const blogs = await elasticClient.search({
+            index : indexBlog,
+            q: value
+        });
+        return blogs.hits.hits
+    } catch (error) {
+            next(error)
+    }
+}
 module.exports = {
-    createNewBlog
+    createNewBlog,
+    getAllBlogs
 }
