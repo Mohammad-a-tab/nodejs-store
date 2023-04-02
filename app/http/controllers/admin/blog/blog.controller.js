@@ -1,3 +1,8 @@
+const { 
+    createNewBlogAtElasticSearch,
+    getAllBlogsFromElasticSearch,
+    removeBlogFromElasticSearch
+ } = require("../../../../ElasticSearch/controller/admin/blog.controller");
 const {  deleteFilePublic, deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
 const { createBlogSchema } = require("../../../validators/admin/blog.schema");
 const { CategoryModel } = require("../../../../models/categories");
@@ -8,7 +13,6 @@ const createHttpError = require("http-errors");
 const Controller = require("../../controller");
 const { any } = require("@hapi/joi");
 const path = require('path');
-const { createNewBlog, getAllBlogs } = require("../../../../ElasticSearch/controller/admin/blog.controller");
 const BlogBlackList = {
     BOOKMARKS : "bookmarks",
     DISLIKES : "dislikes",
@@ -32,14 +36,14 @@ class BlogController extends Controller {
             if(await this.existCategoryOfBlogByID(data?.category)){
                 
                 blogResult = await BlogModel.create({...data});
-                await createNewBlog(data)
             }
             if(blogResult._id){
-                
+                const createBlogAtElasticResult = await createNewBlogAtElasticSearch(data)
                 return res.status(HttpStatus.CREATED).json({
                     statusCode : HttpStatus.CREATED,
                     data: {
-                        message : MessageSpecial.SUCCESSFUL_CREATED_BLOG_MESSAGE
+                        message : MessageSpecial.SUCCESSFUL_CREATED_BLOG_MESSAGE,
+                        ElasticResult: createBlogAtElasticResult.result
                     }
                 })
             }
@@ -110,7 +114,7 @@ class BlogController extends Controller {
                     }
                 }
             ]).sort({_id : -1});
-            const elasticBlog = await getAllBlogs()
+            const elasticBlog = await getAllBlogsFromElasticSearch()
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
@@ -139,10 +143,12 @@ class BlogController extends Controller {
             if(result.deletedCount == 0) 
                 throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.INTERNAL_SERVER_ERROR}
             deleteFilePublic(blog?.image)
+            const deleteBlogFromElasticResult = await removeBlogFromElasticSearch(blog?.title)
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
-                    message : MessageSpecial.SUCCESSFUL_REMOVE_BLOG_MESSAGE
+                    message : MessageSpecial.SUCCESSFUL_REMOVE_BLOG_MESSAGE,
+                    ElasticResult : deleteBlogFromElasticResult.deleted
                 }
             })
         } catch (error) {
