@@ -25,20 +25,32 @@ const BlogBlackList = {
 class BlogController extends Controller {
     async createBlog (req,res,next) {
         try {
+            let blogResult = any;
             const blogDataBody = await createBlogSchema.validateAsync(req.body);
             req.body.image =path.join(blogDataBody.fileUploadPath, blogDataBody.filename)
             req.body.image = req.body.image.replace(/\\/g, "/")
             delete blogDataBody.fileUploadPath
             delete blogDataBody.filename
             const data = blogDataBody;
-            data.image = req.body.image
-            data.author = req.user._id
-            let blogResult = any;
-            if(await this.existCategoryOfBlogByID(data?.category)){
-                
+            data.image = req.body.image;
+            data.author = req.user._id;
+            const category = await this.existCategoryOfBlogByID(data?.category)
+            if(category){
                 blogResult = await BlogModel.create({...data});
+                data.category = {
+                    id: category._id,
+                    Title: category.title
+                }
             }
             if(blogResult._id){
+                data.author = {
+                    id : req.user._id,
+                    First_Name: req.user.first_name, 
+                    Last_Name: req.user.last_name, 
+                    Mobile: req.user.mobile, 
+                    Email: req.user.email, 
+                    UserName: req.user.username
+                }
                 const createBlogAtElasticResult = await createNewBlogAtElasticSearch(data)
                 return res.status(HttpStatus.CREATED).json({
                     statusCode : HttpStatus.CREATED,
@@ -123,8 +135,6 @@ class BlogController extends Controller {
                     elasticBlog
                 }
             })
-
-            
         } catch (error) {
             next(error)
         }

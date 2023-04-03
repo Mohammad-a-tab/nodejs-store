@@ -1,7 +1,9 @@
 const {StatusCodes : HttpStatus} = require("http-status-codes");
 const { elasticClient } = require("../../config/elastic.config");
 const indexBlog = "blog"
-
+class ElasticBlogController {
+    
+}
 async function createNewBlogAtElasticSearch (blog) {
     const createResults = await elasticClient.index({
         index: indexBlog,
