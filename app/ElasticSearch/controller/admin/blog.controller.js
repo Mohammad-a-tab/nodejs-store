@@ -18,7 +18,7 @@ async function getAllBlogsFromElasticSearch () {
             "match_all" : {}
         }
     });
-    return blogs.hits.hits
+    return blogs
 }
 async function removeBlogFromElasticSearch (title) {
     const results = await elasticClient.search({

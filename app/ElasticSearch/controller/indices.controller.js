@@ -1,6 +1,36 @@
 const { StatusCodes: HttpStatus } = require("http-status-codes");
 const { elasticClient } = require("../config/elastic.config");
 const createHttpError = require("http-errors");
+
+const indexMappingBlog = {
+    mappings: {
+      properties: {
+        title: { type: 'text' },
+        short_text: { type: 'text' },
+        text: { type: 'text' },
+        image: { type: 'text' },
+        tags: { type: ['text'] },
+        author: {
+          type: 'object',
+          properties: {
+            id: { type: 'text' },
+            first_name: { type: 'text' },
+            last_name: { type: 'text' },
+            username: { type: 'text' },
+            mobile: { type: 'text' },
+            email: { type: 'text' }
+          }
+        },
+        category: {
+          type: 'object',
+          properties: {
+            id: { type: 'text' },
+            title: { type: 'text' }
+          }
+        }
+      }
+    }
+  };
 class IndicesController {
     async createNewIndex (req, res, next) {
         try {
