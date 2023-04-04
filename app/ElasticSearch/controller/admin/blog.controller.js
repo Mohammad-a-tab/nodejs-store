@@ -7,7 +7,7 @@ class ElasticBlogController {
 async function createNewBlogAtElasticSearch (blog) {
     const createResults = await elasticClient.index({
         index: indexBlog,
-        document: {...blog} 
+        body: {...blog} 
     })
     return createResults
 }
@@ -18,7 +18,7 @@ async function getAllBlogsFromElasticSearch () {
             "match_all" : {}
         }
     });
-    return blogs
+    return blogs.hits.hits
 }
 async function removeBlogFromElasticSearch (title) {
     const results = await elasticClient.search({

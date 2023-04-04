@@ -37,23 +37,20 @@ class BlogController extends Controller {
             const category = await this.existCategoryOfBlogByID(data?.category)
             if(category){
                 blogResult = await BlogModel.create({...data});
-                // delete data.category
-                const mmd = [
-                    {id: category?._id},
-                    {Title: category?.title}
-                ]
-                data.category = mmd
+                data.category = {
+                    id: category._id,
+                    Title: category.title
+                }
             }
             if(blogResult._id){
-                // delete data.author
-                // data.author = {
-                //     id : req.user._id,
-                //     First_Name: req.user.first_name, 
-                //     Last_Name: req.user.last_name, 
-                //     Mobile: req.user.mobile, 
-                //     Email: req.user.email, 
-                //     UserName: req.user.username
-                // }
+                data.author = {
+                    id : req.user._id,
+                    First_Name: req.user.first_name, 
+                    Last_Name: req.user.last_name, 
+                    UserName: req.user.username,
+                    Mobile: req.user.mobile, 
+                    Email: req.user.email
+                }
                 const createBlogAtElasticResult = await createNewBlogAtElasticSearch(data)
                 return res.status(HttpStatus.CREATED).json({
                     statusCode : HttpStatus.CREATED,

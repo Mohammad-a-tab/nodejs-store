@@ -5,27 +5,27 @@ const createHttpError = require("http-errors");
 const indexMappingBlog = {
     mappings: {
       properties: {
-        title: { type: 'text' },
-        short_text: { type: 'text' },
-        text: { type: 'text' },
-        image: { type: 'text' },
-        tags: { type: ['text'] },
+        Title: { type: 'text' },
+        Short_Text: { type: 'text' },
+        Text: { type: 'text' },
+        Image: { type: 'text' },
+        Tags: { type: 'text'},
         author: {
           type: 'object',
           properties: {
             id: { type: 'text' },
-            first_name: { type: 'text' },
-            last_name: { type: 'text' },
-            username: { type: 'text' },
-            mobile: { type: 'text' },
-            email: { type: 'text' }
+            First_Name: { type: 'text' },
+            Last_Name: { type: 'text' },
+            UserName: { type: 'text' },
+            Mobile: { type: 'text' },
+            Email: { type: 'text' }
           }
         },
         category: {
           type: 'object',
           properties: {
             id: { type: 'text' },
-            title: { type: 'text' }
+            Title: { type: 'text' }
           }
         }
       }
@@ -35,8 +35,17 @@ class IndicesController {
     async createNewIndex (req, res, next) {
         try {
             const {indexName} = req.body;
+            let indexMapping = {}
             if(!indexName) throw createHttpError.BadRequest("Invalid value of index name");
-            const results = await elasticClient.indices.create({index : indexName});
+            if(indexName === "blog"){
+                indexMapping = indexMappingBlog
+            }
+            else if(indexName === 'product'){}
+            else if(indexName === 'category'){}
+            const results = await elasticClient.indices.create({
+                index: indexName,
+                body: indexMapping
+            });
             return res.status(HttpStatus.CREATED).json({
                 statusCode : HttpStatus.CREATED,
                 data : {
