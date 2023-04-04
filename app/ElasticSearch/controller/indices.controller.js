@@ -11,7 +11,7 @@ const indexMappingBlog = {
         Image: { type: 'text' },
         Tags: { type: 'text'},
         author: {
-          type: 'object',
+          type: 'nested',
           properties: {
             id: { type: 'text' },
             First_Name: { type: 'text' },

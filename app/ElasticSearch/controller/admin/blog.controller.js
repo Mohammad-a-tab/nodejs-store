@@ -1,6 +1,23 @@
 const {StatusCodes : HttpStatus} = require("http-status-codes");
 const { elasticClient } = require("../../config/elastic.config");
 const indexBlog = "blog"
+
+const query = {
+    nested: {
+      path: "author",
+      query: {
+        bool: {
+          must: [
+            { match: { "author.First_Name": "ali" } },
+            { match: { "author.Last_Name": "emani" }},
+            { match: { "author.UserName": "mohammad-a-tab" }},
+            { match: { "author.Mobile": "09309859475" }},
+            { match: { "author.Email": "mmd@gmail.com" }}
+          ]
+        }
+      }
+    }
+  };
 class ElasticBlogController {
     async searchByTitle (req, res, next) {
         try {
@@ -12,6 +29,19 @@ class ElasticBlogController {
                         title
                     }
                 }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchByAuthor (req, res, next) {
+        try {
+            const {info} = req.params;
+            const blog = await elasticClient.search({
+                index: indexBlog,
+                body: { query }
             });
             const blogResult = blog.hits.hits.map(item => item._source)
             return res.status(HttpStatus.OK).json(blogResult)
