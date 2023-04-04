@@ -2,8 +2,9 @@ const { ElasticBlogController } = require("../../controller/admin/blog.controlle
 const router = require("express").Router();
 
 router.get("/search-title/:title", ElasticBlogController.searchByTitle)
-// router.get("/list", IndicesController.getIndices)
-// router.delete("/remove", IndicesController.removeIndex)
+router.get("/search-text/:text", ElasticBlogController.searchByText)
+router.get("/search-tags/:tags", ElasticBlogController.searchByTags)
+
 
 module.exports = {
     BlogRouter: router 

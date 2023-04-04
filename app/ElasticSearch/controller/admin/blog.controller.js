@@ -13,7 +13,41 @@ class ElasticBlogController {
                     }
                 }
             });
-            const blogResult = blog.hits.hits[0]._source
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchByText (req, res, next) {
+        try {
+            const {text} = req.params;
+            const blog = await elasticClient.search({
+                index: indexBlog,
+                query: {
+                    match: {
+                        text
+                    }
+                }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchByTags (req, res, next) {
+        try {
+            const {tags} = req.params;
+            const blog = await elasticClient.search({
+                index: indexBlog,
+                query: {
+                    match: {
+                        tags
+                    }
+                }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
             return res.status(HttpStatus.OK).json(blogResult)
         } catch (error) {
             next(error)
