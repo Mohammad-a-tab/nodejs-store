@@ -1,12 +1,12 @@
 /**
  * @swagger
- *  /admin/blogs/{id}:
+ *  /elastic/blogs/search-title/{title}:
  *      get:
- *          summary: get blog by ID and populate this field 
+ *          summary: get blog by title with ElasticSearch
  *          tags: [ Blog(Elastic_Panel) ]
  *          parameters:
  *              -   in: path
- *                  name: id
+ *                  name: title
  *                  type: string
  *                  required: true
  *          responses:

@@ -5,7 +5,7 @@ class ElasticBlogController {
     async searchByTitle (req, res, next) {
         try {
             const {title} = req.params;
-            const result = await elasticClient.search({
+            const blog = await elasticClient.search({
                 index: indexBlog,
                 query: {
                     match: {
@@ -13,7 +13,8 @@ class ElasticBlogController {
                     }
                 }
             });
-            return res.status(HttpStatus.OK).json(result.hits.hits)
+            const blogResult = blog.hits.hits[0]._source
+            return res.status(HttpStatus.OK).json(blogResult)
         } catch (error) {
             next(error)
         }
