@@ -42,7 +42,7 @@ async function updateBlogAtElasticSearch (blog, data) {
     });
     const results = await elasticClient.search({
         index : indexBlog,
-        q: blog?.title || blog?.text || blog?.short_text || blog?.tags || blog?.category || blog?.image
+        q: blog?.title || blog?.text || blog?.short_text || blog?.tags || blog?.image
     });
     const blogID = results.hits.hits[0]._id;
     const updateResult = await elasticClient.update({
