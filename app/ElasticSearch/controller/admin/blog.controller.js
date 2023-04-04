@@ -1,23 +1,6 @@
 const {StatusCodes : HttpStatus} = require("http-status-codes");
 const { elasticClient } = require("../../config/elastic.config");
 const indexBlog = "blog"
-
-const query = {
-    nested: {
-      path: "author",
-      query: {
-        bool: {
-          must: [
-            { match: { "author.First_Name": "ali" } },
-            { match: { "author.Last_Name": "emani" }},
-            { match: { "author.UserName": "mohammad-a-tab" }},
-            { match: { "author.Mobile": "09309859475" }},
-            { match: { "author.Email": "mmd@gmail.com" }}
-          ]
-        }
-      }
-    }
-  };
 class ElasticBlogController {
     async searchByTitle (req, res, next) {
         try {
@@ -38,10 +21,77 @@ class ElasticBlogController {
     }
     async searchByAuthor (req, res, next) {
         try {
-            const {info} = req.params;
+            const {author} = req?.params;
             const blog = await elasticClient.search({
                 index: indexBlog,
-                body: { query }
+                body: { 
+                    query: {
+                        bool: {
+                            should: [
+                                {
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                          bool: {
+                                            must: [
+                                              { match: { "author.First_Name": author }}
+                                            ]
+                                          }
+                                        }
+                                      }
+                                },
+                                {
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                          bool: {
+                                            must: [
+                                              { match: { "author.Last_Name": author }}
+                                            ]
+                                          }
+                                        }
+                                      }
+                                },
+                                {
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                          bool: {
+                                            must: [
+                                              { match: { "author.UserName": author }}
+                                            ]
+                                          }
+                                        }
+                                      }
+                                },
+                                {
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                          bool: {
+                                            must: [
+                                              { match: { "author.Mobile": author }}
+                                            ]
+                                          }
+                                        }
+                                      }
+                                },
+                                {
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                          bool: {
+                                            must: [
+                                              { match: { "author.Email": author }}
+                                            ]
+                                          }
+                                        }
+                                      }
+                                }
+                            ],
+                            minimum_should_match: 1,
+                        }
+                } }
             });
             const blogResult = blog.hits.hits.map(item => item._source)
             return res.status(HttpStatus.OK).json(blogResult)
