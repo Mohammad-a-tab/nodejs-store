@@ -145,7 +145,6 @@
  *              200:
  *                  description: success
  */
-
 /**
  * @swagger
  *  /admin/blogs/{id}:

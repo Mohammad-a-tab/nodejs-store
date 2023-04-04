@@ -4,7 +4,7 @@ const indexBlog = "blog"
 class ElasticBlogController {
     async searchByTitle (req, res, next) {
         try {
-            const {title} = req.body;
+            const {title} = req.params;
             const result = await elasticClient.search({
                 index: indexBlog,
                 query: {
@@ -101,6 +101,7 @@ async function updateBlogAtElasticSearch (blog, data) {
     return updateResult
 }
 module.exports = {
+    ElasticBlogController: new ElasticBlogController(),
     createNewBlogAtElasticSearch,
     getAllBlogsFromElasticSearch,
     removeBlogFromElasticSearch,
