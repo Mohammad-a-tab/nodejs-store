@@ -2,7 +2,55 @@ const {StatusCodes : HttpStatus} = require("http-status-codes");
 const { elasticClient } = require("../../config/elastic.config");
 const indexBlog = "blog"
 class ElasticBlogController {
-    
+    async searchByTitle (req, res, next) {
+        try {
+            const {title} = req.body;
+            const result = await elasticClient.search({
+                index: indexBlog,
+                query: {
+                    match: {
+                        title
+                    }
+                }
+            });
+            return res.status(HttpStatus.OK).json(result.hits.hits)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchByRegexp (req, res, next) {
+        try {
+            const {search} = req.body;
+            const result = await elasticClient.search({
+                index: indexBlog,
+                query: {
+                    regexp: {
+                        title: `.*${search}.*`
+                    }
+                }
+            });
+            return res.status(HttpStatus.OK).json(result.hits.hits)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchByMultiField (req, res, next) {
+        try {
+            const {search} = req.body;
+            const result = await elasticClient.search({
+                index: indexBlog,
+                query: {
+                    multi_match: {
+                        query: search,
+                        fields: ["title", "text", "short_text", "author"]
+                    }
+                }
+            });
+            return res.status(HttpStatus.OK).json(result.hits.hits)
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 async function createNewBlogAtElasticSearch (blog) {
     const createResults = await elasticClient.index({
