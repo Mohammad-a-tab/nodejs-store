@@ -1,6 +1,7 @@
 const { ElasticBlogController } = require("../../controller/admin/blog.controller");
 const router = require("express").Router();
 
+router.get("/search-MultiField/:search", ElasticBlogController.searchByMultiField)
 router.get("/search-title/:title", ElasticBlogController.searchByTitle)
 router.get("/search-title-regexp/:search", ElasticBlogController.searchTitleByRegexp)
 router.get("/search-text/:text", ElasticBlogController.searchByText)

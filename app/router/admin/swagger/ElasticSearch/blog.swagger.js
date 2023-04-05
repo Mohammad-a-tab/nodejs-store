@@ -1,5 +1,20 @@
 /**
  * @swagger
+ *  /elastic/blogs/search-MultiField/{search}:
+ *      get:
+ *          summary: get blog by title, text, short_text and tags with ElasticSearch
+ *          tags: [ Blog(Elastic_Panel) ]
+ *          parameters:
+ *              -   in: path
+ *                  name: search
+ *                  type: string
+ *                  required: true
+ *          responses:
+ *              200:
+ *                  description: success
+ */
+/**
+ * @swagger
  *  /elastic/blogs/search-title-regexp/{search}:
  *      get:
  *          summary: get blog by title with ElasticSearch

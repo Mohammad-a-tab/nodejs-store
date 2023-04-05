@@ -230,17 +230,18 @@ class ElasticBlogController {
     }
     async searchByMultiField (req, res, next) {
         try {
-            const {search} = req.body;
-            const result = await elasticClient.search({
+            const {search} = req.params;
+            const blog = await elasticClient.search({
                 index: indexBlog,
                 query: {
                     multi_match: {
                         query: search,
-                        fields: ["title", "text", "short_text", "author"]
+                        fields: ["title", "text", "short_text", "tags"]
                     }
                 }
             });
-            return res.status(HttpStatus.OK).json(result.hits.hits)
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
         } catch (error) {
             next(error)
         }
