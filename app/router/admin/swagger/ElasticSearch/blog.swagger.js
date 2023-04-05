@@ -15,13 +15,13 @@
  */
 /**
  * @swagger
- *  /elastic/blogs/search-text-regexp/{text}:
+ *  /elastic/blogs/search-text-regexp/{search}:
  *      get:
  *          summary: get blog by text with ElasticSearch
  *          tags: [ Blog(Elastic_Panel) ]
  *          parameters:
  *              -   in: path
- *                  name: text
+ *                  name: search
  *                  type: string
  *                  required: true
  *          responses:
