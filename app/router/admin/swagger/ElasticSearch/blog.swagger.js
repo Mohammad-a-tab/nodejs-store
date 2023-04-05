@@ -1,5 +1,50 @@
 /**
  * @swagger
+ *  /elastic/blogs/search-title-regexp/{title}:
+ *      get:
+ *          summary: get blog by title with ElasticSearch
+ *          tags: [ Blog(Elastic_Panel) ]
+ *          parameters:
+ *              -   in: path
+ *                  name: title
+ *                  type: string
+ *                  required: true
+ *          responses:
+ *              200:
+ *                  description: success
+ */
+/**
+ * @swagger
+ *  /elastic/blogs/search-text-regexp/{text}:
+ *      get:
+ *          summary: get blog by text with ElasticSearch
+ *          tags: [ Blog(Elastic_Panel) ]
+ *          parameters:
+ *              -   in: path
+ *                  name: text
+ *                  type: string
+ *                  required: true
+ *          responses:
+ *              200:
+ *                  description: success
+ */
+/**
+ * @swagger
+ *  /elastic/blogs/search-author-regexp/{author}:
+ *      get:
+ *          summary: get blog by Author with ElasticSearch
+ *          tags: [ Blog(Elastic_Panel) ]
+ *          parameters:
+ *              -   in: path
+ *                  name: author
+ *                  type: string
+ *                  required: true
+ *          responses:
+ *              200:
+ *                  description: success
+ */
+/**
+ * @swagger
  *  /elastic/blogs/search-title/{title}:
  *      get:
  *          summary: get blog by title with ElasticSearch

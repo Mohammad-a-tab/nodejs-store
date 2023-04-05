@@ -133,10 +133,10 @@ class ElasticBlogController {
             next(error)
         }
     }
-    async searchByRegexp (req, res, next) {
+    async searchTitleByRegexp (req, res, next) {
         try {
             const {search} = req.body;
-            const result = await elasticClient.search({
+            const blog = await elasticClient.search({
                 index: indexBlog,
                 query: {
                     regexp: {
@@ -144,7 +144,42 @@ class ElasticBlogController {
                     }
                 }
             });
-            return res.status(HttpStatus.OK).json(result.hits.hits)
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchTextByRegexp (req, res, next) {
+        try {
+            const {search} = req.body;
+            const blog = await elasticClient.search({
+                index: indexBlog,
+                query: {
+                    regexp: {
+                        text: `.*${search}.*`
+                    }
+                }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchAuthorByRegexp (req, res, next) {
+        try {
+            const {search} = req.body;
+            const blog = await elasticClient.search({
+                index: indexBlog,
+                query: {
+                    regexp: {
+                        title: `.*${search}.*`
+                    }
+                }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
         } catch (error) {
             next(error)
         }
