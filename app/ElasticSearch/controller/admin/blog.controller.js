@@ -135,7 +135,7 @@ class ElasticBlogController {
     }
     async searchTitleByRegexp (req, res, next) {
         try {
-            const {search} = req.body;
+            const {search} = req.params;
             const blog = await elasticClient.search({
                 index: indexBlog,
                 query: {

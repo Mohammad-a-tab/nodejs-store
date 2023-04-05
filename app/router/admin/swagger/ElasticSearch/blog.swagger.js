@@ -1,12 +1,12 @@
 /**
  * @swagger
- *  /elastic/blogs/search-title-regexp/{title}:
+ *  /elastic/blogs/search-title-regexp/{search}:
  *      get:
  *          summary: get blog by title with ElasticSearch
  *          tags: [ Blog(Elastic_Panel) ]
  *          parameters:
  *              -   in: path
- *                  name: title
+ *                  name: search
  *                  type: string
  *                  required: true
  *          responses:
