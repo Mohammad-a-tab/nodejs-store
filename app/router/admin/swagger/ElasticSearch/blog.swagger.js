@@ -30,13 +30,13 @@
  */
 /**
  * @swagger
- *  /elastic/blogs/search-author-regexp/{author}:
+ *  /elastic/blogs/search-author-regexp/{search}:
  *      get:
  *          summary: get blog by Author with ElasticSearch
  *          tags: [ Blog(Elastic_Panel) ]
  *          parameters:
  *              -   in: path
- *                  name: author
+ *                  name: search
  *                  type: string
  *                  required: true
  *          responses:

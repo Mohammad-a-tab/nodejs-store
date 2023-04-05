@@ -86,7 +86,7 @@ class ElasticBlogController {
                                             ]
                                           }
                                         }
-                                      }
+                                    }
                                 }
                             ],
                             minimum_should_match: 1,
@@ -169,12 +169,56 @@ class ElasticBlogController {
     }
     async searchAuthorByRegexp (req, res, next) {
         try {
-            const {search} = req.body;
+            const {search} = req.params;
             const blog = await elasticClient.search({
                 index: indexBlog,
-                query: {
-                    regexp: {
-                        title: `.*${search}.*`
+                body: {
+                    query: {
+                        bool: {
+                            should: [
+                                {   
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                            regexp: {'author.First_Name': `.*${search}.*`}
+                                        }
+                                    }
+                                },
+                                {   
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                            regexp: {'author.Last_Name': `.*${search}.*`}
+                                        }
+                                    }
+                                },
+                                {   
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                            regexp: {'author.UserName': `.*${search}.*`}
+                                        }
+                                    }
+                                },
+                                {   
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                            regexp: {'author.Mobile': `.*${search}.*`}
+                                        }
+                                    }
+                                },
+                                {   
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                            regexp: {'author.Email': `.*${search}.*`}
+                                        }
+                                    }
+                                },
+                            ],
+                            minimum_should_match: 1
+                        }
                     }
                 }
             });
