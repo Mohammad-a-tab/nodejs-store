@@ -30,7 +30,36 @@ const indexMappingBlog = {
         }
       }
     }
-  };
+};
+const indexMappingProduct = {
+    mappings: {
+      properties: {
+        Title: { type: 'text' },
+        Short_Text: { type: 'text' },
+        Text: { type: 'text' },
+        Image: { type: 'text' },
+        Tags: { type: 'text'},
+        author: {
+          type: 'nested',
+          properties: {
+            id: { type: 'text' },
+            First_Name: { type: 'text' },
+            Last_Name: { type: 'text' },
+            UserName: { type: 'text' },
+            Mobile: { type: 'text' },
+            Email: { type: 'text' }
+          }
+        },
+        category: {
+          type: 'object',
+          properties: {
+            id: { type: 'text' },
+            Title: { type: 'text' }
+          }
+        }
+      }
+    }
+};
 class IndicesController {
     async createNewIndex (req, res, next) {
         try {

@@ -1,5 +1,5 @@
 const {StatusCodes : HttpStatus} = require("http-status-codes");
-const { elasticClient } = require("../../../config/elastic.config");
+const { elasticClient } = require("../../config/elastic.config");
 const indexBlog = "blog"
 class ElasticBlogController {
     async searchByTitle (req, res, next) {

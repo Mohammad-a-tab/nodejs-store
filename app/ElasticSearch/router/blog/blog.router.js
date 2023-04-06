@@ -1,4 +1,4 @@
-const { ElasticBlogController } = require("../../controller/admin/blog/blog.controller");
+const { ElasticBlogController } = require("../../controller/blog/blog.controller");
 const router = require("express").Router();
 
 router.get("/search-MultiField/:search", ElasticBlogController.searchByMultiField)
