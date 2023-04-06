@@ -14,6 +14,7 @@ const {
     , copyObject
     , deleteInvalidPropertyInObject
 } = require("../../../../utils/function");
+const { createNewProductInElasticSearch, getAllProductsFromElasticSearch } = require("../../../../ElasticSearch/controller/product/product.controller");
 const ProductBlackList = {
     BOOKMARKS : "bookmarks",
     DISLIKES : "dislikes",
@@ -32,38 +33,39 @@ class ProductController extends Controller {
             try {
                 const images = ListOfImagesFromRequest(req?.files || [], req.body.fileUploadPath)
                 req.body.images = images
-                const productBody = await createProductSchema.validateAsync(req.body);
-                const {title , text , short_text , category , tags , count , price , discount} = productBody;
-                const supplier = req.user._id;
+                const data = await createProductSchema.validateAsync(req.body);
                 let features = setFeatures(req.body)
                 let type = ""
-                if(features.height > 0 || features.length > 0 || features.width >0 || features.weight > 0){
+                if(features.height > 0 || features.length > 0 || features.width >0 || features.weight > 0) {
                     type = "physical"
                 }
                 else{
-                  type = "virtual"
+                    type = "virtual"
                 }
-                await this.ExistCorrectCategoryID(category)
-                const product = await ProductModel.create({
-                    title,
-                    text,
-                    short_text,
-                    tags,
-                    count,
-                    category,
-                    discount,
-                    type,
-                    price,
-                    images,
-                    features,
-                    supplier
-                });
+                const category = await this.ExistCorrectCategoryID(data?.category)
+                data.supplier = req.user._id;
+                data.features = features;
+                data.type = type;
+                const product = await ProductModel.create({...data});
                 if(product._id){
-                    
+                    data.supplier = {
+                        id: req.user._id,
+                        First_Name: req.user.first_name,
+                        Last_Name: req.user.last_name,
+                        UserName: req.user.username,
+                        Mobile: req.user.mobile,
+                        Email: req.user.email
+                    }
+                    data.category = {
+                        id: category._id,
+                        Title: category.title
+                    }
+                    const createProductInElasticResult = await createNewProductInElasticSearch(data)
                     return res.status(HttpStatus.CREATED).json({
                         StatusCode : HttpStatus.CREATED,
                         data : {
-                            message : MessageSpecial.SUCCESSFUL_CREATED_PRODUCT_MESSAGE
+                            message : MessageSpecial.SUCCESSFUL_CREATED_PRODUCT_MESSAGE,
+                            ElasticResult : createProductInElasticResult.result
                         }
                     })
                 }
@@ -132,6 +134,7 @@ class ProductController extends Controller {
             try {
                 const search = req?.query?.search || "";
                 let products;
+                let ElasticResult;
                 if (search) {
                      products = await ProductModel.aggregate([
                         {
@@ -175,16 +178,19 @@ class ProductController extends Controller {
                         {
                             $project : {
                                 "category.__v" : 0,
+                                "__v" : 0,
                                 "category.parent" : 0,
                                 "category._id" : 0,
                             }
                         }
                   ])
+                  ElasticResult = await getAllProductsFromElasticSearch()
                 }
                 return res.status(HttpStatus.OK).json({
                   statusCode: HttpStatus.OK,
                   data: {
-                    products
+                    products,
+                    ElasticResult
                   }
                 })
               } catch (error) {

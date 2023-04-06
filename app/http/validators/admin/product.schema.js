@@ -9,7 +9,7 @@ const createProductSchema = Joi.object({
     colors: Joi.array().min(0).max(20).error(createError.BadRequest("The selected colors cannot be more than 20 items")),
     category: Joi.string().regex(MongoIDPattern).error(createError.BadRequest("The Desired category was not found")),
     price: Joi.number().error(createError.BadRequest("The entered price is not correct")),
-    discount: Joi.number().error(createError.BadRequest("The entered discount is not correct")),
+    discount: Joi.number().allow('').error(createError.BadRequest("The entered discount is not correct")),
     count: Joi.number().error(createError.BadRequest("The entered number is not correct")),
     weight: Joi.number().allow(null, 0, "0").error(createError.BadRequest("The entered weight is not correct")),
     length: Joi.number().allow(null, 0, "0").error(createError.BadRequest("The entered length is not correct")),

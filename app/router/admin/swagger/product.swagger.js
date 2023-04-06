@@ -1,4 +1,3 @@
-
 /**
  * @swagger
  *  components:
@@ -81,7 +80,6 @@
  *                  -   tags
  *                  -   category
  *                  -   price
- *                  -   discount
  *                  -   count
  *              properties:
  *                  title:
@@ -90,30 +88,29 @@
  *                      example: عنوان محصول
  *                  short_text:
  *                      type: string
- *                      description: the title of product
+ *                      description: the short_text of product
  *                      example: متن کوتاه شده تستی
  *                  text:
  *                      type: string
- *                      description: the title of product
+ *                      description: the text of product
  *                      example: متن بلد تستی
  *                  tags:
  *                      type: array
- *                      description: the title of product
+ *                      description: the tags of product
  *                  category:
  *                      type: string
- *                      description: the title of product
- *                      example: 6279e994c1e47a98d0f356d3
+ *                      description: the category of product
+ *                      example: 63b426b72179e3a80896b66c
  *                  price:
  *                      type: string
- *                      description: the title of product
+ *                      description: the price of product
  *                      example: 2500000
  *                  discount:
  *                      type: string
- *                      description: the title of product
- *                      example: 20
+ *                      description: the discount of product
  *                  count:
  *                      type: string
- *                      description: the title of product
+ *                      description: the count of product
  *                      example: 100
  *                  images:
  *                      type: array

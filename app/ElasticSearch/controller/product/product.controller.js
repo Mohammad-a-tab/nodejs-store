@@ -1,0 +1,303 @@
+const {StatusCodes : HttpStatus} = require("http-status-codes");
+const { elasticClient } = require("../../config/elastic.config");
+const indexProduct = "product"
+class ElasticProductController {
+    async searchByTitle (req, res, next) {
+        try {
+            const {title} = req.params;
+            const blog = await elasticClient.search({
+                index: indexProduct,
+                query: {
+                    match: {
+                        title
+                    }
+                }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchByAuthor (req, res, next) {
+        try {
+            const {author} = req?.params;
+            const blog = await elasticClient.search({
+                index: indexProduct,
+                body: { 
+                    query: {
+                        bool: {
+                            should: [
+                                {
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                          bool: {
+                                            must: [
+                                              { match: { "author.First_Name": author }}
+                                            ]
+                                          }
+                                        }
+                                      }
+                                },
+                                {
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                          bool: {
+                                            must: [
+                                              { match: { "author.Last_Name": author }}
+                                            ]
+                                          }
+                                        }
+                                      }
+                                },
+                                {
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                          bool: {
+                                            must: [
+                                              { match: { "author.UserName": author }}
+                                            ]
+                                          }
+                                        }
+                                      }
+                                },
+                                {
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                          bool: {
+                                            must: [
+                                              { match: { "author.Mobile": author }}
+                                            ]
+                                          }
+                                        }
+                                      }
+                                },
+                                {
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                          bool: {
+                                            must: [
+                                              { match: { "author.Email": author }}
+                                            ]
+                                          }
+                                        }
+                                    }
+                                }
+                            ],
+                            minimum_should_match: 1,
+                        }
+                } }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchByText (req, res, next) {
+        try {
+            const {text} = req.params;
+            const blog = await elasticClient.search({
+                index: indexProduct,
+                query: {
+                    match: {
+                        text
+                    }
+                }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchByTags (req, res, next) {
+        try {
+            const {tags} = req.params;
+            const blog = await elasticClient.search({
+                index: indexProduct,
+                query: {
+                    match: {
+                        tags
+                    }
+                }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchTitleByRegexp (req, res, next) {
+        try {
+            const {search} = req.params;
+            const blog = await elasticClient.search({
+                index: indexProduct,
+                query: {
+                    regexp: {
+                        title: `.*${search}.*`
+                    }
+                }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchTextByRegexp (req, res, next) {
+        try {
+            const {search} = req.params;
+            const blog = await elasticClient.search({
+                index: indexProduct,
+                query: {
+                    regexp: {
+                        text: `.*${search}.*`
+                    }
+                }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchAuthorByRegexp (req, res, next) {
+        try {
+            const {search} = req.params;
+            const blog = await elasticClient.search({
+                index: indexProduct,
+                body: {
+                    query: {
+                        bool: {
+                            should: [
+                                {   
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                            regexp: {'author.First_Name': `.*${search}.*`}
+                                        }
+                                    }
+                                },
+                                {   
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                            regexp: {'author.Last_Name': `.*${search}.*`}
+                                        }
+                                    }
+                                },
+                                {   
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                            regexp: {'author.UserName': `.*${search}.*`}
+                                        }
+                                    }
+                                },
+                                {   
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                            regexp: {'author.Mobile': `.*${search}.*`}
+                                        }
+                                    }
+                                },
+                                {   
+                                    nested: {
+                                        path: "author",
+                                        query: {
+                                            regexp: {'author.Email': `.*${search}.*`}
+                                        }
+                                    }
+                                },
+                            ],
+                            minimum_should_match: 1
+                        }
+                    }
+                }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async searchByMultiField (req, res, next) {
+        try {
+            const {search} = req.params;
+            const blog = await elasticClient.search({
+                index: indexProduct,
+                query: {
+                    multi_match: {
+                        query: search,
+                        fields: ["title", "text", "short_text", "tags"]
+                    }
+                }
+            });
+            const blogResult = blog.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(blogResult)
+        } catch (error) {
+            next(error)
+        }
+    }
+}
+async function createNewProductInElasticSearch(product) {
+    const createResults = await elasticClient.index({
+        index: indexProduct,
+        body: {...product} 
+    })
+    return createResults
+}
+async function getAllProductsFromElasticSearch() {
+    const products = await elasticClient.search({
+        index : indexProduct, 
+        query : {
+            "match_all" : {}
+        }
+    });
+    const ProductsResult = products.hits.hits.map(item => item._source)
+    return ProductsResult
+}
+async function removeBlogFromElasticSearch(title) {
+    const results = await elasticClient.search({
+        index : indexProduct,
+        q: title
+    });
+    const blogID = results.hits.hits[0]._id;
+    const deletedResult = await elasticClient.deleteByQuery({
+        index : indexProduct,
+        query : {
+            match : {
+                _id : blogID
+            }
+        }
+    });
+    return deletedResult
+}
+async function updateBlogAtElasticSearch(blog, data) {
+    Object.keys(data).forEach(key => {
+        if(!data[key]) delete data[key]
+    });
+    const results = await elasticClient.search({
+        index : indexProduct,
+        q: blog?.title || blog?.text || blog?.short_text || blog?.tags || blog?.image
+    });
+    const blogID = results.hits.hits[0]._id;
+    const updateResult = await elasticClient.update({
+        index: indexProduct,
+        id : blogID,
+        doc: data
+    })
+    return updateResult
+}
+module.exports = {
+    ElasticProductController: new ElasticProductController(),
+    createNewProductInElasticSearch,
+    getAllProductsFromElasticSearch
+}
