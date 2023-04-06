@@ -264,17 +264,17 @@ async function getAllProductsFromElasticSearch() {
     const ProductsResult = products.hits.hits.map(item => item._source)
     return ProductsResult
 }
-async function removeBlogFromElasticSearch(title) {
+async function removeProductFromElasticSearch(title) {
     const results = await elasticClient.search({
         index : indexProduct,
         q: title
     });
-    const blogID = results.hits.hits[0]._id;
+    const ProductID = results.hits.hits[0]._id;
     const deletedResult = await elasticClient.deleteByQuery({
         index : indexProduct,
         query : {
             match : {
-                _id : blogID
+                _id : ProductID
             }
         }
     });
@@ -299,5 +299,6 @@ async function updateBlogAtElasticSearch(blog, data) {
 module.exports = {
     ElasticProductController: new ElasticProductController(),
     createNewProductInElasticSearch,
-    getAllProductsFromElasticSearch
+    getAllProductsFromElasticSearch,
+    removeProductFromElasticSearch
 }

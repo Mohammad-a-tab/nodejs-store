@@ -15,7 +15,11 @@ const {
     , deleteInvalidPropertyInObject,
     deleteFiledAdditional
 } = require("../../../../utils/function");
-const { createNewProductInElasticSearch, getAllProductsFromElasticSearch } = require("../../../../ElasticSearch/controller/product/product.controller");
+const { 
+    createNewProductInElasticSearch, 
+    getAllProductsFromElasticSearch, 
+    removeProductFromElasticSearch 
+} = require("../../../../ElasticSearch/controller/product/product.controller");
 const ProductBlackList = {
     BOOKMARKS : "bookmarks",
     DISLIKES : "dislikes",
@@ -27,8 +31,8 @@ const ProductBlackList = {
     WEIGHT : "weight",
     HEIGHT : "height",
     length : "length"
- }
- Object.freeze(ProductBlackList)
+}
+Object.freeze(ProductBlackList)
 class ProductController extends Controller {
         async addProduct (req, res, next) {
             try {
@@ -118,15 +122,17 @@ class ProductController extends Controller {
         async removeProduct (req, res, next) {
             try {
                 const {id} = req.params;
-                const products = await this.findProduct(id);
-                deleteFilePublic(products?.images)
+                const product = await this.findProduct(id);
+                deleteFilePublic(product?.images)
                 const deleteResult = await ProductModel.deleteOne({_id : id});
+                const deleteProductFromElasticResult = await removeProductFromElasticSearch(product?.title)
                 if(deleteResult.deletedCount == 0) 
                     throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.INTERNAL_SERVER_ERROR}
                 return res.status(HttpStatus.OK).json({
                     statusCode : HttpStatus.OK,
                     data : {
-                        message : MessageSpecial.SUCCESSFUL_REMOVE_PRODUCT_MESSAGE
+                        message : MessageSpecial.SUCCESSFUL_REMOVE_PRODUCT_MESSAGE,
+                        ElasticResult: deleteProductFromElasticResult.deleted
                     }
                 })
                 
