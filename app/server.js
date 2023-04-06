@@ -82,7 +82,7 @@ module.exports = class Application {
                   },
                   security : [{BearerAuth : [] }]
             },
-            apis : ["./app/router/**/*.js"]
+            apis : ["./app/ElasticSearch/router/**/*.js", "./app/router/**/*.js"]
         }),
         {explorer : true},
         ));

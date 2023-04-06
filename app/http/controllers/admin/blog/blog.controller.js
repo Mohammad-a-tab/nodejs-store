@@ -3,7 +3,7 @@ const {
     getAllBlogsFromElasticSearch,
     removeBlogFromElasticSearch,
     updateBlogAtElasticSearch
- } = require("../../../../ElasticSearch/controller/admin/blog.controller");
+ } = require("../../../../ElasticSearch/controller/admin/blog/blog.controller");
 const {  deleteFilePublic, deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
 const { createBlogSchema } = require("../../../validators/admin/blog.schema");
 const { CategoryModel } = require("../../../../models/categories");
