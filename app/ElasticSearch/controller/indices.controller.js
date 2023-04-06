@@ -8,7 +8,7 @@ const indexMappingBlog = {
         Title: { type: 'text' },
         Short_Text: { type: 'text' },
         Text: { type: 'text' },
-        Image: { type: 'text' },
+        image: { type: 'text' },
         Tags: { type: 'text'},
         author: {
           type: 'nested',
@@ -34,12 +34,16 @@ const indexMappingBlog = {
 const indexMappingProduct = {
     mappings: {
       properties: {
-        Title: { type: 'text' },
-        Short_Text: { type: 'text' },
-        Text: { type: 'text' },
-        Image: { type: 'text' },
-        Tags: { type: 'text'},
-        author: {
+        title: { type: 'text' },
+        short_Text: { type: 'text' },
+        text: { type: 'text' },
+        images: { type: 'text' },
+        tags: { type: 'text'},
+        type: { type: 'text'},
+        price: { type: 'integer'},
+        count: { type: 'integer'},
+        discount: { type: 'integer'},
+        supplier: {
           type: 'nested',
           properties: {
             id: { type: 'text' },
@@ -48,6 +52,18 @@ const indexMappingProduct = {
             UserName: { type: 'text' },
             Mobile: { type: 'text' },
             Email: { type: 'text' }
+          }
+        },
+        features: {
+          type: 'object',
+          properties: {
+            length: { type: 'text' },
+            height: { type: 'text' },
+            width: { type: 'text' },
+            weight: { type: 'text' },
+            colors: { type: 'text' },
+            model: { type: 'text' },
+            Madin: { type: 'text' }
           }
         },
         category: {
@@ -69,8 +85,10 @@ class IndicesController {
             if(indexName === "blog"){
                 indexMapping = indexMappingBlog
             }
-            else if(indexName === 'product'){}
-            else if(indexName === 'category'){}
+            else if(indexName === 'product') {
+                indexMapping = indexMappingProduct
+            }
+            else if(indexName === 'course'){}
             const results = await elasticClient.indices.create({
                 index: indexName,
                 body: indexMapping

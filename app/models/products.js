@@ -24,7 +24,7 @@ const ProductSchema = new mongoose.Schema({
         weight : "",
         colors : [],
         model : [],
-        madein : ""
+        Madin : ""
     }},
     supplier : {type : [mongoose.Types.ObjectId] , ref : "user", required : true}
 
