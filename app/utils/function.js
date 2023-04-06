@@ -81,6 +81,12 @@ function ListOfImagesFromRequest(files, fileUploadPath) {
         return []
     }
 }
+function deleteFiledAdditional(obj) {
+    let fieldsToDelete = ['colors', 'weight', 'length', 'height', 'width'];
+    fieldsToDelete.forEach(field => {
+        delete obj[field]
+    })
+}
 function setFeatures(body) {
     const { colors, width, weight, height, length } = body;
     let features = {};
@@ -266,5 +272,6 @@ module.exports = {
     getTimeOfCourse,
     calculateDiscount,
     getBasketOfUser,
-    invoiceNumberGenerator
+    invoiceNumberGenerator,
+    deleteFiledAdditional
 }

@@ -12,7 +12,8 @@ const {
     , ListOfImagesFromRequest 
     , setFeatures
     , copyObject
-    , deleteInvalidPropertyInObject
+    , deleteInvalidPropertyInObject,
+    deleteFiledAdditional
 } = require("../../../../utils/function");
 const { createNewProductInElasticSearch, getAllProductsFromElasticSearch } = require("../../../../ElasticSearch/controller/product/product.controller");
 const ProductBlackList = {
@@ -34,6 +35,8 @@ class ProductController extends Controller {
                 const images = ListOfImagesFromRequest(req?.files || [], req.body.fileUploadPath)
                 req.body.images = images
                 const data = await createProductSchema.validateAsync(req.body);
+                delete data?.fileUploadPath
+                delete data?.filename
                 let features = setFeatures(req.body)
                 let type = ""
                 if(features.height > 0 || features.length > 0 || features.width >0 || features.weight > 0) {
@@ -43,6 +46,7 @@ class ProductController extends Controller {
                     type = "virtual"
                 }
                 const category = await this.ExistCorrectCategoryID(data?.category)
+                deleteFiledAdditional(data)
                 data.supplier = req.user._id;
                 data.features = features;
                 data.type = type;
@@ -152,13 +156,38 @@ class ProductController extends Controller {
                             $unwind : "$category"
                         },
                         {
+                            $lookup : {
+                                from : "users",
+                                localField : "supplier",
+                                foreignField : "_id",
+                                as : "supplier"
+                            }
+                        },
+                        {
+                            $unwind : "$supplier"
+                        },
+                        {
                             $project : {
                                 "category.__v" : 0,
+                                "__v" : 0,
                                 "category.parent" : 0,
                                 "category._id" : 0,
+                                "supplier.bills" : 0,
+                                "supplier.basket" : 0,
+                                "supplier.discount" : 0,
+                                "supplier.__v" : 0,
+                                "supplier.updatedAt" : 0,
+                                "supplier.Role" : 0,
+                                "supplier.otp" : 0,
+                                "supplier.token" : 0,
+                                "supplier.Products" : 0,
+                                "supplier.Courses" : 0,
+                                "supplier.password" : 0,
+                                "supplier._id" : 0
                             }
                         }
                   ])
+                  ElasticResult = await getAllProductsFromElasticSearch()
                 } else {
                   products = await ProductModel.aggregate([
                         {
@@ -176,11 +205,34 @@ class ProductController extends Controller {
                             $unwind : "$category"
                         },
                         {
+                            $lookup : {
+                                from : "users",
+                                localField : "supplier",
+                                foreignField : "_id",
+                                as : "supplier"
+                            }
+                        },
+                        {
+                            $unwind : "$supplier"
+                        },
+                        {
                             $project : {
                                 "category.__v" : 0,
                                 "__v" : 0,
                                 "category.parent" : 0,
                                 "category._id" : 0,
+                                "supplier.bills" : 0,
+                                "supplier.basket" : 0,
+                                "supplier.discount" : 0,
+                                "supplier.__v" : 0,
+                                "supplier.updatedAt" : 0,
+                                "supplier.Role" : 0,
+                                "supplier.otp" : 0,
+                                "supplier.token" : 0,
+                                "supplier.Products" : 0,
+                                "supplier.Courses" : 0,
+                                "supplier.password" : 0,
+                                "supplier._id" : 0
                             }
                         }
                   ])
