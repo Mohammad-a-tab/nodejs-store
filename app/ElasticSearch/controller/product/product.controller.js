@@ -5,7 +5,7 @@ class ElasticProductController {
     async searchByTitle (req, res, next) {
         try {
             const {title} = req.params;
-            const blog = await elasticClient.search({
+            const product = await elasticClient.search({
                 index: indexProduct,
                 query: {
                     match: {
@@ -13,8 +13,8 @@ class ElasticProductController {
                     }
                 }
             });
-            const blogResult = blog.hits.hits.map(item => item._source)
-            return res.status(HttpStatus.OK).json(blogResult)
+            const productResult = product.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(productResult)
         } catch (error) {
             next(error)
         }
@@ -22,7 +22,7 @@ class ElasticProductController {
     async searchByAuthor (req, res, next) {
         try {
             const {author} = req?.params;
-            const blog = await elasticClient.search({
+            const product = await elasticClient.search({
                 index: indexProduct,
                 body: { 
                     query: {
@@ -93,8 +93,8 @@ class ElasticProductController {
                         }
                 } }
             });
-            const blogResult = blog.hits.hits.map(item => item._source)
-            return res.status(HttpStatus.OK).json(blogResult)
+            const productResult = product.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(productResult)
         } catch (error) {
             next(error)
         }
@@ -102,7 +102,7 @@ class ElasticProductController {
     async searchByText (req, res, next) {
         try {
             const {text} = req.params;
-            const blog = await elasticClient.search({
+            const product = await elasticClient.search({
                 index: indexProduct,
                 query: {
                     match: {
@@ -110,8 +110,8 @@ class ElasticProductController {
                     }
                 }
             });
-            const blogResult = blog.hits.hits.map(item => item._source)
-            return res.status(HttpStatus.OK).json(blogResult)
+            const productResult = product.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(productResult)
         } catch (error) {
             next(error)
         }
@@ -119,7 +119,7 @@ class ElasticProductController {
     async searchByTags (req, res, next) {
         try {
             const {tags} = req.params;
-            const blog = await elasticClient.search({
+            const product = await elasticClient.search({
                 index: indexProduct,
                 query: {
                     match: {
@@ -127,8 +127,8 @@ class ElasticProductController {
                     }
                 }
             });
-            const blogResult = blog.hits.hits.map(item => item._source)
-            return res.status(HttpStatus.OK).json(blogResult)
+            const productResult = product.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(productResult)
         } catch (error) {
             next(error)
         }
@@ -136,7 +136,7 @@ class ElasticProductController {
     async searchTitleByRegexp (req, res, next) {
         try {
             const {search} = req.params;
-            const blog = await elasticClient.search({
+            const product = await elasticClient.search({
                 index: indexProduct,
                 query: {
                     regexp: {
@@ -144,8 +144,8 @@ class ElasticProductController {
                     }
                 }
             });
-            const blogResult = blog.hits.hits.map(item => item._source)
-            return res.status(HttpStatus.OK).json(blogResult)
+            const productResult = product.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(productResult)
         } catch (error) {
             next(error)
         }
@@ -153,7 +153,7 @@ class ElasticProductController {
     async searchTextByRegexp (req, res, next) {
         try {
             const {search} = req.params;
-            const blog = await elasticClient.search({
+            const product = await elasticClient.search({
                 index: indexProduct,
                 query: {
                     regexp: {
@@ -161,8 +161,8 @@ class ElasticProductController {
                     }
                 }
             });
-            const blogResult = blog.hits.hits.map(item => item._source)
-            return res.status(HttpStatus.OK).json(blogResult)
+            const productResult = product.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(productResult)
         } catch (error) {
             next(error)
         }
@@ -170,7 +170,7 @@ class ElasticProductController {
     async searchAuthorByRegexp (req, res, next) {
         try {
             const {search} = req.params;
-            const blog = await elasticClient.search({
+            const product = await elasticClient.search({
                 index: indexProduct,
                 body: {
                     query: {
@@ -222,8 +222,8 @@ class ElasticProductController {
                     }
                 }
             });
-            const blogResult = blog.hits.hits.map(item => item._source)
-            return res.status(HttpStatus.OK).json(blogResult)
+            const productResult = product.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(productResult)
         } catch (error) {
             next(error)
         }
@@ -231,7 +231,7 @@ class ElasticProductController {
     async searchByMultiField (req, res, next) {
         try {
             const {search} = req.params;
-            const blog = await elasticClient.search({
+            const product = await elasticClient.search({
                 index: indexProduct,
                 query: {
                     multi_match: {
@@ -240,8 +240,8 @@ class ElasticProductController {
                     }
                 }
             });
-            const blogResult = blog.hits.hits.map(item => item._source)
-            return res.status(HttpStatus.OK).json(blogResult)
+            const productResult = product.hits.hits.map(item => item._source)
+            return res.status(HttpStatus.OK).json(productResult)
         } catch (error) {
             next(error)
         }
@@ -282,18 +282,18 @@ async function removeProductFromElasticSearch(title) {
     });
     return deletedResult
 }
-async function updateBlogAtElasticSearch(blog, data) {
+async function updateBlogAtElasticSearch(product, data) {
     Object.keys(data).forEach(key => {
         if(!data[key]) delete data[key]
     });
     const results = await elasticClient.search({
         index : indexProduct,
-        q: blog?.title || blog?.text || blog?.short_text || blog?.tags || blog?.image
+        q: product?.title || product?.text || product?.short_text || product?.tags || product?.image
     });
-    const blogID = results.hits.hits[0]._id;
+    const productID = results.hits.hits[0]._id;
     const updateResult = await elasticClient.update({
         index: indexProduct,
-        id : blogID,
+        id : productID,
         doc: data
     })
     return updateResult
