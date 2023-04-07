@@ -7,11 +7,11 @@ router.get("/search-title-regexp/:search", ElasticProductController.searchTitleB
 router.get("/search-text/:text", ElasticProductController.searchByText)
 router.get("/search-text-regexp/:search", ElasticProductController.searchTextByRegexp)
 router.get("/search-supplier/:supplier", ElasticProductController.searchBySupplier)
-router.get("/search-supplier-regexp/:search", ElasticProductController.searchSupplierByRegexpByRegexp)
+router.get("/search-supplier-regexp/:search", ElasticProductController.searchSupplierByRegexp)
 router.get("/search-tags/:tags", ElasticProductController.searchByTags)
 
 
 module.exports = {
-    BlogRouter: router 
+    ProductRouter: router 
 }
 
