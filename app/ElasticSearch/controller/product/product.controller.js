@@ -19,9 +19,9 @@ class ElasticProductController {
             next(error)
         }
     }
-    async searchByAuthor (req, res, next) {
+    async searchBySupplier (req, res, next) {
         try {
-            const {author} = req?.params;
+            const {supplier} = req?.params;
             const product = await elasticClient.search({
                 index: indexProduct,
                 body: { 
@@ -30,11 +30,11 @@ class ElasticProductController {
                             should: [
                                 {
                                     nested: {
-                                        path: "author",
+                                        path: "supplier",
                                         query: {
                                           bool: {
                                             must: [
-                                              { match: { "author.First_Name": author }}
+                                              { match: { "supplier.First_Name": supplier }}
                                             ]
                                           }
                                         }
@@ -42,11 +42,11 @@ class ElasticProductController {
                                 },
                                 {
                                     nested: {
-                                        path: "author",
+                                        path: "supplier",
                                         query: {
                                           bool: {
                                             must: [
-                                              { match: { "author.Last_Name": author }}
+                                              { match: { "supplier.Last_Name": supplier }}
                                             ]
                                           }
                                         }
@@ -54,11 +54,11 @@ class ElasticProductController {
                                 },
                                 {
                                     nested: {
-                                        path: "author",
+                                        path: "supplier",
                                         query: {
                                           bool: {
                                             must: [
-                                              { match: { "author.UserName": author }}
+                                              { match: { "supplier.UserName": supplier }}
                                             ]
                                           }
                                         }
@@ -66,11 +66,11 @@ class ElasticProductController {
                                 },
                                 {
                                     nested: {
-                                        path: "author",
+                                        path: "supplier",
                                         query: {
                                           bool: {
                                             must: [
-                                              { match: { "author.Mobile": author }}
+                                              { match: { "supplier.Mobile": supplier }}
                                             ]
                                           }
                                         }
@@ -78,11 +78,11 @@ class ElasticProductController {
                                 },
                                 {
                                     nested: {
-                                        path: "author",
+                                        path: "supplier",
                                         query: {
                                           bool: {
                                             must: [
-                                              { match: { "author.Email": author }}
+                                              { match: { "supplier.Email": supplier }}
                                             ]
                                           }
                                         }
@@ -167,7 +167,7 @@ class ElasticProductController {
             next(error)
         }
     }
-    async searchAuthorByRegexp (req, res, next) {
+    async searchSupplierByRegexp (req, res, next) {
         try {
             const {search} = req.params;
             const product = await elasticClient.search({
@@ -178,41 +178,41 @@ class ElasticProductController {
                             should: [
                                 {   
                                     nested: {
-                                        path: "author",
+                                        path: "supplier",
                                         query: {
-                                            regexp: {'author.First_Name': `.*${search}.*`}
+                                            regexp: {'supplier.First_Name': `.*${search}.*`}
                                         }
                                     }
                                 },
                                 {   
                                     nested: {
-                                        path: "author",
+                                        path: "supplier",
                                         query: {
-                                            regexp: {'author.Last_Name': `.*${search}.*`}
+                                            regexp: {'supplier.Last_Name': `.*${search}.*`}
                                         }
                                     }
                                 },
                                 {   
                                     nested: {
-                                        path: "author",
+                                        path: "supplier",
                                         query: {
-                                            regexp: {'author.UserName': `.*${search}.*`}
+                                            regexp: {'supplier.UserName': `.*${search}.*`}
                                         }
                                     }
                                 },
                                 {   
                                     nested: {
-                                        path: "author",
+                                        path: "supplier",
                                         query: {
-                                            regexp: {'author.Mobile': `.*${search}.*`}
+                                            regexp: {'supplier.Mobile': `.*${search}.*`}
                                         }
                                     }
                                 },
                                 {   
                                     nested: {
-                                        path: "author",
+                                        path: "supplier",
                                         query: {
-                                            regexp: {'author.Email': `.*${search}.*`}
+                                            regexp: {'supplier.Email': `.*${search}.*`}
                                         }
                                     }
                                 },

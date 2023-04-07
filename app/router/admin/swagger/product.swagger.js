@@ -189,7 +189,6 @@
  *                  type:
  *                      type: string
  *                      description: the type of product 
- *                      example: virtual - physical
  *                  colors:
  *                      $ref: '#/components/schemas/Color'
  *                      
