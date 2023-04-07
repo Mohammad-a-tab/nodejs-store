@@ -19,7 +19,8 @@ const {
 const { 
     createNewProductInElasticSearch, 
     getAllProductsFromElasticSearch, 
-    removeProductFromElasticSearch 
+    removeProductFromElasticSearch, 
+    updateProductInElasticSearch
 } = require("../../../../ElasticSearch/controller/product/product.controller");
 const ProductBlackList = {
     BOOKMARKS : "bookmarks",
@@ -101,6 +102,10 @@ class ProductController extends Controller {
                 if(data.category) {
                     if(await this.ExistCorrectCategoryID(data.category)){
                         updateResult = await ProductModel.updateOne({_id : id}, {$set : data})
+                        data.category = {
+                            id: data.category._id,
+                            Title: data.category.title,
+                        }
                     }
                 }else{
 
@@ -108,10 +113,12 @@ class ProductController extends Controller {
                 }
                 if(updateResult.modifiedCount == 0) 
                     throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_UPDATED_MESSAGE}
+                const updateProductInElasticResult = await updateProductInElasticSearch(product, data)
                 return res.status(HttpStatus.OK).json({
                     statusCode: HttpStatus.OK,
                     data : {
-                        message : MessageSpecial.SUCCESSFUL_UPDATED_MESSAGE
+                        message : MessageSpecial.SUCCESSFUL_UPDATED_MESSAGE,
+                        ElasticResult: updateProductInElasticResult.result
                     }
                 })
                 

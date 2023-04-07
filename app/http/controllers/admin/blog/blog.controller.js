@@ -181,11 +181,10 @@ class BlogController extends Controller {
             let updateResult = any;
             if(data.category){
                 if(await this.existCategoryOfBlogByID(data.category)){
-                
                     updateResult = await BlogModel.updateOne({_id : id}, {$set : data})
                     data.category = {
-                        id: category._id,
-                        Title: category.title
+                        id: data.category._id,
+                        Title: data.category.title
                     }
                 }
             }

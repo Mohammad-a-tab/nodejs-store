@@ -282,7 +282,7 @@ async function removeProductFromElasticSearch(title) {
     });
     return deletedResult
 }
-async function updateBlogAtElasticSearch(product, data) {
+async function updateProductInElasticSearch(product, data) {
     Object.keys(data).forEach(key => {
         if(!data[key]) delete data[key]
     });
@@ -302,5 +302,6 @@ module.exports = {
     ElasticProductController: new ElasticProductController(),
     createNewProductInElasticSearch,
     getAllProductsFromElasticSearch,
-    removeProductFromElasticSearch
+    removeProductFromElasticSearch,
+    updateProductInElasticSearch
 }
