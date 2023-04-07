@@ -155,30 +155,30 @@
  *                      example: عنوان محصول
  *                  short_text:
  *                      type: string
- *                      description: the title of product
+ *                      description: the short_text of product
  *                      example: متن کوتاه شده تستی
  *                  text:
  *                      type: string
- *                      description: the title of product
+ *                      description: the text of product
  *                      example: متن بلد تستی
  *                  tags:
  *                      type: array
- *                      description: the title of product
+ *                      description: the tags of product
  *                  category:
  *                      type: string
- *                      description: the title of product
+ *                      description: the category of product
  *                      example: 6279e994c1e47a98d0f356d3
  *                  price:
  *                      type: string
- *                      description: the title of product
+ *                      description: the price of product
  *                      example: 2500000
  *                  discount:
  *                      type: string
- *                      description: the title of product
+ *                      description: the discount of product
  *                      example: 20
  *                  count:
  *                      type: string
- *                      description: the title of product
+ *                      description: the count of product
  *                      example: 100
  *                  images:
  *                      type: array
@@ -195,7 +195,7 @@
  *                      example: 0
  *                  width:
  *                      type: string
- *                      description: the with of product packet
+ *                      description: the width of product packet
  *                      example: 0
  *                  length:
  *                      type: string
@@ -291,7 +291,7 @@
  *  /admin/products/edit/{id}:
  *      patch:
  *          tags: [Product(Admin-Panel)]
- *          summary: create and save product
+ *          summary: edit and save product
  *          parameters:
  *              -   in: path
  *                  name: id
