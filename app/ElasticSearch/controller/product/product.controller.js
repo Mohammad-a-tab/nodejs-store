@@ -257,8 +257,10 @@ async function createNewProductInElasticSearch(product) {
 async function getAllProductsFromElasticSearch() {
     const products = await elasticClient.search({
         index : indexProduct, 
-        query : {
-            "match_all" : {}
+        body: {
+            query : {
+                "match_all" : {}
+            }
         }
     });
     const ProductsResult = products.hits.hits.map(item => item._source)

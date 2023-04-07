@@ -13,7 +13,8 @@ const {
     , setFeatures
     , copyObject
     , deleteInvalidPropertyInObject,
-    deleteFiledAdditional
+    deleteFiledAdditional,
+    removeFieldEmpty
 } = require("../../../../utils/function");
 const { 
     createNewProductInElasticSearch, 
@@ -143,10 +144,10 @@ class ProductController extends Controller {
         async getALlProducts (req, res, next) {
             try {
                 const search = req?.query?.search || "";
-                let products;
-                let ElasticResult;
+                let data;
+                let ElasticData;
                 if (search) {
-                     products = await ProductModel.aggregate([
+                     data = await ProductModel.aggregate([
                         {
                             $match : { $text: { $search: `"${req.query.search }"`  } }
                         },
@@ -193,9 +194,9 @@ class ProductController extends Controller {
                             }
                         }
                   ])
-                  ElasticResult = await getAllProductsFromElasticSearch()
+                  ElasticData = await getAllProductsFromElasticSearch()
                 } else {
-                  products = await ProductModel.aggregate([
+                  data = await ProductModel.aggregate([
                         {
                             $match : {}
                         },
@@ -242,8 +243,10 @@ class ProductController extends Controller {
                             }
                         }
                   ])
-                  ElasticResult = await getAllProductsFromElasticSearch()
+                  ElasticData = await getAllProductsFromElasticSearch()
                 }
+                const products = removeFieldEmpty(data)
+                const ElasticResult = removeFieldEmpty(ElasticData)
                 return res.status(HttpStatus.OK).json({
                   statusCode: HttpStatus.OK,
                   data: {

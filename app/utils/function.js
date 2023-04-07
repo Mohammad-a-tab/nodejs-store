@@ -258,6 +258,16 @@ async function getBasketOfUser(userID, discount = {}){
     ]);
     return copyObject(userDetail)
 }
+function removeFieldEmpty(array) {
+    for (const obj of array) {
+        for (let key in obj) {
+            if (obj[key] === null || obj[key].length === 0 || obj[key] === undefined || obj[key] === '') {
+              delete obj[key];
+            }
+        }
+    }
+    return array
+}
 module.exports = {
     RandomNumberGenerator,
     SignAccessToken,
@@ -273,5 +283,6 @@ module.exports = {
     calculateDiscount,
     getBasketOfUser,
     invoiceNumberGenerator,
-    deleteFiledAdditional
+    deleteFiledAdditional,
+    removeFieldEmpty
 }
