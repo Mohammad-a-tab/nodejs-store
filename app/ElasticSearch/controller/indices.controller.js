@@ -100,14 +100,56 @@ const indexMappingCourse = {
             Email: { type: 'text' }
           }
         },
+        chapters: {
+          type: 'nested',
+          properties: {
+            title: { type: 'text' },
+            text: { type: 'text' },
+            episodes: { 
+              type: 'nested',
+              properties: {
+                title: { type: 'text' },
+                text: { type: 'text' },
+                type: { type: 'text' },
+                time: { type: 'text' },
+                videoAddress: { type: 'text' },
+              } 
+            },
+          }
+        },
         comments: {
-          type: 'object',
+          type: 'nested',
           properties: {
             comment: { type: 'text' },
             show: { type: 'boolean' },
             openToComment: { type: 'boolean' },
-            model: { type: 'text' },
-            Madin: { type: 'text' }
+            user: { 
+              type: 'nested',
+              properties: {
+                id: { type: 'text' },
+                First_Name: { type: 'text' },
+                Last_Name: { type: 'text' },
+                Mobile: { type: 'text' }
+              }
+            },
+            answers: { 
+              type: 'nested',
+              properties: {
+                comment: { type: 'text' },
+                show: { type: 'boolean' },
+                openToComment: { type: 'boolean' },
+                user: {
+                  type: 'nested',
+                  properties: {
+                    id: { type: 'text' },
+                    First_Name: { type: 'text' },
+                    Last_Name: { type: 'text' },
+                    Mobile: { type: 'text' }
+                  }
+                }
+
+              }
+            }
           }
         },
         category: {
