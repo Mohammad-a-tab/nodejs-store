@@ -100,6 +100,33 @@ const indexMappingCourse = {
             Email: { type: 'text' }
           }
         },
+        likes: {
+          type: 'nested',
+          properties: {
+            id: { type: 'text' },
+            First_Name: { type: 'text' },
+            Last_Name: { type: 'text' },
+            Mobile: { type: 'text' }
+          }
+        },
+        dislikes: {
+          type: 'nested',
+          properties: {
+            id: { type: 'text' },
+            First_Name: { type: 'text' },
+            Last_Name: { type: 'text' },
+            Mobile: { type: 'text' }
+          }
+        },
+        bookmarks: {
+          type: 'nested',
+          properties: {
+            id: { type: 'text' },
+            First_Name: { type: 'text' },
+            Last_Name: { type: 'text' },
+            Mobile: { type: 'text' }
+          }
+        },
         chapters: {
           type: 'nested',
           properties: {
@@ -174,7 +201,9 @@ class IndicesController {
             else if(indexName === 'product') {
                 indexMapping = indexMappingProduct
             }
-            else if(indexName === 'course') {}
+            else if(indexName === 'course') {
+                indexMapping = indexMappingCourse
+            }
             const results = await elasticClient.indices.create({
                 index: indexName,
                 body: indexMapping
