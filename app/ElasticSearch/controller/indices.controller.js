@@ -84,11 +84,12 @@ const indexMappingCourse = {
         text: { type: 'text' },
         image: { type: 'text' },
         tags: { type: 'text'},
-        type: { type: 'text'},
+        status: { type: 'text'},
         price: { type: 'integer'},
-        count: { type: 'integer'},
+        time: { type: 'text'},
+        type: { type: 'text'},
         discount: { type: 'integer'},
-        supplier: {
+        teacher: {
           type: 'nested',
           properties: {
             id: { type: 'text' },
@@ -99,14 +100,12 @@ const indexMappingCourse = {
             Email: { type: 'text' }
           }
         },
-        features: {
+        comments: {
           type: 'object',
           properties: {
-            length: { type: 'text' },
-            height: { type: 'text' },
-            width: { type: 'text' },
-            weight: { type: 'text' },
-            colors: { type: 'text' },
+            comment: { type: 'text' },
+            show: { type: 'boolean' },
+            openToComment: { type: 'boolean' },
             model: { type: 'text' },
             Madin: { type: 'text' }
           }
