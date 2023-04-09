@@ -76,19 +76,64 @@ const indexMappingProduct = {
       }
     }
 };
+const indexMappingCourse = {
+    mappings: {
+      properties: {
+        title: { type: 'text' },
+        short_Text: { type: 'text' },
+        text: { type: 'text' },
+        image: { type: 'text' },
+        tags: { type: 'text'},
+        type: { type: 'text'},
+        price: { type: 'integer'},
+        count: { type: 'integer'},
+        discount: { type: 'integer'},
+        supplier: {
+          type: 'nested',
+          properties: {
+            id: { type: 'text' },
+            First_Name: { type: 'text' },
+            Last_Name: { type: 'text' },
+            UserName: { type: 'text' },
+            Mobile: { type: 'text' },
+            Email: { type: 'text' }
+          }
+        },
+        features: {
+          type: 'object',
+          properties: {
+            length: { type: 'text' },
+            height: { type: 'text' },
+            width: { type: 'text' },
+            weight: { type: 'text' },
+            colors: { type: 'text' },
+            model: { type: 'text' },
+            Madin: { type: 'text' }
+          }
+        },
+        category: {
+          type: 'object',
+          properties: {
+            id: { type: 'text' },
+            Title: { type: 'text' }
+          }
+        }
+      }
+    }
+};
 class IndicesController {
     async createNewIndex (req, res, next) {
         try {
             const {indexName} = req.body;
             let indexMapping = {}
             if(!indexName) throw createHttpError.BadRequest("Invalid value of index name");
-            if(indexName === "blog"){
+            if(indexName === "blog") {
                 indexMapping = indexMappingBlog
             }
             else if(indexName === 'product') {
                 indexMapping = indexMappingProduct
             }
-            else if(indexName === 'course'){}
+            else if(indexName === 'course') {}
             const results = await elasticClient.indices.create({
                 index: indexName,
                 body: indexMapping
