@@ -288,7 +288,7 @@ async function updateProductInElasticSearch(product, data) {
     });
     const results = await elasticClient.search({
         index : indexProduct,
-        q: product?.title || product?.text || product?.short_text || product?.tags || product?.images
+        q: product?.title || product?.text || product?.short_text || product?.tags || product?.image
     });
     const productID = results.hits.hits[0]._id;
     const updateResult = await elasticClient.update({

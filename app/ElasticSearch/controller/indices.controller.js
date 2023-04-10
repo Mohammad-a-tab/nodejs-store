@@ -132,6 +132,7 @@ const indexMappingCourse = {
           properties: {
             title: { type: 'text' },
             text: { type: 'text' },
+            _id: { type: 'text' },
             episodes: { 
               type: 'nested',
               properties: {
