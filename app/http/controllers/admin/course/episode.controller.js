@@ -8,6 +8,8 @@ const {CourseModel} = require("../../../../models/course");
 const createHttpError = require("http-errors");
 const Controller = require("../../controller");
 const path = require("path");
+const { AdminCourseController } = require("./course.controller");
+const { updateCourseInElasticSearch } = require("../../../../ElasticSearch/controller/course/course.controller");
 class EpisodeController extends Controller {
     async addNewEpisode (req, res , next) {
         try {
@@ -40,12 +42,22 @@ class EpisodeController extends Controller {
                 $push : {
                 "chapters.$.episodes" : episode
             }});
+            const course = await AdminCourseController.findCourseByID(courseID);
+            const data = copyObject(course)
+            delete data._id
+            delete data.discountedPrice
+            delete data.discountStatus
+            delete data.category
+            delete data.teacher
+            delete data.students
+            const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             if(createEpisodeResults.modifiedCount == 0) 
                 throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_CREATED_EPISODE_MESSAGE}
             return res.status(HttpStatus.CREATED).json({
                 StatusCode : HttpStatus.CREATED,
                 data : {
-                    message : MessageSpecial.SUCCESSFUL_CREATED_EPISODE_MESSAGE
+                    message : MessageSpecial.SUCCESSFUL_CREATED_EPISODE_MESSAGE,
+                    ElasticResult: updateCourseInElasticResult.result
                 }   
             })
 

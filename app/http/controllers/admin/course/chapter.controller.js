@@ -1,4 +1,4 @@
-const { deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function")
+const { deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
 const { MessageSpecial } = require("../../../../utils/constants");
 const { AdminCourseController } = require("./course.controller");
 const {StatusCodes : HttpStatus} = require("http-status-codes");
@@ -22,7 +22,6 @@ class ChapterController extends Controller {
             delete data.category
             delete data.teacher
             delete data.students
-            console.log(data);
             const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             if(saveChapterResults.modifiedCount == 0) 
                 throw createHttpError.InternalServerError("Add chapter failed");
