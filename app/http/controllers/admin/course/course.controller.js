@@ -8,6 +8,7 @@ const { isValidObjectId } = require("mongoose");
 const Controller = require("../../controller");
 const createHttpError = require("http-errors");
 const path = require("path");
+const { createNewCourseInElasticSearch } = require("../../../../ElasticSearch/controller/course/course.controller");
 
 let BLACKLIST = {
     TIME : "time",
@@ -108,10 +109,26 @@ class CourseController extends Controller {
             const {id} = req.params;
             const course = await CourseModel.findById(id);
             if(!course) throw createHttpError.NotFound("Course not found");
+            const data = course;
+            data.teacher = {
+                id: req.user._id,
+                First_Name: req.user.first_name,
+                Last_Name: req.user._last_name,
+                UserName: req.user.username,
+                Mobile: req.user._mobile,
+                Email: req.user._email,
+            }
+            const category = await this.existCategoryByID(course?.category)   
+            data.category = {
+                id: category._id,
+                Title: category.title,
+            }
+            const mmd = await createNewCourseInElasticSearch(data)
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
-                    course
+                    course,
+                    mmd: mmd.result
                 }
             })
         } catch (error) {
