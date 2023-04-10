@@ -1,6 +1,6 @@
 const {StatusCodes : HttpStatus} = require("http-status-codes");
 const { elasticClient } = require("../../config/elastic.config");
-const indexCourse = "Course"
+const indexCourse = "course"
 class ElasticCourseController {
     async searchByTitle (req, res, next) {
         try {
@@ -264,6 +264,7 @@ async function getAllCourseFromElasticSearch() {
         }
     });
     const CoursesResult = courses.hits.hits.map(item => item._source)
+    console.log(CoursesResult);
     return CoursesResult
 }
 async function removeCourseFromElasticSearch(title) {

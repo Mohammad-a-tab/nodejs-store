@@ -8,7 +8,7 @@ const { isValidObjectId } = require("mongoose");
 const Controller = require("../../controller");
 const createHttpError = require("http-errors");
 const path = require("path");
-const { createNewCourseInElasticSearch } = require("../../../../ElasticSearch/controller/course/course.controller");
+const { createNewCourseInElasticSearch, getAllCourseFromElasticSearch } = require("../../../../ElasticSearch/controller/course/course.controller");
 
 let BLACKLIST = {
     TIME : "time",
@@ -40,10 +40,12 @@ class CourseController extends Controller {
                 {path : "category" , select : {title : 1}},
                 {path : "teacher" , select : {first_name : 1 , last_name : 1 , mobile : 1, email : 1}}
             ]).sort({_id : -1})
+            const elasticCourses = await getAllCourseFromElasticSearch()
             return res.status(HttpStatus.OK).json({
                 StatusCode : HttpStatus.OK,
                 data : {
                     courses
+                    elasticCourses
                 }
             })
         } catch (error) {
@@ -55,52 +57,47 @@ class CourseController extends Controller {
             const courseDataBody = await createCourseSchema.validateAsync(req.body);
             req.body.image =path.join(courseDataBody.fileUploadPath, courseDataBody.filename)
             req.body.image = req.body.image.replace(/\\/g, "/")
-            let {
-                title 
-                , text 
-                , short_text 
-                , tags 
-                , category 
-                , price 
-                , discount = 0 
-                , type 
-                , discountedPrice 
-            } = courseDataBody;
-            const image = req.body.image
-            const teacher = req.user._id
-            if(Number(price) > 0 && type === "free") 
+            const data = courseDataBody;
+            data.image = req.body.image
+            data.teacher = req.user._id
+            if(Number(data.price) > 0 && data.type === "free") 
                 throw createHttpError.BadRequest("برای دوره ی رایگان نمیتوان قیمت ثبت کرد")
-            let discountStatus = false
-            if(Number(discount) > 0){
-                discountStatus = true
+            data.discountStatus = false
+            if(Number(data?.discount) > 0){
+                data.discountStatus = true
             }
-            await this.existCategoryByID(category)
-            const courseResult = await CourseModel.create({
-                title
-                , text
-                , short_text
-                , category
-                , tags
-                , image
-                , teacher
-                , price
-                , discount
-                , discountedPrice
-                , discountStatus
-                , type,
-                status : "notStarted",
-            });
+            const category = await this.existCategoryByID(data?.category)
+            const courseResult = await CourseModel.create({...data});
             if(!courseResult?._id) 
                 throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_CREATED_COURSE_MESSAGE}
+            delete data.discountStatus
+            delete data.discountedPrice
+            delete data.filename
+            delete data.fileUploadPath
+            data.teacher = {
+                id: req.user._id,
+                First_Name: req.user.first_name,
+                Last_Name: req.user.last_name,
+                UserName: req.user.username,
+                Mobile: req.user.mobile,
+                Email: req.user.email,
+            }  
+            data.category = {
+                id: category._id,
+                Title: category.title,
+            }
+            const createCourseInElasticResult = await createNewCourseInElasticSearch(data)
             return res.status(HttpStatus.CREATED).json({
                 statusCode : HttpStatus.CREATED,
                 data: {
-                    message : MessageSpecial.SUCCESSFUL_CREATED_COURSE_MESSAGE
+                    message : MessageSpecial.SUCCESSFUL_CREATED_COURSE_MESSAGE,
+                    ElasticResult: createCourseInElasticResult.result
                 }
             })
             
         } catch (error) {
             deleteFilePublic(req?.body?.image)
+            console.log(error);
             next(error)
         }
     }
@@ -109,26 +106,10 @@ class CourseController extends Controller {
             const {id} = req.params;
             const course = await CourseModel.findById(id);
             if(!course) throw createHttpError.NotFound("Course not found");
-            const data = course;
-            data.teacher = {
-                id: req.user._id,
-                First_Name: req.user.first_name,
-                Last_Name: req.user._last_name,
-                UserName: req.user.username,
-                Mobile: req.user._mobile,
-                Email: req.user._email,
-            }
-            const category = await this.existCategoryByID(course?.category)   
-            data.category = {
-                id: category._id,
-                Title: category.title,
-            }
-            const mmd = await createNewCourseInElasticSearch(data)
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
-                    course,
-                    mmd: mmd.result
+                    course
                 }
             })
         } catch (error) {

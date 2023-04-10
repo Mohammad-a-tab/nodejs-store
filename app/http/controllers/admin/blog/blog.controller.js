@@ -127,12 +127,12 @@ class BlogController extends Controller {
                     }
                 }
             ]).sort({_id : -1});
-            const elasticBlog = await getAllBlogsFromElasticSearch()
+            const elasticBlogs = await getAllBlogsFromElasticSearch()
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
                     blogs,
-                    elasticBlog
+                    elasticBlogs
                 }
             })
         } catch (error) {

@@ -130,11 +130,13 @@ const indexMappingCourse = {
         chapters: {
           type: 'nested',
           properties: {
+            _id: { type: 'text' },
             title: { type: 'text' },
             text: { type: 'text' },
             episodes: { 
               type: 'nested',
               properties: {
+                _id: { type: 'text' },
                 title: { type: 'text' },
                 text: { type: 'text' },
                 type: { type: 'text' },
@@ -148,33 +150,17 @@ const indexMappingCourse = {
           type: 'nested',
           properties: {
             comment: { type: 'text' },
+            _id: { type: 'text' },
             show: { type: 'boolean' },
             openToComment: { type: 'boolean' },
-            user: { 
-              type: 'nested',
-              properties: {
-                id: { type: 'text' },
-                First_Name: { type: 'text' },
-                Last_Name: { type: 'text' },
-                Mobile: { type: 'text' }
-              }
-            },
+            user: { type: 'text' },
             answers: { 
               type: 'nested',
               properties: {
                 comment: { type: 'text' },
                 show: { type: 'boolean' },
                 openToComment: { type: 'boolean' },
-                user: {
-                  type: 'nested',
-                  properties: {
-                    id: { type: 'text' },
-                    First_Name: { type: 'text' },
-                    Last_Name: { type: 'text' },
-                    Mobile: { type: 'text' }
-                  }
-                }
-
+                user: { type: 'text' },
               }
             }
           }
