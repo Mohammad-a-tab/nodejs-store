@@ -264,7 +264,6 @@ async function getAllCourseFromElasticSearch() {
         }
     });
     const CoursesResult = courses.hits.hits.map(item => item._source)
-    console.log(CoursesResult);
     return CoursesResult
 }
 async function removeCourseFromElasticSearch(title) {

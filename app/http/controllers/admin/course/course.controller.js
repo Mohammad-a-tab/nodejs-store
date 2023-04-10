@@ -44,7 +44,7 @@ class CourseController extends Controller {
             return res.status(HttpStatus.OK).json({
                 StatusCode : HttpStatus.OK,
                 data : {
-                    courses
+                    courses,
                     elasticCourses
                 }
             })
