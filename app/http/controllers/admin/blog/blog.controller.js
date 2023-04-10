@@ -51,12 +51,12 @@ class BlogController extends Controller {
                     Mobile: req.user.mobile, 
                     Email: req.user.email
                 }
-                const createBlogAtElasticResult = await createNewBlogAtElasticSearch(data)
+                const createBlogInElasticResult = await createNewBlogAtElasticSearch(data)
                 return res.status(HttpStatus.CREATED).json({
                     statusCode : HttpStatus.CREATED,
                     data: {
                         message : MessageSpecial.SUCCESSFUL_CREATED_BLOG_MESSAGE,
-                        ElasticResult: createBlogAtElasticResult.result
+                        ElasticResult: createBlogInElasticResult.result
                     }
                 })
             }
@@ -191,12 +191,12 @@ class BlogController extends Controller {
             updateResult = await BlogModel.updateOne({_id : id}, {$set : data})
             if(updateResult.modifiedCount == 0) 
                 throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_UPDATED_MESSAGE}
-            const updateBlogAtElasticResult = await updateBlogAtElasticSearch(blog, data)
+            const updateBlogInElasticResult = await updateBlogAtElasticSearch(blog, data)
             return res.status(HttpStatus.OK).json({
                 statusCode: HttpStatus.OK,
                 data : {
                     message : MessageSpecial.SUCCESSFUL_UPDATED_BLOG_MESSAGE,
-                    ElasticResult : updateBlogAtElasticResult.result
+                    ElasticResult : updateBlogInElasticResult.result
                 }
             })
             

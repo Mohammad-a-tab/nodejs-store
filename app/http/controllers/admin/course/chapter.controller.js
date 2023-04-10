@@ -5,6 +5,7 @@ const {StatusCodes : HttpStatus} = require("http-status-codes");
 const { CourseModel } = require("../../../../models/course");
 const Controller = require("../../controller");
 const createHttpError = require("http-errors");
+const { updateCourseInElasticSearch } = require("../../../../ElasticSearch/controller/course/course.controller");
 class ChapterController extends Controller {
     async addChapter (req , res , next) {
         try {
@@ -13,12 +14,23 @@ class ChapterController extends Controller {
             const saveChapterResults = await CourseModel.updateOne({_id : id} , {$push : {
                 chapters : {title , text , episodes : []}
             }});
+            const course = await AdminCourseController.findCourseByID(id);
+            const data = copyObject(course)
+            delete data._id
+            delete data.discountedPrice
+            delete data.discountStatus
+            delete data.category
+            delete data.teacher
+            delete data.students
+            console.log(data);
+            const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             if(saveChapterResults.modifiedCount == 0) 
                 throw createHttpError.InternalServerError("Add chapter failed");
             return res.status(HttpStatus.CREATED).json({
                 statusCode : HttpStatus.CREATED,
                 data : {
-                    message : MessageSpecial.SUCCESSFUL_CREATED_CHAPTER_MESSAGE
+                    message : MessageSpecial.SUCCESSFUL_CREATED_CHAPTER_MESSAGE,
+                    ElasticResult: updateCourseInElasticResult.result
                 }
             })
 
