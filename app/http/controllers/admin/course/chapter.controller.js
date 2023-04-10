@@ -1,4 +1,4 @@
-const { deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
+const { deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function")
 const { MessageSpecial } = require("../../../../utils/constants");
 const { AdminCourseController } = require("./course.controller");
 const {StatusCodes : HttpStatus} = require("http-status-codes");
