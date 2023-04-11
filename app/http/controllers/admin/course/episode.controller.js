@@ -44,15 +44,13 @@ class EpisodeController extends Controller {
             }});
             const course = await AdminCourseController.findCourseByID(courseID);
             const data = copyObject(course)
-            delete data._id
-            delete data.discountedPrice
-            delete data.discountStatus
-            delete data.category
-            delete data.teacher
-            delete data.students
+            deleteCourseFieldForInsertElastic(data);
             const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             if(createEpisodeResults.modifiedCount == 0) 
-                throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_CREATED_EPISODE_MESSAGE}
+                throw {
+                    status : HttpStatus.INTERNAL_SERVER_ERROR, 
+                    message : MessageSpecial.UNSUCCESSFUL_CREATED_EPISODE_MESSAGE
+                }
             return res.status(HttpStatus.CREATED).json({
                 StatusCode : HttpStatus.CREATED,
                 data : {

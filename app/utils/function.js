@@ -106,6 +106,14 @@ function setFeatures(body) {
 function copyObject(object){
     return JSON.parse(JSON.stringify(object))
 }
+function deleteCourseFieldForInsertElastic(data) {
+    delete data._id
+    delete data.discountedPrice
+    delete data.discountStatus
+    delete data.category
+    delete data.teacher
+    delete data.students
+}
 function deleteInvalidPropertyInObject(data = {}, blackListFields = []){
     let nullishData = ["", " ", "0", 0, null, undefined]
     Object.keys(data).forEach(key => {
@@ -284,5 +292,6 @@ module.exports = {
     getBasketOfUser,
     invoiceNumberGenerator,
     deleteFiledAdditional,
-    removeFieldEmpty
+    removeFieldEmpty,
+    deleteCourseFieldForInsertElastic
 }

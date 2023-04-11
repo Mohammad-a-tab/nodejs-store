@@ -264,7 +264,7 @@ async function getAllCourseFromElasticSearch() {
         }
     });
     const CoursesResult = courses.hits.hits.map(item => item._source)
-    return CoursesResults
+    return CoursesResult
 }
 async function removeCourseFromElasticSearch(title) {
     const results = await elasticClient.search({
