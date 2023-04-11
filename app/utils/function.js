@@ -114,6 +114,24 @@ function deleteCourseFieldForInsertElastic(data) {
     delete data.teacher
     delete data.students
 }
+function deleteCourseFieldForInsertCourseInElastic(data, req, category) {
+    delete data.discountStatus
+    delete data.discountedPrice
+    delete data.filename
+    delete data.fileUploadPath
+    data.teacher = {
+        id: req.user._id,
+        First_Name: req.user.first_name,
+        Last_Name: req.user.last_name,
+        UserName: req.user.username,
+        Mobile: req.user.mobile,
+        Email: req.user.email,
+    }  
+    data.category = {
+        id: category._id,
+        Title: category.title,
+    }
+}
 function deleteInvalidPropertyInObject(data = {}, blackListFields = []){
     let nullishData = ["", " ", "0", 0, null, undefined]
     Object.keys(data).forEach(key => {
@@ -293,5 +311,6 @@ module.exports = {
     invoiceNumberGenerator,
     deleteFiledAdditional,
     removeFieldEmpty,
-    deleteCourseFieldForInsertElastic
+    deleteCourseFieldForInsertElastic,
+    deleteCourseFieldForInsertCourseInElastic
 }

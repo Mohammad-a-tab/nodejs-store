@@ -1,4 +1,4 @@
-const { deleteInvalidPropertyInObject, copyObject, deleteFilePublic } = require("../../../../utils/function");
+const { deleteInvalidPropertyInObject, copyObject, deleteFilePublic, deleteCourseFieldForInsertCourseInElastic } = require("../../../../utils/function");
 const { createCourseSchema } = require("../../../validators/admin/course.schema");
 const { CategoryModel } = require("../../../../models/categories");
 const { MessageSpecial } = require("../../../../utils/constants");
@@ -69,23 +69,11 @@ class CourseController extends Controller {
             const category = await this.existCategoryByID(data?.category)
             const courseResult = await CourseModel.create({...data});
             if(!courseResult?._id) 
-                throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_CREATED_COURSE_MESSAGE}
-            delete data.discountStatus
-            delete data.discountedPrice
-            delete data.filename
-            delete data.fileUploadPath
-            data.teacher = {
-                id: req.user._id,
-                First_Name: req.user.first_name,
-                Last_Name: req.user.last_name,
-                UserName: req.user.username,
-                Mobile: req.user.mobile,
-                Email: req.user.email,
-            }  
-            data.category = {
-                id: category._id,
-                Title: category.title,
-            }
+                throw {
+                    status : HttpStatus.INTERNAL_SERVER_ERROR, 
+                    message : MessageSpecial.UNSUCCESSFUL_CREATED_COURSE_MESSAGE
+                }
+            deleteCourseFieldForInsertCourseInElastic(data, req, category)
             const createCourseInElasticResult = await createNewCourseInElasticSearch(data)
             return res.status(HttpStatus.CREATED).json({
                 statusCode : HttpStatus.CREATED,
@@ -97,7 +85,6 @@ class CourseController extends Controller {
             
         } catch (error) {
             deleteFilePublic(req?.body?.image)
-            console.log(error);
             next(error)
         }
     }

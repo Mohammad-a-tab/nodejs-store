@@ -44,7 +44,7 @@ class EpisodeController extends Controller {
             }});
             const course = await AdminCourseController.findCourseByID(courseID);
             const data = copyObject(course)
-            deleteCourseFieldForInsertElastic(data);
+            deleteCourseFieldForInsertElastic(data)
             const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             if(createEpisodeResults.modifiedCount == 0) 
                 throw {

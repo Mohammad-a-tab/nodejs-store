@@ -1,11 +1,17 @@
-const { deleteInvalidPropertyInObject, copyObject } = require("../../../../utils/function");
+const { 
+    deleteInvalidPropertyInObject, 
+    copyObject, 
+    deleteCourseFieldForInsertElastic 
+} = require("../../../../utils/function");
 const { MessageSpecial } = require("../../../../utils/constants");
 const { AdminCourseController } = require("./course.controller");
 const {StatusCodes : HttpStatus} = require("http-status-codes");
 const { CourseModel } = require("../../../../models/course");
 const Controller = require("../../controller");
 const createHttpError = require("http-errors");
-const { updateCourseInElasticSearch } = require("../../../../ElasticSearch/controller/course/course.controller");
+const { 
+    updateCourseInElasticSearch 
+} = require("../../../../ElasticSearch/controller/course/course.controller");
 class ChapterController extends Controller {
     async addChapter (req , res , next) {
         try {
@@ -15,13 +21,8 @@ class ChapterController extends Controller {
                 chapters : {title , text , episodes : []}
             }});
             const course = await AdminCourseController.findCourseByID(id);
-            const data = copyObject(course)
-            delete data._id
-            delete data.discountedPrice
-            delete data.discountStatus
-            delete data.category
-            delete data.teacher
-            delete data.students
+            const data = copyObject(course);
+            deleteCourseFieldForInsertElastic(data);
             const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             if(saveChapterResults.modifiedCount == 0) 
                 throw createHttpError.InternalServerError("Add chapter failed");
