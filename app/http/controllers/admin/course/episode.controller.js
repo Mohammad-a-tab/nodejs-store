@@ -1,4 +1,12 @@
-const { getTime, copyObject, deleteInvalidPropertyInObject, deleteFilePublic } = require("../../../../utils/function");
+const { 
+    getTime, 
+    copyObject, 
+    deleteInvalidPropertyInObject, 
+    deleteFilePublic 
+} = require("../../../../utils/function");
+const { 
+    updateCourseInElasticSearch 
+} = require("../../../../ElasticSearch/controller/course/course.controller");
 const { createEpisodeSchema } = require("../../../validators/admin/course.schema");
 const { default: getVideoDurationInSeconds } = require("get-video-duration");
 const { ObjectValidator } = require("../../../validators/public.validator");
@@ -9,7 +17,6 @@ const createHttpError = require("http-errors");
 const Controller = require("../../controller");
 const path = require("path");
 const { AdminCourseController } = require("./course.controller");
-const { updateCourseInElasticSearch } = require("../../../../ElasticSearch/controller/course/course.controller");
 class EpisodeController extends Controller {
     async addNewEpisode (req, res , next) {
         try {
