@@ -1,5 +1,4 @@
 const { AdminPermissionController } = require("../../http/controllers/admin/RBAC/permission.controller");
-
 const router = require("express").Router();
 
 router.post("/add" 

@@ -1,9 +1,10 @@
 const { AdminProductController } = require("../../http/controllers/admin/product/product.controller");
 const { stringToArray } = require("../../http/middlewares/stringToArray");
-const { uploadFileProduct } = require("../../utils/multer");
+const { uploadFile } = require("../../utils/multer");
+
 const router = require("express").Router();
 router.post("/add", 
-    uploadFileProduct.array("images" ,10), 
+    uploadFile.array("images" ,10), 
     stringToArray("tags"), 
     stringToArray("colors"), 
     AdminProductController.addProduct)
@@ -14,7 +15,7 @@ router.get("/:id",
 router.delete("/remove/:id", 
     AdminProductController.removeProduct)
 router.patch("/edit/:id", 
-    uploadFileProduct.array("images" ,10), 
+    uploadFile.array("images" ,10), 
     stringToArray("tags", "colors"), 
     AdminProductController.editProduct)
 

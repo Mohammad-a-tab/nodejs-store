@@ -1,16 +1,17 @@
 const { AdminCourseController } = require("../../http/controllers/admin/course/course.controller");
 const { stringToArray } = require("../../http/middlewares/stringToArray");
-const { uploadFileCourse} = require("../../utils/multer");
+const { uploadFile } = require("../../utils/multer");
+
 const router = require("express").Router();
 
 router.get("/list", 
     AdminCourseController.getAllCourses) // get all course
 router.post("/add", 
-    uploadFileCourse.single("image"), 
+    uploadFile.single("image"), 
     stringToArray("tags"), 
     AdminCourseController.addCourse)
 router.patch("/update/:courseID", 
-    uploadFileCourse.single("image"), 
+    uploadFile.single("image"), 
     stringToArray("tags"), 
     AdminCourseController.updateOneCourse)
 router.get("/:id", 
