@@ -120,7 +120,7 @@ class CourseController extends Controller {
                 req.body.discountStatus = discountStatus
             }
             const data = copyObject(req.body);
-            const {fileUploadPath, filename} = req.body;
+            const { fileUploadPath, filename } = req.body;
             let blackListFields = Object.values(BLACKLIST)
             deleteInvalidPropertyInObject(data , blackListFields)
             if(req.file){
@@ -138,7 +138,8 @@ class CourseController extends Controller {
             updateCourseResults = await CourseModel.updateOne({_id : courseID} , {
                 $set : data
             });
-            if(updateCourseResults.modifiedCount == 0) throw createHttpError.InternalServerError("Course update failed");
+            if(updateCourseResults.modifiedCount == 0) 
+                throw createHttpError.InternalServerError("Course update failed");
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
@@ -170,7 +171,8 @@ class CourseController extends Controller {
         }
     }
     async findCourseByID (courseID) {
-        if(!isValidObjectId(courseID)) throw createHttpError.BadRequest("The entered ID is not correct"); 
+        if(!isValidObjectId(courseID)) 
+            throw createHttpError.BadRequest("The entered ID is not correct"); 
        const course = await CourseModel.findById(courseID);
        if(!course) throw createHttpError.NotFound("Course not found");
        return course

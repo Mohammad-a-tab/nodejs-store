@@ -1,5 +1,5 @@
-const {StatusCodes : HttpStatus} = require("http-status-codes");
 const { elasticClient } = require("../../config/elastic.config");
+const {StatusCodes : HttpStatus} = require("http-status-codes");
 const indexCourse = "course"
 class ElasticCourseController {
     async searchByTitle (req, res, next) {
