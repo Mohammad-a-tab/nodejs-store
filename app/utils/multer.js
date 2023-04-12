@@ -2,12 +2,12 @@ const createError = require("http-errors");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-
 function createRoute(req) {
   const date = new Date();
-  const year = date.getFullYear().toString();
-  const month = date.getMonth().toString();
-  const day = date.getDate().toString();
+  const monthNumber = date.getMonth() + 1;
+  const Year = date.getFullYear().toString();
+  const Month = monthNumber.toString();
+  const Day = date.getDate().toString();
   const str = req.baseUrl;
   const folderName = str.split("/");
   const directory = path.join(
@@ -17,11 +17,11 @@ function createRoute(req) {
     "public",
     "uploads",
     folderName[2],
-    year,
-    month,
-    day
+    Year,
+    Month,
+    Day
   );
-  req.body.fileUploadPath = path.join("uploads", "blogs", year, month, day);
+  req.body.fileUploadPath = path.join("uploads", folderName[2], Year, Month, Day);
   fs.mkdirSync(directory, { recursive: true });
   return directory;
 }
