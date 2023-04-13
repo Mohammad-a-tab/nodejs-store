@@ -34,6 +34,10 @@ class EpisodeController extends Controller {
             const videoAddress = fileAddress.replace(/\\/g ,"/");
             req.body.videoAddress = fileAddress.replace(/\\/g ,"/");
             const videoURL = `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${videoAddress}`
+            const course = await AdminCourseController.findCourseByID(courseID);
+            const data = copyObject(course)
+            deleteCourseFieldForInsertElastic(data)
+            const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             const seconds = await getVideoDurationInSeconds(videoURL);
             const time = getTime(seconds);
             const episode = {
@@ -50,10 +54,6 @@ class EpisodeController extends Controller {
                 $push : {
                 "chapters.$.episodes" : episode
             }});
-            const course = await AdminCourseController.findCourseByID(courseID);
-            const data = copyObject(course)
-            deleteCourseFieldForInsertElastic(data)
-            const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             if(createEpisodeResults.modifiedCount == 0) 
                 throw {
                     status : HttpStatus.INTERNAL_SERVER_ERROR, 
@@ -81,6 +81,10 @@ class EpisodeController extends Controller {
             });
             const episode = await this.getOneEpisodeForUpdate(episodeID)
             deleteFilePublic(episode?.videoAddress)
+            const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
+            const data = copyObject(course)
+            deleteCourseFieldForInsertElastic(data)
+            const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             const removeEpisodeResult = await CourseModel.updateOne({
                 "chapters.episodes._id": episodeID,
             }, {
@@ -90,10 +94,6 @@ class EpisodeController extends Controller {
                     }
                 }
             });
-            const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
-            const data = copyObject(course)
-            deleteCourseFieldForInsertElastic(data)
-            const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             if (removeEpisodeResult.modifiedCount == 0)
                 throw new createHttpError.InternalServerError("Episode remove failed")
             return res.status(HttpStatus.OK).json({

@@ -288,7 +288,7 @@ async function updateCourseInElasticSearch(course, data) {
     });
     const results = await elasticClient.search({
         index : indexCourse,
-        q: course?.title || course?.text || course?.short_text || course?.tags || course?.image || course?.chapters || course?.teacher
+        q: course?.title || course?.text || course?.short_text || course?.tags || course?.image 
     });
     const courseID = results.hits.hits[0]._id;
     const updateResult = await elasticClient.update({
@@ -298,10 +298,30 @@ async function updateCourseInElasticSearch(course, data) {
     })
     return updateResult
 }
+async function updateChaptersInElasticSearch(course, data) {
+    Object.keys(data).forEach(key => {
+        if(!data[key]) delete data[key]
+    });
+    console.log(data);
+    const results = await elasticClient.search({
+        index : indexCourse,
+        q: course?.title || course?.text || course?.short_text || course?.tags || course?.image 
+    });
+    let mmd = results.hits.hits[0]
+    
+    // const courseID = results.hits.hits[0]._id;
+    // const updateResult = await elasticClient.update({
+    //     index: indexCourse,
+    //     id : courseID,
+    //     doc: data
+    // })
+    // return updateResult
+}
 module.exports = {
     ElasticCourseController: new ElasticCourseController(),
     createNewCourseInElasticSearch,
     getAllCourseFromElasticSearch,
     removeCourseFromElasticSearch,
+    updateChaptersInElasticSearch,
     updateCourseInElasticSearch
 }

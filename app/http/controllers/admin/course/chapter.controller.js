@@ -10,7 +10,7 @@ const { CourseModel } = require("../../../../models/course");
 const Controller = require("../../controller");
 const createHttpError = require("http-errors");
 const { 
-    updateCourseInElasticSearch 
+    updateCourseInElasticSearch, updateChaptersInElasticSearch 
 } = require("../../../../ElasticSearch/controller/course/course.controller");
 class ChapterController extends Controller {
     async addChapter (req , res , next) {
@@ -56,7 +56,6 @@ class ChapterController extends Controller {
         try {
             const {chapterID} = req.params;
             const chapter = await this.getOneChapter(chapterID);
-            console.log(chapter)
             const data = copyObject(req.body);
             deleteInvalidPropertyInObject(data , ["_id"]);
             const newChapter = {
@@ -81,18 +80,30 @@ class ChapterController extends Controller {
         try {
             const {chapterID} = req.params;
             await this.getOneChapter(chapterID);
-            const removeChapterResults = await CourseModel.updateOne({"chapters._id" : chapterID} , {
-                $pull : {
-                    chapters : {
-                        _id : chapterID
-                    }
-                }
-            });
-            if(removeChapterResults.modifiedCount == 0) throw {status : HttpStatus.INTERNAL_SERVER_ERROR , message : MessageSpecial.UNSUCCESSFUL_REMOVE_CHAPTER_MESSAGE}
+            const course = await CourseModel.findOne({"chapters._id": chapterID})
+            const data = copyObject(course)
+            deleteCourseFieldForInsertElastic(data)
+            await updateChaptersInElasticSearch(course, data)
+            // const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
+            // if(updateCourseInElasticResult.result == "updated") {
+            //     const removeChapterResults = await CourseModel.updateOne({"chapters._id" : chapterID} , {
+            //         $pull : {
+            //             chapters : {
+            //                 _id : chapterID
+            //             }
+            //         }
+            //     });
+            //     if(removeChapterResults.modifiedCount == 0) 
+            //         throw {
+            //             status : HttpStatus.INTERNAL_SERVER_ERROR, 
+            //             message : MessageSpecial.UNSUCCESSFUL_REMOVE_CHAPTER_MESSAGE
+            //         }
+            // }
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
-                    message : MessageSpecial.SUCCESSFUL_REMOVE_CHAPTER_MESSAGE
+                    message : MessageSpecial.SUCCESSFUL_REMOVE_CHAPTER_MESSAGE,
+                    // ElasticResult: updateCourseInElasticResult.result
                 }
             })
             
