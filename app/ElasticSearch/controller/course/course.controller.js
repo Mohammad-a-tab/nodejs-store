@@ -298,24 +298,31 @@ async function updateCourseInElasticSearch(course, data) {
     })
     return updateResult
 }
-async function updateChaptersInElasticSearch(course, data) {
-    Object.keys(data).forEach(key => {
-        if(!data[key]) delete data[key]
+async function updateChaptersInElasticSearch(courses) {
+    let course
+    for (course of courses) {
+        delete course._id
+        delete course.discountedPrice
+        delete course.discountStatus
+        delete course.category
+        delete course.teacher
+        delete course.students
+    }
+    Object.keys(course).forEach(key => {
+        if(!course[key]) delete course[key]
     });
-    console.log(data);
     const results = await elasticClient.search({
         index : indexCourse,
         q: course?.title || course?.text || course?.short_text || course?.tags || course?.image 
     });
-    let mmd = results.hits.hits[0]
-    
-    // const courseID = results.hits.hits[0]._id;
-    // const updateResult = await elasticClient.update({
-    //     index: indexCourse,
-    //     id : courseID,
-    //     doc: data
-    // })
-    // return updateResult
+    const courseID = results.hits.hits[0]._id;
+    const updateResult = await elasticClient.update({
+        index: indexCourse,
+        id : courseID,
+        doc: course
+    })
+    console.log(updateResult);
+    return updateResult
 }
 module.exports = {
     ElasticCourseController: new ElasticCourseController(),
