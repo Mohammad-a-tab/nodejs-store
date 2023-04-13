@@ -1,7 +1,6 @@
 const { 
     deleteInvalidPropertyInObject, 
     copyObject, 
-    deleteCourseFieldForInsertElastic, 
     updateElasticCourse
 } = require("../../../../utils/function");
 const { MessageSpecial } = require("../../../../utils/constants");
@@ -10,9 +9,6 @@ const {StatusCodes : HttpStatus} = require("http-status-codes");
 const { CourseModel } = require("../../../../models/course");
 const Controller = require("../../controller");
 const createHttpError = require("http-errors");
-const { 
-    updateCourseInElasticSearch, updateChaptersInElasticSearch 
-} = require("../../../../ElasticSearch/controller/course/course.controller");
 class ChapterController extends Controller {
     async addChapter (req , res , next) {
         try {

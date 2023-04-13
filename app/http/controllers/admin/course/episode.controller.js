@@ -139,13 +139,13 @@ class EpisodeController extends Controller {
                throw new createHttpError.InternalServerError("The episode was not edited")
             const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
             const ElasticResult = await updateElasticCourse(course._id);
-           return res.status(HttpStatus.OK).json({
+            return res.status(HttpStatus.OK).json({
                statusCode: HttpStatus.OK,
                data: {
                    message: MessageSpecial.SUCCESSFUL_CREATED_EPISODE_MESSAGE,
                    ElasticResult
                }
-           })
+            })
        } catch (error) {
            deleteFilePublic(req?.body?.videoAddress)
            next(error)

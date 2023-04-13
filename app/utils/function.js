@@ -63,7 +63,7 @@ function verifyRefreshToken(token){
     })
 }
 function deleteFilePublic(fileAddress) {
-    if (!Array.isArray(fileAddress) && fileAddress.length > 0) {
+    if (!Array.isArray(fileAddress) && fileAddress?.length > 0) {
         const pathFile = path.join(__dirname, "..", "..", "public", fileAddress)
         if (fs.existsSync(pathFile)) fs.unlinkSync(pathFile)
     }else if(Array.isArray(fileAddress) && fileAddress.length > 0){
@@ -123,9 +123,9 @@ function deleteCourseFieldForInsertElastic(data) {
     delete data.category
     delete data.teacher
     delete data.students
-    for (const chapter of data.chapters) {
-        for (const episodes of chapter.episodes) {
-            for (const episode of episodes) {
+    for (const chapter of data?.chapters) {
+        if(Array.isArray(chapter?.episodes)){
+            for (const episode of chapter.episodes) {
                 delete episode?._id
             }
         }
