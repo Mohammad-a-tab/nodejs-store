@@ -47,18 +47,20 @@ class EpisodeController extends Controller {
                 time,
                 videoAddress
             }
-            const createEpisodeResults = await CourseModel.updateOne({
-                _id : courseID,
-                "chapters._id" : chapterID
-            }, {
-                $push : {
-                "chapters.$.episodes" : episode
-            }});
-            if(createEpisodeResults.modifiedCount == 0) 
-                throw {
-                    status : HttpStatus.INTERNAL_SERVER_ERROR, 
-                    message : MessageSpecial.UNSUCCESSFUL_CREATED_EPISODE_MESSAGE
-                }
+            if(updateCourseInElasticResult.result == "updated") {
+                const createEpisodeResults = await CourseModel.updateOne({
+                    _id : courseID,
+                    "chapters._id" : chapterID
+                }, {
+                    $push : {
+                    "chapters.$.episodes" : episode
+                }});
+                if(createEpisodeResults.modifiedCount == 0) 
+                    throw {
+                        status : HttpStatus.INTERNAL_SERVER_ERROR, 
+                        message : MessageSpecial.UNSUCCESSFUL_CREATED_EPISODE_MESSAGE
+                    }
+            }
             return res.status(HttpStatus.CREATED).json({
                 StatusCode : HttpStatus.CREATED,
                 data : {
