@@ -57,7 +57,7 @@ class EpisodeController extends Controller {
                     message : MessageSpecial.UNSUCCESSFUL_CREATED_EPISODE_MESSAGE
                 }
 
-            const ElasticResult = await updateElasticCourse(courseID);
+            const ElasticResult = await updateElasticCourse(CourseModel, courseID);
             return res.status(HttpStatus.CREATED).json({
                 StatusCode : HttpStatus.CREATED,
                 data : {
@@ -92,7 +92,7 @@ class EpisodeController extends Controller {
             if (removeEpisodeResult.modifiedCount == 0)
                 throw new createHttpError.InternalServerError("Episode remove failed")
             const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
-            const ElasticResult = await updateElasticCourse(course._id);
+            const ElasticResult = await updateElasticCourse(CourseModel, course._id);
             return res.status(HttpStatus.OK).json({
                 statusCode: HttpStatus.OK,
                 data: {
@@ -138,7 +138,7 @@ class EpisodeController extends Controller {
            if (!editEpisodeResult.modifiedCount)
                throw new createHttpError.InternalServerError("The episode was not edited")
             const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
-            const ElasticResult = await updateElasticCourse(course._id);
+            const ElasticResult = await updateElasticCourse(CourseModel, course._id);
             return res.status(HttpStatus.OK).json({
                statusCode: HttpStatus.OK,
                data: {

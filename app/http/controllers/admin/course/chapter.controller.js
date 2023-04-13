@@ -13,13 +13,13 @@ class ChapterController extends Controller {
     async addChapter (req , res , next) {
         try {
             const {id , title , text} = req.body;
-            await AdminCourseController.findCourseByID(id);
+            const course = await AdminCourseController.findCourseByID(id);
             const saveChapterResults = await CourseModel.updateOne({_id : id} , {$push : {
                 chapters : {title , text , episodes : []}
             }});
             if(saveChapterResults.modifiedCount == 0) 
                 throw createHttpError.InternalServerError("Add chapter failed");
-            const ElasticResult = await updateElasticCourse(id);
+            const ElasticResult = await updateElasticCourse(CourseModel, course?._id);
             return res.status(HttpStatus.CREATED).json({
                 statusCode : HttpStatus.CREATED,
                 data : {
@@ -62,7 +62,7 @@ class ChapterController extends Controller {
             });
             if(updateChapterResults.modifiedCount == 0) 
                 throw createHttpError.InternalServerError("The desired chapter was not updated");
-            const ElasticResult = await updateElasticCourse(course?._id);
+            const ElasticResult = await updateElasticCourse(CourseModel, course?._id);
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
@@ -91,7 +91,7 @@ class ChapterController extends Controller {
                     status : HttpStatus.INTERNAL_SERVER_ERROR, 
                     message : MessageSpecial.UNSUCCESSFUL_REMOVE_CHAPTER_MESSAGE
                 }
-            const ElasticResult = await updateElasticCourse(course?._id);
+            const ElasticResult = await updateElasticCourse(CourseModel, course?._id);
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {

@@ -44,7 +44,7 @@ CourseSchema.virtual("imageURL").get(function(){
     return `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${this.image}`
 })
 CourseSchema.virtual("totalTime").get(function(){
-    return getTimeOfCourse(this.chapters || [])
+    return  getTimeOfCourse(this.chapters || [])
 })
 
 module.exports = {

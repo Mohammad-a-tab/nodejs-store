@@ -329,6 +329,5 @@ module.exports = {
     createNewCourseInElasticSearch,
     getAllCourseFromElasticSearch,
     removeCourseFromElasticSearch,
-    updateChaptersInElasticSearch,
     updateCourseInElasticSearch
 }

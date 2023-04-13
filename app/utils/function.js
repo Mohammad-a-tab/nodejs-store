@@ -1,3 +1,4 @@
+const { updateCourseInElasticSearch } = require("../ElasticSearch/controller/course/course.controller");
 const { ACCESS_TOKEN_SECRET_KEY, REFRESH_TOKEN_SECRET_KEY } = require("./constants");
 const { UserModel } = require("../models/users");
 const redisClient = require("./initRedis");
@@ -6,8 +7,6 @@ const moment = require("moment-jalali");
 const JWT = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs");
-const { CourseModel } = require("../models/course");
-const { updateCourseInElasticSearch } = require("../ElasticSearch/controller/course/course.controller");
 
 function RandomNumberGenerator(){
     return Math.floor((Math.random() * 90000) + 10000)
@@ -108,10 +107,9 @@ function setFeatures(body) {
 function copyObject(object){
     return JSON.parse(JSON.stringify(object))
 }
-async function updateElasticCourse (id = "") {
-    let data;
-    const course = await CourseModel.findById(id);
-    if(course) data = copyObject(course);
+async function updateElasticCourse (courseModel, id = "") {
+    const course = await courseModel.findById(id);
+    const data = copyObject(course);
     deleteCourseFieldForInsertElastic(data);
     const ElasticResult = await updateCourseInElasticSearch(course, data)
     return ElasticResult.result;
