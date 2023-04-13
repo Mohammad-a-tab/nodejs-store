@@ -21,9 +21,9 @@ class ChapterController extends Controller {
             const saveChapterResults = await CourseModel.updateOne({_id : id} , {$push : {
                 chapters : {title , text , episodes : []}
             }});
-            const ElasticResult = await updateElasticCourse(id);
             if(saveChapterResults.modifiedCount == 0) 
                 throw createHttpError.InternalServerError("Add chapter failed");
+            const ElasticResult = await updateElasticCourse(id);
             return res.status(HttpStatus.CREATED).json({
                 statusCode : HttpStatus.CREATED,
                 data : {
@@ -53,6 +53,7 @@ class ChapterController extends Controller {
     async updateChapterById (req , res , next) {
         try {
             const {chapterID} = req.params;
+            const course = await CourseModel.findOne({"chapters._id" : chapterID});
             const chapter = await this.getOneChapter(chapterID);
             const data = copyObject(req.body);
             deleteInvalidPropertyInObject(data , ["_id"]);
@@ -63,11 +64,14 @@ class ChapterController extends Controller {
             const updateChapterResults = await CourseModel.updateOne({"chapters._id" : chapterID} , {
                 $set : {"chapters.$" : newChapter}
             });
-            if(updateChapterResults.modifiedCount == 0) throw createHttpError.InternalServerError("The desired chapter was not updated");
+            if(updateChapterResults.modifiedCount == 0) 
+                throw createHttpError.InternalServerError("The desired chapter was not updated");
+            const ElasticResult = await updateElasticCourse(course?._id);
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
-                    message : MessageSpecial.SUCCESSFUL_UPDATED_CHAPTER_MESSAGE
+                    message : MessageSpecial.SUCCESSFUL_UPDATED_CHAPTER_MESSAGE,
+                    ElasticResult
                 }
             })
         } catch (error) {
@@ -78,6 +82,7 @@ class ChapterController extends Controller {
         try {
             const {chapterID} = req.params;
             await this.getOneChapter(chapterID);
+            const course = await CourseModel.findOne({"chapters._id" : chapterID});
             const removeChapterResults = await CourseModel.updateOne({"chapters._id" : chapterID} , {
                 $pull : {
                     chapters : {
@@ -90,14 +95,12 @@ class ChapterController extends Controller {
                     status : HttpStatus.INTERNAL_SERVER_ERROR, 
                     message : MessageSpecial.UNSUCCESSFUL_REMOVE_CHAPTER_MESSAGE
                 }
-            const courses = await CourseModel.find({})
-            const data = copyObject(courses)
-            const updateCourseInElasticResult = await updateChaptersInElasticSearch(data)
+            const ElasticResult = await updateElasticCourse(course?._id);
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
                     message : MessageSpecial.SUCCESSFUL_REMOVE_CHAPTER_MESSAGE,
-                    ElasticResult: updateCourseInElasticResult.result
+                    ElasticResult
                 }
             })
             

@@ -35,10 +35,6 @@ class EpisodeController extends Controller {
             const videoAddress = fileAddress.replace(/\\/g ,"/");
             req.body.videoAddress = fileAddress.replace(/\\/g ,"/");
             const videoURL = `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${videoAddress}`
-            const course = await AdminCourseController.findCourseByID(courseID);
-            const data = copyObject(course)
-            deleteCourseFieldForInsertElastic(data)
-            const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             const seconds = await getVideoDurationInSeconds(videoURL);
             const time = getTime(seconds);
             const episode = {
@@ -48,25 +44,25 @@ class EpisodeController extends Controller {
                 time,
                 videoAddress
             }
-            if(updateCourseInElasticResult.result == "updated") {
-                const createEpisodeResults = await CourseModel.updateOne({
-                    _id : courseID,
-                    "chapters._id" : chapterID
-                }, {
-                    $push : {
-                    "chapters.$.episodes" : episode
-                }});
-                if(createEpisodeResults.modifiedCount == 0) 
-                    throw {
-                        status : HttpStatus.INTERNAL_SERVER_ERROR, 
-                        message : MessageSpecial.UNSUCCESSFUL_CREATED_EPISODE_MESSAGE
-                    }
-            }
+            const createEpisodeResults = await CourseModel.updateOne({
+                _id : courseID,
+                "chapters._id" : chapterID
+            }, {
+                $push : {
+                "chapters.$.episodes" : episode
+            }});
+            if(createEpisodeResults.modifiedCount == 0) 
+                throw {
+                    status : HttpStatus.INTERNAL_SERVER_ERROR, 
+                    message : MessageSpecial.UNSUCCESSFUL_CREATED_EPISODE_MESSAGE
+                }
+
+            const ElasticResult = await updateElasticCourse(courseID);
             return res.status(HttpStatus.CREATED).json({
                 StatusCode : HttpStatus.CREATED,
                 data : {
                     message : MessageSpecial.SUCCESSFUL_CREATED_EPISODE_MESSAGE,
-                    ElasticResult: updateCourseInElasticResult.result
+                    ElasticResult
                 }   
             })
 
@@ -141,10 +137,13 @@ class EpisodeController extends Controller {
            })
            if (!editEpisodeResult.modifiedCount)
                throw new createHttpError.InternalServerError("The episode was not edited")
+            const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
+            const ElasticResult = await updateElasticCourse(course._id);
            return res.status(HttpStatus.OK).json({
                statusCode: HttpStatus.OK,
                data: {
-                   message: MessageSpecial.SUCCESSFUL_CREATED_EPISODE_MESSAGE
+                   message: MessageSpecial.SUCCESSFUL_CREATED_EPISODE_MESSAGE,
+                   ElasticResult
                }
            })
        } catch (error) {
