@@ -288,7 +288,7 @@ async function updateCourseInElasticSearch(course, data) {
     });
     const results = await elasticClient.search({
         index : indexCourse,
-        q: course?.title || course?.text || course?.short_text || course?.tags || course?.image
+        q: course?.title || course?.text || course?.short_text || course?.tags || course?.image || course?.chapters || course?.teacher
     });
     const courseID = results.hits.hits[0]._id;
     const updateResult = await elasticClient.update({

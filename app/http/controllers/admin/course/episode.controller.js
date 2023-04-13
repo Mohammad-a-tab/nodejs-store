@@ -2,7 +2,8 @@ const {
     getTime, 
     copyObject, 
     deleteInvalidPropertyInObject, 
-    deleteFilePublic 
+    deleteFilePublic, 
+    deleteCourseFieldForInsertElastic
 } = require("../../../../utils/function");
 const { 
     updateCourseInElasticSearch 
