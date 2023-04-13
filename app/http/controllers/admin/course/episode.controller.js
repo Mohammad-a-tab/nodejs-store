@@ -3,12 +3,8 @@ const {
     copyObject, 
     deleteInvalidPropertyInObject, 
     deleteFilePublic, 
-    deleteCourseFieldForInsertElastic,
     updateElasticCourse
 } = require("../../../../utils/function");
-const { 
-    updateCourseInElasticSearch 
-} = require("../../../../ElasticSearch/controller/course/course.controller");
 const { createEpisodeSchema } = require("../../../validators/admin/course.schema");
 const { default: getVideoDurationInSeconds } = require("get-video-duration");
 const { ObjectValidator } = require("../../../validators/public.validator");
@@ -18,7 +14,6 @@ const {CourseModel} = require("../../../../models/course");
 const createHttpError = require("http-errors");
 const Controller = require("../../controller");
 const path = require("path");
-const { AdminCourseController } = require("./course.controller");
 class EpisodeController extends Controller {
     async addNewEpisode (req, res , next) {
         try {
@@ -78,6 +73,7 @@ class EpisodeController extends Controller {
             } = await ObjectValidator.validateAsync({
                 id: req.params.episodeID
             });
+            const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
             const episode = await this.getOneEpisodeForUpdate(episodeID)
             deleteFilePublic(episode?.videoAddress)
             const removeEpisodeResult = await CourseModel.updateOne({
@@ -91,8 +87,7 @@ class EpisodeController extends Controller {
             });
             if (removeEpisodeResult.modifiedCount == 0)
                 throw new createHttpError.InternalServerError("Episode remove failed")
-            const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
-            const ElasticResult = await updateElasticCourse(CourseModel, course._id);
+            const ElasticResult = await updateElasticCourse(CourseModel, course?._id);
             return res.status(HttpStatus.OK).json({
                 statusCode: HttpStatus.OK,
                 data: {
@@ -138,7 +133,7 @@ class EpisodeController extends Controller {
            if (!editEpisodeResult.modifiedCount)
                throw new createHttpError.InternalServerError("The episode was not edited")
             const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
-            const ElasticResult = await updateElasticCourse(CourseModel, course._id);
+            const ElasticResult = await updateElasticCourse(CourseModel, course?._id);
             return res.status(HttpStatus.OK).json({
                statusCode: HttpStatus.OK,
                data: {
