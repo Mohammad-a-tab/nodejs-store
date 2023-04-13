@@ -90,13 +90,17 @@ class EpisodeController extends Controller {
                     }
                 }
             });
-
+            const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
+            const data = copyObject(course)
+            deleteCourseFieldForInsertElastic(data)
+            const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             if (removeEpisodeResult.modifiedCount == 0)
                 throw new createHttpError.InternalServerError("Episode remove failed")
             return res.status(HttpStatus.OK).json({
                 statusCode: HttpStatus.OK,
                 data: {
-                    message: MessageSpecial.SUCCESSFUL_REMOVE_EPISODE_MESSAGE
+                    message: MessageSpecial.SUCCESSFUL_REMOVE_EPISODE_MESSAGE,
+                    ElasticResult: updateCourseInElasticResult.result
                 }
             })
         } catch (error) {
