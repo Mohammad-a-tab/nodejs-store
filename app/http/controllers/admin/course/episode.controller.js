@@ -3,7 +3,8 @@ const {
     copyObject, 
     deleteInvalidPropertyInObject, 
     deleteFilePublic, 
-    deleteCourseFieldForInsertElastic
+    deleteCourseFieldForInsertElastic,
+    updateElasticCourse
 } = require("../../../../utils/function");
 const { 
     updateCourseInElasticSearch 
@@ -83,10 +84,6 @@ class EpisodeController extends Controller {
             });
             const episode = await this.getOneEpisodeForUpdate(episodeID)
             deleteFilePublic(episode?.videoAddress)
-            const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
-            const data = copyObject(course)
-            deleteCourseFieldForInsertElastic(data)
-            const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
             const removeEpisodeResult = await CourseModel.updateOne({
                 "chapters.episodes._id": episodeID,
             }, {
@@ -98,11 +95,13 @@ class EpisodeController extends Controller {
             });
             if (removeEpisodeResult.modifiedCount == 0)
                 throw new createHttpError.InternalServerError("Episode remove failed")
+            const course = await CourseModel.findOne({"chapters.episodes._id": episodeID})
+            const ElasticResult = await updateElasticCourse(course._id);
             return res.status(HttpStatus.OK).json({
                 statusCode: HttpStatus.OK,
                 data: {
                     message: MessageSpecial.SUCCESSFUL_REMOVE_EPISODE_MESSAGE,
-                    ElasticResult: updateCourseInElasticResult.result
+                    ElasticResult
                 }
             })
         } catch (error) {

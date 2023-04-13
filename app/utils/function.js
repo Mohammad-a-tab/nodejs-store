@@ -5,7 +5,9 @@ const createError = require("http-errors");
 const moment = require("moment-jalali");
 const JWT = require("jsonwebtoken");
 const path = require("path");
-const fs = require("fs")
+const fs = require("fs");
+const { CourseModel } = require("../models/course");
+const { updateCourseInElasticSearch } = require("../ElasticSearch/controller/course/course.controller");
 
 function RandomNumberGenerator(){
     return Math.floor((Math.random() * 90000) + 10000)
@@ -106,6 +108,14 @@ function setFeatures(body) {
 function copyObject(object){
     return JSON.parse(JSON.stringify(object))
 }
+async function updateElasticCourse (id = "") {
+    let data;
+    const course = await CourseModel.findById(id);
+    if(course) data = copyObject(course);
+    deleteCourseFieldForInsertElastic(data);
+    const ElasticResult = await updateCourseInElasticSearch(course, data)
+    return ElasticResult.result;
+}
 function deleteCourseFieldForInsertElastic(data) {
     delete data._id
     delete data.discountedPrice
@@ -113,6 +123,13 @@ function deleteCourseFieldForInsertElastic(data) {
     delete data.category
     delete data.teacher
     delete data.students
+    for (const chapter of data.chapters) {
+        for (const episodes of chapter.episodes) {
+            for (const episode of episodes) {
+                delete episode?._id
+            }
+        }
+    }
 }
 function deleteCourseFieldForInsertCourseInElastic(data, req, category) {
     delete data.discountStatus
@@ -302,6 +319,7 @@ module.exports = {
     invoiceNumberGenerator,
     RandomNumberGenerator,
     deleteFiledAdditional,
+    updateElasticCourse,
     verifyRefreshToken,
     calculateDiscount,
     removeFieldEmpty,

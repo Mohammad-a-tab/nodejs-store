@@ -1,7 +1,8 @@
 const { 
     deleteInvalidPropertyInObject, 
     copyObject, 
-    deleteCourseFieldForInsertElastic 
+    deleteCourseFieldForInsertElastic, 
+    updateElasticCourse
 } = require("../../../../utils/function");
 const { MessageSpecial } = require("../../../../utils/constants");
 const { AdminCourseController } = require("./course.controller");
@@ -20,17 +21,14 @@ class ChapterController extends Controller {
             const saveChapterResults = await CourseModel.updateOne({_id : id} , {$push : {
                 chapters : {title , text , episodes : []}
             }});
-            const course = await AdminCourseController.findCourseByID(id);
-            const data = copyObject(course);
-            deleteCourseFieldForInsertElastic(data);
-            const updateCourseInElasticResult = await updateCourseInElasticSearch(course, data)
+            const ElasticResult = await updateElasticCourse(id);
             if(saveChapterResults.modifiedCount == 0) 
                 throw createHttpError.InternalServerError("Add chapter failed");
             return res.status(HttpStatus.CREATED).json({
                 statusCode : HttpStatus.CREATED,
                 data : {
                     message : MessageSpecial.SUCCESSFUL_CREATED_CHAPTER_MESSAGE,
-                    ElasticResult: updateCourseInElasticResult.result
+                    ElasticResult
                 }
             })
 
