@@ -256,7 +256,7 @@ async function createNewCourseInElasticSearch(course) {
 }
 async function getAllCourseFromElasticSearch(data) {
     for (const course of data) {
-        await updateChaptersInElasticSearch(course)
+        updateChaptersInElasticSearch(course)
     }
     const courses = await elasticClient.search({
         index : indexCourse, 
@@ -274,7 +274,7 @@ async function removeCourseFromElasticSearch(title) {
         index : indexCourse,
         q: title
     });
-    const CourseID = results.hits.hits[0]._id;
+    const CourseID = results.hits.hits[0]?._id;
     const deletedResult = await elasticClient.deleteByQuery({
         index : indexCourse,
         query : {
@@ -302,32 +302,38 @@ async function updateCourseInElasticSearch(course, data) {
     return updateResult
 }
 async function updateChaptersInElasticSearch(course) {
-    delete course._id
-    delete course.discountedPrice
-    delete course.discountStatus
-    delete course.category
-    delete course.teacher
-    delete course.students
-    for (const chapter of course?.chapters) {
-        if(Array.isArray(chapter?.episodes)){
-            for (const episode of chapter.episodes) {
-                delete episode?._id
-            }
+    try {
+        delete course?._id
+        delete course?.discountedPrice
+        delete course?.discountStatus
+        delete course?.category
+        delete course?.teacher
+        delete course?.students
+        if(course?.chapters.length > 0) {
+            for (const chapter of course?.chapters) {
+                if(Array.isArray(chapter?.episodes)){
+                    for (const episode of chapter.episodes) {
+                        delete episode?._id
+                    }
+                }
+            } 
         }
+        Object.keys(course).forEach(key => {
+            if(!course[key]) delete course[key]
+        });
+        const results = await elasticClient.search({
+            index : indexCourse,
+            q: course?.title || course?.text || course?.short_text || course?.tags || course?.image 
+        });
+        const courseID = results.hits.hits[0]?._id;
+        await elasticClient.update({
+            index: indexCourse,
+            id : courseID,
+            doc: course
+        })
+    } catch (error) {
+        console.log(error);
     }
-    Object.keys(course).forEach(key => {
-        if(!course[key]) delete course[key]
-    });
-    const results = await elasticClient.search({
-        index : indexCourse,
-        q: course?.title || course?.text || course?.short_text || course?.tags || course?.image 
-    });
-    const courseID = results.hits.hits[0]._id;
-    await elasticClient.update({
-        index: indexCourse,
-        id : courseID,
-        doc: course
-    })
 }
 module.exports = {
     ElasticCourseController: new ElasticCourseController(),

@@ -1,11 +1,13 @@
 const { 
     deleteInvalidPropertyInObject, 
     copyObject, deleteFilePublic, 
-    deleteCourseFieldForInsertCourseInElastic 
+    deleteCourseFieldForInsertCourseInElastic, 
+    updateElasticCourse
 } = require("../../../../utils/function");
 const { 
     createNewCourseInElasticSearch, 
-    getAllCourseFromElasticSearch 
+    getAllCourseFromElasticSearch, 
+    removeCourseFromElasticSearch
 } = require("../../../../ElasticSearch/controller/course/course.controller");
 const { createCourseSchema } = require("../../../validators/admin/course.schema");
 const { CategoryModel } = require("../../../../models/categories");
@@ -128,7 +130,7 @@ class CourseController extends Controller {
                 data.image = path.join(fileUploadPath,filename);
                 deleteFilePublic(course.image)
             }
-            let updateCourseResults = any;
+            let updateCourseResults;
             if(data.category){
                 if(await this.existCategoryByID(data.category)){
                     updateCourseResults = await CourseModel.updateOne({_id : courseID} , {
@@ -141,10 +143,12 @@ class CourseController extends Controller {
             });
             if(updateCourseResults.modifiedCount == 0) 
                 throw createHttpError.InternalServerError("Course update failed");
+            const ElasticResult = await updateElasticCourse(CourseModel, courseID);
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
-                    message : MessageSpecial.SUCCESSFUL_UPDATED_COURSE_MESSAGE
+                    message : MessageSpecial.SUCCESSFUL_UPDATED_COURSE_MESSAGE,
+                    ElasticResult
                 }
             })
         } catch (error) {
@@ -156,14 +160,18 @@ class CourseController extends Controller {
         try {
             const {CourseID} = req.params;
             const course = await this.findCourseByID(CourseID);
-            const deleteCourseResult = await CourseModel.deleteOne({_id : CourseID});
-            if(deleteCourseResult.deletedCount == 0) 
-                throw createHttpError.InternalServerError("The course delete Unsuccessfully")
-            deleteFilePublic(course?.image)
+            const deleteCourseFromElasticResult = await removeCourseFromElasticSearch(course?.title)
+            if(deleteCourseFromElasticResult.deleted) {
+                const deleteCourseResult = await CourseModel.deleteOne({_id : CourseID});
+                if(deleteCourseResult.deletedCount == 0) 
+                    throw createHttpError.InternalServerError("The course delete Unsuccessfully")
+                deleteFilePublic(course?.image)
+            }
             return res.status(HttpStatus.OK).json({
                 statusCode : HttpStatus.OK,
                 data : {
-                    message : MessageSpecial.SUCCESSFUL_REMOVE_COURSE_MESSAGE
+                    message : MessageSpecial.SUCCESSFUL_REMOVE_COURSE_MESSAGE,
+                    ElasticResult: deleteCourseFromElasticResult.deleted
                 }
             })
             

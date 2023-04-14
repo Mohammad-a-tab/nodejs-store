@@ -121,12 +121,14 @@ function deleteCourseFieldForInsertElastic(data) {
     delete data.category
     delete data.teacher
     delete data.students
-    for (const chapter of data?.chapters) {
-        if(Array.isArray(chapter?.episodes)){
-            for (const episode of chapter.episodes) {
-                delete episode?._id
+    if(data?.chapters.length > 0) {
+        for (const chapter of data?.chapters) {
+            if(Array.isArray(chapter?.episodes)){
+                for (const episode of chapter.episodes) {
+                    delete episode?._id
+                }
             }
-        }
+        } 
     }
 }
 function deleteCourseFieldForInsertCourseInElastic(data, req, category) {
