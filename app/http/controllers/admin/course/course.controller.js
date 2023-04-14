@@ -47,7 +47,8 @@ class CourseController extends Controller {
                 {path : "category" , select : {title : 1}},
                 {path : "teacher" , select : {first_name : 1 , last_name : 1 , mobile : 1, email : 1}}
             ]).sort({_id : -1})
-            const elasticCourses = await getAllCourseFromElasticSearch()
+            const data = copyObject(courses)
+            const elasticCourses = await getAllCourseFromElasticSearch(data)
             return res.status(HttpStatus.OK).json({
                 StatusCode : HttpStatus.OK,
                 data : {

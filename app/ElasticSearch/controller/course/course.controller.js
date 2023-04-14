@@ -254,7 +254,10 @@ async function createNewCourseInElasticSearch(course) {
     })
     return createResults
 }
-async function getAllCourseFromElasticSearch() {
+async function getAllCourseFromElasticSearch(data) {
+    for (const course of data) {
+        await updateChaptersInElasticSearch(course)
+    }
     const courses = await elasticClient.search({
         index : indexCourse, 
         body: {
@@ -298,15 +301,19 @@ async function updateCourseInElasticSearch(course, data) {
     })
     return updateResult
 }
-async function updateChaptersInElasticSearch(courses) {
-    let course
-    for (course of courses) {
-        delete course._id
-        delete course.discountedPrice
-        delete course.discountStatus
-        delete course.category
-        delete course.teacher
-        delete course.students
+async function updateChaptersInElasticSearch(course) {
+    delete course._id
+    delete course.discountedPrice
+    delete course.discountStatus
+    delete course.category
+    delete course.teacher
+    delete course.students
+    for (const chapter of course?.chapters) {
+        if(Array.isArray(chapter?.episodes)){
+            for (const episode of chapter.episodes) {
+                delete episode?._id
+            }
+        }
     }
     Object.keys(course).forEach(key => {
         if(!course[key]) delete course[key]
@@ -316,13 +323,11 @@ async function updateChaptersInElasticSearch(courses) {
         q: course?.title || course?.text || course?.short_text || course?.tags || course?.image 
     });
     const courseID = results.hits.hits[0]._id;
-    const updateResult = await elasticClient.update({
+    await elasticClient.update({
         index: indexCourse,
         id : courseID,
         doc: course
     })
-    console.log(updateResult);
-    return updateResult
 }
 module.exports = {
     ElasticCourseController: new ElasticCourseController(),
