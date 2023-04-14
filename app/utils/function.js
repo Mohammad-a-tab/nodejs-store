@@ -108,19 +108,23 @@ function copyObject(object){
     return JSON.parse(JSON.stringify(object))
 }
 async function updateElasticCourse (courseModel, id = "") {
-    const course = await courseModel.findById(id);
+    const course = await courseModel.findOne(
+        {_id: id}, 
+        {
+            _id: 0, 
+            discountedPrice: 0, 
+            discountStatus: 0, 
+            category: 0, 
+            teacher: 0, 
+            students: 0
+        }
+    );
     const data = copyObject(course);
     deleteCourseFieldForInsertElastic(data);
     const ElasticResult = await updateCourseInElasticSearch(course, data)
     return ElasticResult.result;
 }
 function deleteCourseFieldForInsertElastic(data) {
-    delete data._id
-    delete data.discountedPrice
-    delete data.discountStatus
-    delete data.category
-    delete data.teacher
-    delete data.students
     if(data?.chapters.length > 0) {
         for (const chapter of data?.chapters) {
             if(Array.isArray(chapter?.episodes)){

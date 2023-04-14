@@ -16,7 +16,6 @@ const { StatusCodes:HttpStatus } = require("http-status-codes");
 const { BlogModel } = require("../../../../models/blogs");
 const createHttpError = require("http-errors");
 const Controller = require("../../controller");
-const { any } = require("@hapi/joi");
 const path = require('path');
 const BlogBlackList = {
     BOOKMARKS : "bookmarks",
@@ -29,7 +28,7 @@ const BlogBlackList = {
 class BlogController extends Controller {
     async createBlog (req,res,next) {
         try {
-            let blogResult = any;
+            let blogResult;
             const blogDataBody = await createBlogSchema.validateAsync(req.body);
             req.body.image =path.join(blogDataBody.fileUploadPath, blogDataBody.filename)
             req.body.image = req.body.image.replace(/\\/g, "/")
@@ -182,7 +181,7 @@ class BlogController extends Controller {
             const data = copyObject(req.body);
             let blackListFields = Object.values(BlogBlackList);
             deleteInvalidPropertyInObject(data , blackListFields)
-            let updateResult = any;
+            let updateResult;
             if(data.category){
                 if(await this.existCategoryOfBlogByID(data.category)){
                     updateResult = await BlogModel.updateOne({_id : id}, {$set : data})

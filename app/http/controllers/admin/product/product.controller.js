@@ -6,7 +6,6 @@ const { StatusCodes: HttpStatus } = require("http-status-codes");
 const { ProductModel } = require("../../../../models/products");
 const createHttpError = require("http-errors");
 const Controller = require("../../controller");
-const { any } = require("@hapi/joi");
 const { 
     deleteFilePublic 
     , ListOfImagesFromRequest 
@@ -98,7 +97,7 @@ class ProductController extends Controller {
                 }
                 let blackListFields = Object.values(ProductBlackList);
                 deleteInvalidPropertyInObject(data , blackListFields)
-                let updateResult = any;
+                let updateResult;
                 if(data.category) {
                     if(await this.ExistCorrectCategoryID(data.category)){
                         updateResult = await ProductModel.updateOne({_id : id}, {$set : data})
