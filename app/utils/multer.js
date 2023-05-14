@@ -50,7 +50,7 @@ function fileFilter(req, file, cb) {
   if (mimetypes.includes(ext)) {
     return cb(null, true);
   }
-  return cb(createError.BadRequest("فرمت ارسال شده تصویر صحیح نمیباشد"));
+  return cb(createError.BadRequest("The format of the image sent is not correct"));
 }
 function videoFilter(req, file, cb) {
   const ext = path.extname(file.originalname);
@@ -58,7 +58,7 @@ function videoFilter(req, file, cb) {
   if (mimetypes.includes(ext)) {
     return cb(null, true);
   }
-  return cb(createError.BadRequest("فرمت ارسال شده ویدیو صحیح نمیباشد"));
+  return cb(createError.BadRequest("The format of the video sent is not correct"));
 }
 const pictureMaxSize = 1 * 1000 * 1000;//300MB
 const videoMaxSize = 300 * 1000 * 1000;//300MB
