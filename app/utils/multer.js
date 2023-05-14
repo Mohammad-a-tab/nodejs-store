@@ -46,16 +46,16 @@ const storage = multer.diskStorage({
 });
 function fileFilter(req, file, cb) {
   const ext = path.extname(file.originalname);
-  const mimetypes = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
-  if (mimetypes.includes(ext)) {
+  const mimeTypes = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+  if (mimeTypes.includes(ext)) {
     return cb(null, true);
   }
   return cb(createError.BadRequest("The format of the image sent is not correct"));
 }
 function videoFilter(req, file, cb) {
   const ext = path.extname(file.originalname);
-  const mimetypes = [".mp4", ".mpg", ".mov", ".avi", ".mkv"];
-  if (mimetypes.includes(ext)) {
+  const mimeTypes = [".mp4", ".mpg", ".mov", ".avi", ".mkv"];
+  if (mimeTypes.includes(ext)) {
     return cb(null, true);
   }
   return cb(createError.BadRequest("The format of the video sent is not correct"));
