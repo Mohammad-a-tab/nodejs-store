@@ -12,7 +12,7 @@
  *                      description: the title of category
  *                  parent:
  *                      type: string
- *                      description: the title of category
+ *                      description: the parent of category
  *          Edit-tCategory:
  *              type: object
  *              properties:
@@ -21,7 +21,7 @@
  *                      description: the title of category
  *                  parent:
  *                      type: string
- *                      description: the title of category
+ *                      description: the parent of category
  */
 /**
  * @swagger
